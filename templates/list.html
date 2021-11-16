@@ -10,10 +10,10 @@
 
 <table class="">
     <tr>
-    {% for header in table_headers.values() %}
+    {% for key, header in table_headers.items() %}
         <th>
             <p>
-                <strong>{{ header }}</strong>
+                <a href="/{{ key }}/1"><strong>  {{ header }}</strong></a>
             </p>
         </th>
     {% endfor %}
