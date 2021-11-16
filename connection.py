@@ -7,7 +7,5 @@ def import_data(name_file, mode="r", buffering=3, encoding="UTF-8"):
         dictionary_lists = []
         for dictionary in all_data:
             dictionary_lists.append(dictionary)
-
-        z = dictionary_lists[1]["message"]
         return dictionary_lists
 
