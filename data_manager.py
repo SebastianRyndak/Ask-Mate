@@ -5,7 +5,7 @@ QUESTION_HEADERS = ["id", "submission_time", "view_number", "vote_number", "titl
 ANSWER_HEADERS = ["id", "submission_time", "vote_number", "question_id", "message", "image"]
 TABLE_HEADERS = {"vote_number": "Votes", "title": "Title", "message": "Message", "view_number": "Views"}
 SORT_BY_INT = ["vote_number", "view_number"]
-reverse = 0
+reverse = 0  #global variable
 
 
 def prepare_table_to_display(descend=0, sort_value="submission_time"):
