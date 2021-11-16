@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>add-questions</title>
+</head>
+<body>
+<h1>Add Question</h1>
+<form action="/add-question" method="post">
+  <label for="title">Title:</label><br>
+  <input type="text" id="title" name="title" minlength="5"><br><br>
+
+  <label for="question">Your question:</label><br>
+  <textarea id="story_id" name="question" rows="4" cols="25"></textarea><br><br>
+
+  <label for="image">Add Image:</label><br>
+  <input type="file" name="image"><br><br>
+
+  <input type="submit" value="Submit">
+
+</form>
+
+</body>
+</html>
