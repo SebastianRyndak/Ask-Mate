@@ -66,7 +66,8 @@ def question(question_id):
 
 @app.route("/question/<question_id>/new-answer", methods=["POST", "GET"])
 def add_new_answer(question_id):
-    return render_template("new_answer.html", question_id=question_id)
+    question = data_manager.find_title_and_message(question_id)[0]
+    return render_template("new_answer.html", question_id=question_id, question=question)
 
 
 @app.route("/answer/<answer_id>/delete", methods=["POST", "GET"])
