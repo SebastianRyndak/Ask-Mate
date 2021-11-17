@@ -1,13 +1,11 @@
 import csv
 
+def import_data(file, mode="r", buffering=3, encoding="UTF-8"):
+    with open(file, mode, buffering, encoding) as f:
+        csv_file = csv.DictReader(f)
+        csv_list = [dict(row) for row in csv_file]
+    return csv_list
 
-def import_data(name_file, mode="r", buffering=3, encoding="UTF-8"):
-    with open(name_file, mode, buffering, encoding) as f:
-        all_data = csv.DictReader(f)
-        dictionary_lists = []
-        for dictionary in all_data:
-            dictionary_lists.append(dictionary)
-        return dictionary_lists
 
 
 def export_data(name_file, mode="a", date={}):
@@ -17,3 +15,4 @@ def export_data(name_file, mode="a", date={}):
         record = ",".join(question)
         print(record)
         f.write(f"{record}\n")
+
