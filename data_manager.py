@@ -21,7 +21,6 @@ def add_new_answer(question_id, message, image):
     write_answer_to_csv(answer_id, submission_time, 0, question_id, message, image)
 
 
-
 def delete_answer_by_id(answer_id):
     answers_list = connection.get_all_answers()
     for answer in answers_list:
@@ -58,8 +57,6 @@ def find_all_answer_to_question(question_id):
     answer_len = len(answer)
     pack = list(zip(answer, vote, id_list)) # WITOLD
     return pack, answer_len
-
-
 
 
 def prepare_table_to_display(descend=0, sort_value="submission_time"):
@@ -117,7 +114,7 @@ def get_answer_by_id(answer_id):
 def get_question_id_by_answer_id(answer_id):
     question_id = 0
     for item in ANSWER_LIST:
-        if item["id"]==answer_id:
+        if item["id"] == answer_id:
             question_id = item["question_id"]
     return question_id
 
@@ -151,7 +148,6 @@ def delete_answer_from_csv_by_id(answer_id):
         for row in reader:
             if row['id'] != answer_id:
                 answer_list_after_deletion.append(row)
-    print(answer_list_after_deletion)
     with open(ANSWER_DATA_PATH, 'w', encoding="UTF-8", newline='') as write_file:
         writer = csv.DictWriter(write_file, fieldnames=ANSWER_HEADERS)
         writer.writeheader()
