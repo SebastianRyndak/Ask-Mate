@@ -1,8 +1,18 @@
 import csv
 
-
-def create_list(file, mode="r", buffering=3, encoding="UTF-8"):
+def import_data(file, mode="r", buffering=3, encoding="UTF-8"):
     with open(file, mode, buffering, encoding) as f:
         csv_file = csv.DictReader(f)
         csv_list = [dict(row) for row in csv_file]
     return csv_list
+
+
+
+def export_data(name_file, mode="a", date={}):
+    with open(name_file, mode) as f:
+        question = list(date.values())
+        print(question)
+        record = ",".join(question)
+        print(record)
+        f.write(f"{record}\n")
+

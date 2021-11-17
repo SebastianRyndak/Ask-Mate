@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AskMate! List of questions</title>
+</head>
+<body>
+<h1>Hi Mates!</h1>
+<h2>On this page you can read the following questions:</h2>
+
+<table class="">
+    <tr>
+    {% for key, header in table_headers.items() %}
+        <th>
+            <p>
+                <a href="/{{ key }}/1"><strong>  {{ header }}</strong></a>
+            </p>
+        </th>
+    {% endfor %}
+    </tr>
+    {% for user_record in questions_list %}
+        <tr>{% for keys in table_headers.keys() %}
+            {% if keys == "title" %}
+                <td><a href="/question/{{ user_record["id"] }}">{{ user_record[keys] }}</a></td>
+            {% else: %}
+                <td>{{ user_record[keys] }}</td>
+            {% endif %} {% endfor %} </tr> {% endfor %}
+
+</table>
+<br>
+<button><a href="/add-question">Add question</a></button>
+
+
+</body>
+</html>
