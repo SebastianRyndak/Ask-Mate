@@ -11,23 +11,17 @@ def hello():
 
 @app.route("/question/<question_id>/new-answer", methods=["POST", "GET"])
 def add_new_answer(question_id):
-    if request.method == "POST":
-       # if request.form.get("add_na"):
-    #    message = request.form.get("message")
-    #    data_manager.add_new_answer(int(question_id), message, "")
-    #    elif request.form.get("upload_na"):
-    #        print("test")
     return render_template("new_answer.html", question_id=question_id)
 
 
 @app.route("/question/<question_id>/", methods=["POST", "GET"])
 def list_new_answer(question_id):
     if request.method == "POST":
-       # if request.form.get("add_na"):
-        message = request.form.get("message")
-        data_manager.add_new_answer(int(question_id), message, "")
-    #    elif request.form.get("upload_na"):
-    #        print("test")
+        if request.form.get("add_na"):
+            message = request.form.get("message")
+            data_manager.add_new_answer(int(question_id), message, "")
+        elif request.form.get("upload_na"):
+            print("test")
     return render_template("new_answer.html", question_id=question_id)
 
 

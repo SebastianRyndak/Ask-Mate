@@ -6,12 +6,12 @@
 </head>
 <body>
 <h1>Answer the question</h1>
-<h3 id="question_na" name="question_na">Question example</h3>
+<h3 id="question_na" name="question_na">{{ question}}</h3>
 <form action="/question/{{question_id}}/" method="post" enctype=multipart/form-data>
 <textarea id="message" name="message" rows="4" cols="50" required></textarea>
     <br>
-<!--    <input type=file name="select_image_na" value="Select Image">
-      <input type="submit" name="upload_na" value="Upload"> -->
+   <input type=file name="select_image_na" value="Select Image">
+      <input type="submit" name="upload_na" value="Upload">
     <br>
     <br>
     <input type=submit name="add_na" value="Add">
