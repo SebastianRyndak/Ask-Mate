@@ -45,3 +45,19 @@ def write_answer_to_csv(id, submission_time, vote_number, question_id, message, 
              ANSWER_DATA_HEADERS[4]: message,
              ANSWER_DATA_HEADERS[5]: image}
         )
+
+
+def delete_answer_from_csv_by_id(answer_id):
+    answer_list_after_deletion = []
+    with open(ANSWER_DATA_PATH, "r") as read_file:
+        reader = csv.DictReader(read_file)
+        for row in reader:
+            if row['id'] != answer_id:
+                answer_list_after_deletion.append(row)
+    print(answer_list_after_deletion)
+    with open(ANSWER_DATA_PATH,'w') as write_file:
+        writer = csv.DictWriter(write_file, fieldnames=ANSWER_DATA_HEADERS)
+        writer.writerows(answer_list_after_deletion)
+
+
+#delete_answer_from_csv_by_id('9')
