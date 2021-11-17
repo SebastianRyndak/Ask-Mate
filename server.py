@@ -9,9 +9,11 @@ ID = 0
 pictures = ".\\static\\uploads_picture"
 app.config["UPLOAD_PICTURE_FOLDER"] = pictures
 
-@app.route("/<value>/<descend>")
-def prepare_sorted_table_to_display(descend, value):
-    questions_list, table_headers = data_manager.prepare_table_to_display(int(descend), value)
+
+@app.route("/")
+@app.route("/list")
+def question_list():
+    questions_list, table_headers = data_manager.prepare_table_to_display()
     return render_template("list.html", questions_list=questions_list, table_headers=table_headers)
 
 
@@ -32,14 +34,14 @@ def add_information_about_question():
             image = request.files["image"]
             image.save(os.path.join(app.config["UPLOAD_PICTURE_FOLDER"], image.filename))
             dic = {"id": ID, "submission_time": unix_time, "view_number": 0, "vote_number": 0, "title": title, "message": question, "Image": "./static/uploads_picture/" + image.filename}
-            return render_template("index.html")
+            return render_template("list.html")
 
     return render_template("add-question.html")
 
-@app.route("/")
-@app.route("/list")
-def question_list():
-    questions_list, table_headers = data_manager.prepare_table_to_display()
+
+@app.route("/<value>/<descend>")
+def prepare_sorted_table_to_display(descend, value):
+    questions_list, table_headers = data_manager.prepare_table_to_display(int(descend), value)
     return render_template("list.html", questions_list=questions_list, table_headers=table_headers)
 
 
