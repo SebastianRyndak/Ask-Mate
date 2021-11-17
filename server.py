@@ -5,9 +5,9 @@ import data_manager
 
 
 app = Flask(__name__)
-ID = 0
-pictures = ".\\static\\uploads_picture"
-app.config["UPLOAD_PICTURE_FOLDER"] = pictures
+pictures_questions = ".\\static\\uploads_picture_questions"
+app.config["UPLOAD_PICTURE_FOLDER"] = pictures_questions
+app.config["ALLOWED_IMAGE_EXTENSIONS"] = ["JPG", "PNG"]
 
 
 @app.route("/")
@@ -20,15 +20,21 @@ def question_list():
 @app.route("/add-question", methods=['GET', 'POST'])
 def add_information_about_question():
     if request.method == "POST":
-        global ID
-        ID += 1
+        ID = data_manager.ID_gen()
         unix_time = int(time.time())
         title = request.form["title"]
         question = request.form["question"]
         if request.files:
             image = request.files["image"]
-            image.save(os.path.join(app.config["UPLOAD_PICTURE_FOLDER"], image.filename))
-            dic = {"id": str(ID), "submission_time": str(unix_time), "view_number": "0", "vote_number": "0", "title": title, "message": question, "Image": "./static/uploads_picture/" + str(image.filename)}
+            try:
+                if not allowed_image(image.filename):
+                    print("That file extension is not allowed")
+                    return redirect(request.url)
+                image.save(os.path.join(app.config["UPLOAD_PICTURE_FOLDER"], image.filename))
+                dic = {"id": str(ID), "submission_time": str(unix_time), "view_number": "0", "vote_number": "0", "title": title, "message": question, "Image": "./static/uploads_picture_questions/" + str(image.filename)}
+            except:
+                image = ""
+                dic = {"id": str(ID), "submission_time": str(unix_time), "view_number": "0", "vote_number": "0", "title": title, "message": question, "Image": str(image)}
             connection.export_data("./sample_data/question.csv", "a", dic)
             questions_list, table_headers = data_manager.prepare_table_to_display()
             return render_template("list.html", questions_list=questions_list, table_headers=table_headers)
@@ -52,8 +58,17 @@ def question(question_id):
         return "Page doesn't exist"
     except TypeError:
         return "Page doesn't exist"
-
     return render_template('question.html', head_title=title, title_message=message, package=pack, lenth=answer_len)
+
+
+def allowed_image(filename):
+    if not "." in filename:
+        return False
+    ext = filename.rsplit(".", 1)[1]
+    if ext.upper() in app.config["ALLOWED_IMAGE_EXTENSIONS"]:
+        return True
+    else:
+        return False
 
 
 if __name__ == "__main__":

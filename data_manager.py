@@ -2,6 +2,7 @@ import connection
 from operator import itemgetter
 import datetime
 
+
 QUESTION_HEADERS = ["id", "submission_time", "view_number", "vote_number", "title", "message", "image"]
 ANSWER_HEADERS = ["id", "submission_time", "vote_number", "question_id", "message", "image"]
 TABLE_HEADERS = {"vote_number": "Votes", "title": "Title", "message": "Message", "submission_time": "Date", "view_number": "Views"}
@@ -69,4 +70,13 @@ def change_date_format(data):
             if key == "submission_time":
                 date_time = datetime.datetime.fromtimestamp(int(value))
                 record[key] = date_time.strftime('%Y-%m-%d %H:%M:%S')
+
+
+def ID_gen():
+    date = connection.import_data("./sample_data/question.csv")
+    id_list = []
+    for dic in date:
+        id_list.append(int(dic["id"]))
+    return max(id_list) + 1
+
 
