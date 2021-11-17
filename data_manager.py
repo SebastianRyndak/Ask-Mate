@@ -70,3 +70,10 @@ def change_date_format(data):
                 date_time = datetime.datetime.fromtimestamp(int(value))
                 record[key] = date_time.strftime('%Y-%m-%d %H:%M:%S')
 
+
+def ID_gen():
+    date = connection.import_data("./sample_data/question.csv")
+    id_list = []
+    for dic in date:
+        id_list.append(int(dic["id"]))
+    return max(id_list) + 1

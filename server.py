@@ -5,7 +5,6 @@ import data_manager
 
 
 app = Flask(__name__)
-ID = 0
 pictures = ".\\static\\uploads_picture"
 app.config["UPLOAD_PICTURE_FOLDER"] = pictures
 
@@ -20,8 +19,7 @@ def question_list():
 @app.route("/add-question", methods=['GET', 'POST'])
 def add_information_about_question():
     if request.method == "POST":
-        global ID
-        ID += 1
+        ID = data_manager.ID_gen()
         unix_time = int(time.time())
         title = request.form["title"]
         question = request.form["question"]
