@@ -6,7 +6,7 @@
 </head>
 <body>
 <h1>Add Question</h1>
-<form action="/add-question" method="post">
+<form action="/add-question" method="POST" enctype="multipart/form-data">
   <label for="title">Title:</label><br>
   <input type="text" id="title" name="title" minlength="5"><br><br>
 
@@ -14,11 +14,12 @@
   <textarea id="story_id" name="question" rows="4" cols="25"></textarea><br><br>
 
   <label for="image">Add Image:</label><br>
-  <input type="file" name="image"><br><br>
+  <input type="file" name="image" class="custom-file-input"><br><br>
 
   <input type="submit" value="Submit">
-
 </form>
 
+
+   <a href="/index">Back to index </a>
 </body>
 </html>
