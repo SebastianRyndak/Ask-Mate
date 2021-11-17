@@ -1,7 +1,10 @@
 import connection
+import time
+import os
 from operator import itemgetter
 import datetime
 
+ANSWER_DATA_PATH = os.getenv("ANSWER_DATA_PATH") if "ANSWER_DATA_PATH" in os.environ else "sample_data/answer.csv"
 QUESTION_HEADERS = ["id", "submission_time", "view_number", "vote_number", "title", "message", "image"]
 ANSWER_HEADERS = ["id", "submission_time", "vote_number", "question_id", "message", "image"]
 TABLE_HEADERS = {"vote_number": "Votes", "title": "Title", "message": "Message", "submission_time": "Date", "view_number": "Views"}
@@ -9,6 +12,19 @@ SORT_BY_INT = ["vote_number", "Published on", "view_number"]
 ANSWER_LIST = connection.import_data(file="sample_data/answer.csv")
 QUESTION_LIST = connection.import_data(file="sample_data/question.csv")
 reverse = 0  #global variable
+
+def add_new_answer(question_id, message, image):
+    answer_id = int(connection.get_max_answer_id()) + 1
+    submission_time = int(time.time())
+    connection.write_answer_to_csv(answer_id, submission_time, 0, question_id, message, image)
+
+
+def delete_answer_by_id(answer_id):
+    answers_list = connection.get_all_answers()
+    for answer in answers_list:
+        if answer['id'] == answer_id:
+            answers_list.remove(answer)
+    return answers_list
 
 
 def find_title_and_message(question_id):
@@ -77,3 +93,48 @@ def ID_gen():
     for dic in date:
         id_list.append(int(dic["id"]))
     return max(id_list) + 1
+  
+  
+def get_answer_by_id(answer_id):
+    answer_dict = {}
+    with open(ANSWER_DATA_PATH, 'r') as file:
+        reader = csv.DictReader(file)
+        for row in reader:
+            if row['id'] == answer_id:
+                answer_dict = row
+    return answer_dict
+
+
+def get_max_answer_id():
+    id_list = []
+    with open(ANSWER_DATA_PATH, "r") as file:
+        reader = csv.DictReader(file)
+        for row in reader:
+            id_list.append(row['id'])
+    return max(id_list)
+
+
+def write_answer_to_csv(id, submission_time, vote_number, question_id, message, image):
+    with open(ANSWER_DATA_PATH, 'a', newline='') as file:
+        writer = csv.DictWriter(file, fieldnames=ANSWER_HEADERS)
+        writer.writerow(
+            {ANSWER_DATA_HEADERS[0]: id,
+             ANSWER_DATA_HEADERS[1]: submission_time,
+             ANSWER_DATA_HEADERS[2]: vote_number,
+             ANSWER_DATA_HEADERS[3]: question_id,
+             ANSWER_DATA_HEADERS[4]: message,
+             ANSWER_DATA_HEADERS[5]: image}
+        )
+
+
+def delete_answer_from_csv_by_id(answer_id):
+    answer_list_after_deletion = []
+    with open(ANSWER_DATA_PATH, "r") as read_file:
+        reader = csv.DictReader(read_file)
+        for row in reader:
+            if row['id'] != answer_id:
+                answer_list_after_deletion.append(row)
+    print(answer_list_after_deletion)
+    with open(ANSWER_DATA_PATH,'w') as write_file:
+        writer = csv.DictWriter(write_file, fieldnames=ANSWER_DATA_HEADERS)
+        writer.writerows(answer_list_after_deletion)
