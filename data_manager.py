@@ -21,6 +21,7 @@ def add_new_answer(question_id, message, image):
     write_answer_to_csv(answer_id, submission_time, 0, question_id, message, image)
 
 
+
 def delete_answer_by_id(answer_id):
     answers_list = connection.get_all_answers()
     for answer in answers_list:
@@ -37,23 +38,28 @@ def find_title_and_message(question_id):
             return title, message
 
 
+# WITOLD - zmiana w metodzie
 def find_all_answer_to_question(question_id):
     answer = []
     vote = []
+    id_list = [] # WITOLD
     for i in QUESTION_LIST:
         if i["id"] == str(question_id):
             for j in ANSWER_LIST:
                 if j["question_id"] == str(question_id):
                     answer.append(j.get("message"))
                     vote.append(j.get("vote_number"))
+                    id_list.append(j.get("id")) # WITOLD
                 else:
                     pass
         else:
             pass
 
     answer_len = len(answer)
-    pack = list(zip(answer, vote))
+    pack = list(zip(answer, vote, id_list)) # WITOLD
     return pack, answer_len
+
+
 
 
 def prepare_table_to_display(descend=0, sort_value="submission_time"):
@@ -105,6 +111,15 @@ def get_answer_by_id(answer_id):
             if row['id'] == answer_id:
                 answer_dict = row
     return answer_dict
+
+
+#Witold
+def get_question_id_by_answer_id(answer_id):
+    question_id = 0
+    for item in ANSWER_LIST:
+        if item["id"]==answer_id:
+            question_id = item["question_id"]
+    return question_id
 
 
 def get_max_answer_id():

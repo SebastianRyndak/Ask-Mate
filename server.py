@@ -72,9 +72,12 @@ def add_new_answer(question_id):
 
 @app.route("/answer/<answer_id>/delete", methods=["POST", "GET"])
 def delete_answer(answer_id):
-    if request.method == "POST":
-        pass
-    return render_template("question.html", answer_id=answer_id)
+    question_id = data_manager.get_question_id_by_answer_id(answer_id)
+    if request.method == "GET":
+        data_manager.delete_answer_from_csv_by_id(answer_id)
+        title, message = data_manager.find_title_and_message(question_id)
+        pack, answer_len = data_manager.find_all_answer_to_question(question_id)
+    return render_template("question.html", answer_id=answer_id, head_title=title, title_message=message, package=pack, lenth=answer_len,question_id=question_id)
 
 
 if __name__ == "__main__":

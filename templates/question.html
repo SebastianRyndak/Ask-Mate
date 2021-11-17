@@ -18,7 +18,7 @@
 	{% for i in package|batch(3) %}
 	{% for j in i %}
 	<ul>
-		<li><strong>{{ j[0] }}</strong> ----- {{ j[1] }} votes</li><br>
+		<li><strong>{{ j[0] }}</strong> ----- {{ j[1] }} votes <a href="/answer/{{j[2]}}/delete">Delete answer</a></li><br>
 	</ul>
 	{% endfor %}
 	{% endfor %}
