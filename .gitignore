@@ -5,3 +5,5 @@ __pycache__/
 /.idea/inspectionProfiles/profiles_settings.xml
 /.idea/vcs.xml
 /.idea/ask-mate-1-python-SebastianRyndak.iml
+/test.py
+__pycache__
