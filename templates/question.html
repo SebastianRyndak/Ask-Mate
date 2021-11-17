@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang=eng>
+<head>
+	<meta chrset="utf-8">
+	<title>Question</title>
+</head>
+<body>
+<a href="/">Back to main page<a>
+	<h1>{{ head_title }}</h1><br>
+	<h2>{{ title_message }}</h2><br>
+	{% if lenth == 0 %}
+	<h3>Nothing comment yet.</h3>
+	{% elif lenth == 1 %}
+	<h3>{{ lenth }} answer:</h3>
+	{% else %}
+	<h3>{{ lenth }} answers:</h3>
+	{% endif %}
+	{% for i in package|batch(3) %}
+	{% for j in i %}
+	<ul>
+		<li><strong>{{ j[0] }}</strong> ----- {{ j[1] }} votes</li><br>
+	</ul>
+	{% endfor %}
+	{% endfor %}
+</body>
+</html>
