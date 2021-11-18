@@ -84,6 +84,11 @@ def delete_answer(answer_id):
         pack, answer_len = data_manager.find_all_answer_to_question(question_id)
     return render_template("question.html", answer_id=answer_id, head_title=title, title_message=message, package=pack, lenth=answer_len,question_id=question_id)
 
+@app.route('/question/<int:question_id>/delete', methods=["POST"])
+def delete_question(question_id):
+    del_question = data_manager.delete_question(question_id)
+    questions_list, table_headers = data_manager.prepare_table_to_display()
+    return render_template('list.html', questions_list=questions_list, table_headers=table_headers)
 
 if __name__ == "__main__":
     app.run(debug=True)
