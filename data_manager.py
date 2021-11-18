@@ -9,11 +9,13 @@ import csv
 ANSWER_DATA_PATH = os.getenv("ANSWER_DATA_PATH") if "ANSWER_DATA_PATH" in os.environ else "sample_data/answer.csv"
 QUESTION_HEADERS = ["id", "submission_time", "view_number", "vote_number", "title", "message", "image"]
 ANSWER_HEADERS = ["id", "submission_time", "vote_number", "question_id", "message", "image"]
-TABLE_HEADERS = {"vote_number": "Votes", "title": "Title", "message": "Message", "submission_time": "Date", "view_number": "Views"}
+TABLE_HEADERS = {"vote_number": "Votes", "title": "Title", "message": "Message", "submission_time": "Date",
+                 "view_number": "Views"}
 SORT_BY_INT = ["vote_number", "Published on", "view_number"]
-ANSWER_LIST = connection.import_data(file="sample_data/answer.csv")
-QUESTION_LIST = connection.import_data(file="sample_data/question.csv")
-reverse = 0  #global variable
+ANSWER_LIST = connection.import_data(file="./sample_data/answer.csv")
+QUESTION_LIST = connection.import_data(file="./sample_data/question.csv")
+reverse = 0  # global variable
+
 
 
 def add_new_answer(question_id, message, image):
@@ -101,8 +103,7 @@ def ID_gen():
         id_list.append(int(dic["id"]))
     return max(id_list) + 1
 
-  
-  
+
 def get_answer_by_id(answer_id):
     answer_dict = {}
     with open(ANSWER_DATA_PATH, 'r') as file:
@@ -156,6 +157,18 @@ def delete_answer_from_csv_by_id(answer_id):
         writer = csv.DictWriter(write_file, fieldnames=ANSWER_HEADERS)
         writer.writeheader()
         writer.writerows(answer_list_after_deletion)
+
+
+def delete_question(question_id):
+    for i in QUESTION_LIST:
+        if i["id"] == str(question_id):
+            QUESTION_LIST.remove(i)
+    connection.overwrite_csv(QUESTION_LIST)
+    #czy to dzaiała
+   # with open(ANSWER_DATA_PATH, 'w', encoding="UTF-8", newline='') as write_file:
+      #  writer = csv.DictWriter(write_file, fieldnames=QUESTION_HEADERS)
+       # writer.writeheader()
+      #  writer.writerows(QUESTION_LIST)
 
 
 def vote_counter(id, value, data=QUESTION_LIST, key_name="id"):

@@ -3,6 +3,9 @@
 <head>
 	<meta chrset="utf-8">
 	<title>Question</title>
+	<style>
+		.button-red {background-color: #f44336;}
+	</style>
 </head>
 <body>
 <a href="/">Back to main page<a>
@@ -15,6 +18,14 @@
 	{% else %}
 	<h3>{{ lenth }} answers:</h3>
 	{% endif %}
+	{% for tmp in package|batch(3) %}
+		{% for item in tmp %}
+			<li><strong>{{ item[0] }}</strong> ----- {{ item[1] }} votes</li><br>
+		{% endfor %}
+	{% endfor %}
+	<form action="/question/{{ question_id }}/delete" method="POST">
+		<input type="submit" name="delete_button" value="Delete question" class="button-red">
+	</form>
 	{% for i in package|batch(3) %}
 	{% for j in i %}
 	<ul>
@@ -27,6 +38,4 @@
      <input type=submit name="add_na" value="Add">
 </form>
 </body>
-
-
 </html>
