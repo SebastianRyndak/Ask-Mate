@@ -10,20 +10,15 @@ def import_data(file, mode="r", buffering=3, encoding="UTF-8"):
   
 
 def export_data(name_file, mode="a", data={}):
-    with open(name_file, mode, encoding="UTF-8") as f:
-        dic_list=list(data[0].keys())
-        writer = csv.DictWriter(f, fieldnames=dic_list)
-        writer.writeheader()
-        writer.writerows(data)
-
-""" if mode == "w":
-    record = ",".join(data[0].keys())
-    f.write(f"{record}\n")
-for dic in data:
-    question = list(dic.values())
-    record = ",".join(question)
-    f.write(f"{record}\n")
-    
- writer = csv.DictWriter(write_file, fieldnames=ANSWER_DATA_HEADERS)
-        writer.writerows(answer_list_after_deletion)"""
+    if mode=="a":
+        with open(name_file, mode, encoding="UTF-8") as f:
+            question = list(data.values())
+            record = ",".join(question)
+            f.write(f"{record}\n")
+    if mode=="w":
+        with open(name_file, mode, encoding="UTF-8") as f:
+            dic_list=list(data[0].keys())
+            writer = csv.DictWriter(f, fieldnames=dic_list)
+            writer.writeheader()
+            writer.writerows(data)
 

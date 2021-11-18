@@ -9,7 +9,7 @@ pictures = ".\\static\\uploads_picture"
 app.config["UPLOAD_PICTURE_FOLDER"] = pictures
 
 pictures_answers = '.\\static\\upload_pictures_answers'
-app.config["UPLOAD_PICTURE_FOLDER"] = pictures_answers
+app.config["UPLOAD_PICTURE_ANSWERS"] = pictures_answers
 
 
 @app.route("/vote/<id>/<value>")
