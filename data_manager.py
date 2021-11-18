@@ -25,7 +25,8 @@ def add_new_answer(question_id, message, image):
 
 
 def find_title_and_message(question_id):
-    for i in QUESTION_LIST:
+    data = connection.import_data(file="./sample_data/question.csv")
+    for i in data:
         if i["id"] == str(question_id):
             title = i["title"]
             message = i["message"]

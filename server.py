@@ -64,14 +64,9 @@ def question(question_id):
             image = request.files["image"]
             image.save(os.path.join(app.config["UPLOAD_PICTURE_ANSWERS"], image.filename))
         data_manager.add_new_answer(int(question_id), message, "../static/uploads_pictures_answers/" + image.filename)
-
-    try:
-        title, message, image = data_manager.find_title_and_message(question_id)
-        pack, answer_len = data_manager.find_all_answer_to_question(question_id)
-    except UnboundLocalError:
-        return "Page doesn't exist"
-    except TypeError:
-        return "Page doesn't exist"
+    print(data_manager.find_title_and_message(question_id))
+    title, message, image = data_manager.find_title_and_message(question_id)
+    pack, answer_len = data_manager.find_all_answer_to_question(question_id)
 
     return render_template('question.html', head_title=title, title_message=message, package=pack, lenth=answer_len, question_id=question_id, image=image)
 
