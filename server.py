@@ -26,13 +26,12 @@ def add_information_about_question():
         question = request.form["question"]
         if request.files:
             image = request.files["image"]
-            try:
+            if image.filename != "":
                 if not allowed_image(image.filename):
-                    print("That file extension is not allowed")
                     return redirect(request.url)
                 image.save(os.path.join(app.config["UPLOAD_PICTURE_FOLDER"], image.filename))
                 dic = {"id": str(ID), "submission_time": str(unix_time), "view_number": "0", "vote_number": "0", "title": title, "message": question, "Image": "./static/uploads_picture_questions/" + str(image.filename)}
-            except:
+            else:
                 image = ""
                 dic = {"id": str(ID), "submission_time": str(unix_time), "view_number": "0", "vote_number": "0", "title": title, "message": question, "Image": str(image)}
             connection.export_data("./sample_data/question.csv", "a", dic)

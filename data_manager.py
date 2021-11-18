@@ -33,7 +33,6 @@ def find_all_answer_to_question(question_id):
                     pass
         else:
             pass
-
     answer_len = len(answer)
     pack = list(zip(answer, vote))
     return pack, answer_len

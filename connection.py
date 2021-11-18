@@ -8,9 +8,9 @@ def import_data(file, mode="r", buffering=3, encoding="UTF-8"):
     return csv_list
 
 
-def export_data(name_file, mode="a", date={}):
-    with open(name_file, mode) as f:
-        question = list(date.values())
+def export_data(name_file, mode="a", data={}):
+    with open(name_file, mode, encoding="UTF-8") as f:
+        question = list(data.values())
         record = ",".join(question)
         f.write(f"{record}\n")
 
