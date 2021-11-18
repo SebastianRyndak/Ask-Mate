@@ -5,6 +5,7 @@ from operator import itemgetter
 import datetime
 import csv
 
+
 ANSWER_DATA_PATH = os.getenv("ANSWER_DATA_PATH") if "ANSWER_DATA_PATH" in os.environ else "sample_data/answer.csv"
 QUESTION_HEADERS = ["id", "submission_time", "view_number", "vote_number", "title", "message", "image"]
 ANSWER_HEADERS = ["id", "submission_time", "vote_number", "question_id", "message", "image"]
@@ -36,28 +37,29 @@ def find_title_and_message(question_id):
         if i["id"] == str(question_id):
             title = i["title"]
             message = i["message"]
-            return title, message
+            image = i["image"]
+            return title, message, image
 
 
-# WITOLD - zmiana w metodzie
 def find_all_answer_to_question(question_id):
     answer = []
     vote = []
-    id_list = [] # WITOLD
+    id_list = []
+    image = []
     for i in QUESTION_LIST:
         if i["id"] == str(question_id):
             for j in ANSWER_LIST:
                 if j["question_id"] == str(question_id):
                     answer.append(j.get("message"))
                     vote.append(j.get("vote_number"))
-                    id_list.append(j.get("id")) # WITOLD
+                    id_list.append(j.get("id"))
+                    image.append(j.get("image"))
                 else:
                     pass
         else:
             pass
-
     answer_len = len(answer)
-    pack = list(zip(answer, vote, id_list)) # WITOLD
+    pack = list(zip(answer, vote, id_list, image))
     return pack, answer_len
 
 
@@ -139,8 +141,7 @@ def write_answer_to_csv(id, submission_time, vote_number, question_id, message, 
              ANSWER_HEADERS[2]: vote_number,
              ANSWER_HEADERS[3]: question_id,
              ANSWER_HEADERS[4]: message,
-             ANSWER_HEADERS[5]: image}
-        )
+             ANSWER_HEADERS[5]: image})
 
 
 def delete_answer_from_csv_by_id(answer_id):
@@ -150,6 +151,8 @@ def delete_answer_from_csv_by_id(answer_id):
         for row in reader:
             if row['id'] != answer_id:
                 answer_list_after_deletion.append(row)
+
+
     with open(ANSWER_DATA_PATH, 'w', encoding="UTF-8", newline='') as write_file:
         writer = csv.DictWriter(write_file, fieldnames=ANSWER_HEADERS)
         writer.writeheader()
@@ -168,8 +171,6 @@ def delete_question(question_id):
       #  writer.writerows(QUESTION_LIST)
 
 
-
-
 def vote_counter(id, value, data=QUESTION_LIST, key_name="id"):
     for dic in data:
         if dic[key_name] == id:
@@ -180,4 +181,10 @@ def vote_counter(id, value, data=QUESTION_LIST, key_name="id"):
                 votes = int(dic["vote_number"]) - 1
                 dic["vote_number"] = str(votes)
     return data
+
+
+def upload_picture(id,data):
+    for dic in data:
+        if dic["id"] == id:
+            return dic['image']
 
