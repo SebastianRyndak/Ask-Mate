@@ -9,7 +9,14 @@ pictures = ".\\static\\uploads_picture"
 app.config["UPLOAD_PICTURE_FOLDER"] = pictures
 
 pictures_answers = '.\\static\\upload_pictures_answers'
-app.config["UPLOAD_PICTURE_FOLDER"] = pictures_answers
+app.config["UPLOAD_PICTURE_ANSWERS"] = pictures_answers
+
+
+@app.route("/vote/<id>/<value>")
+def list_voting(id, value):
+    data = data_manager.vote_counter(id, value)
+    connection.export_data("./sample_data/question.csv", "w", data)
+    return redirect("/")
 
 
 @app.route("/")
@@ -46,14 +53,6 @@ def prepare_sorted_table_to_display(descend, value):
 @app.route('/question')
 @app.route('/question/<question_id>', methods=["POST", "GET"])
 def question(question_id):
-    if request.method == "POST":
-      #  if request.form.get("add_na"):
-        message = request.form.get("message")
-       # data_manager.add_new_answer(int(question_id), message, "")
-        if request.files:
-            image = request.files["image"]
-            image.save(os.path.join(app.config["UPLOAD_PICTURE_FOLDER"], image.filename))
-            data_manager.add_new_answer(int(question_id), message, image.filename)
     try:
         title, message = data_manager.find_title_and_message(question_id)
         pack, answer_len = data_manager.find_all_answer_to_question(question_id)
@@ -61,19 +60,29 @@ def question(question_id):
         return "Page doesn't exist"
     except TypeError:
         return "Page doesn't exist"
+    if request.method == "POST":
+        message = request.form.get("message")
+        if request.files:
+            image = request.files["image"]
+            image.save(os.path.join(app.config["UPLOAD_PICTURE_FOLDER"], image.filename))
+        data_manager.add_new_answer(int(question_id), message, image.filename)
     return render_template('question.html', head_title=title, title_message=message, package=pack, lenth=answer_len, question_id=question_id)
 
 
 @app.route("/question/<question_id>/new-answer", methods=["POST", "GET"])
 def add_new_answer(question_id):
-    return render_template("new_answer.html", question_id=question_id)
+    question = data_manager.find_title_and_message(question_id)[0]
+    return render_template("new_answer.html", question_id=question_id, question=question)
 
 
 @app.route("/answer/<answer_id>/delete", methods=["POST", "GET"])
 def delete_answer(answer_id):
-    if request.method == "POST":
-        pass
-    return render_template("question.html", answer_id=answer_id)
+    question_id = data_manager.get_question_id_by_answer_id(answer_id)
+    if request.method == "GET":
+        data_manager.delete_answer_from_csv_by_id(answer_id)
+        title, message = data_manager.find_title_and_message(question_id)
+        pack, answer_len = data_manager.find_all_answer_to_question(question_id)
+    return render_template("question.html", answer_id=answer_id, head_title=title, title_message=message, package=pack, lenth=answer_len,question_id=question_id)
 
 @app.route('/question/<int:question_id>/delete', methods=["POST"])
 def delete_question(question_id):
