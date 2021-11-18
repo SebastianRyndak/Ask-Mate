@@ -39,7 +39,7 @@ def find_all_answer_to_question(question_id):
     vote = []
     id_list = []
     image = []
-    x = QUESTION_LIST
+    x = connection.import_data(file="./sample_data/question.csv")
     for i in x:
         if i["id"] == str(question_id):
             y = connection.import_data(file="./sample_data/answer.csv")
@@ -159,7 +159,8 @@ def delete_question(question_id):
     connection.overwrite_csv(QUESTION_LIST)
 
 
-def vote_counter(id, value, data=QUESTION_LIST, key_name="id"):
+def vote_counter(id, value, path="./sample_data/question.csv", key_name="id"):
+    data = connection.import_data(path)
     for dic in data:
         if dic[key_name] == id:
             if value == "+":

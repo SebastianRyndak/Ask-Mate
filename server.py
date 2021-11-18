@@ -19,11 +19,11 @@ def list_voting(id, value):
     return redirect("/")
 
 
-@app.route("/question/vote/<question_id>/<answer_id>/<value>")
+"""@app.route("/question/vote/<question_id>/<answer_id>/<value>")
 def list_voting(value, question_id, answer_id):
     data = data_manager.vote_counter(question_id, value, data=data_manager.ANSWER_LIST)
     connection.export_data("./sample_data/answer.csv", "w", data)
-    return redirect(f"/question/{question_id}")
+    return redirect(f"/question/{question_id}")"""
 
 
 @app.route("/")
