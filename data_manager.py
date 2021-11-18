@@ -150,9 +150,9 @@ def delete_answer_from_csv_by_id(answer_id):
         for row in reader:
             if row['id'] != answer_id:
                 answer_list_after_deletion.append(row)
-    print(answer_list_after_deletion)
-    with open(ANSWER_DATA_PATH, 'w') as write_file:
-        writer = csv.DictWriter(write_file, fieldnames=ANSWER_DATA_HEADERS)
+    with open(ANSWER_DATA_PATH, 'w', encoding="UTF-8", newline='') as write_file:
+        writer = csv.DictWriter(write_file, fieldnames=ANSWER_HEADERS)
+        writer.writeheader()
         writer.writerows(answer_list_after_deletion)
 
 
@@ -162,10 +162,10 @@ def delete_question(question_id):
             QUESTION_LIST.remove(i)
     connection.overwrite_csv(QUESTION_LIST)
     #czy to dzaiała
-    with open(ANSWER_DATA_PATH, 'w', encoding="UTF-8", newline='') as write_file:
-        writer = csv.DictWriter(write_file, fieldnames=ANSWER_HEADERS)
-        writer.writeheader()
-        writer.writerows(answer_list_after_deletion)
+   # with open(ANSWER_DATA_PATH, 'w', encoding="UTF-8", newline='') as write_file:
+      #  writer = csv.DictWriter(write_file, fieldnames=QUESTION_HEADERS)
+       # writer.writeheader()
+      #  writer.writerows(QUESTION_LIST)
 
 
 
