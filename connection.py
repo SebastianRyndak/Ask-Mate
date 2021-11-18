@@ -14,4 +14,10 @@ def export_data(name_file, mode="a", date={}):
         record = ",".join(question)
         f.write(f"{record}\n")
 
-
+def overwrite_csv(QUESTION_LIST):
+    with open("sample_data/question.csv", "w", buffering=3, encoding="UTF-8") as f:
+        keys = QUESTION_LIST[0].keys()
+        writer = csv.DictWriter(f, keys)
+        writer.writeheader()
+        writer.writerows(QUESTION_LIST)
+    
