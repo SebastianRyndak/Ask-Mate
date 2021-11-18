@@ -128,7 +128,7 @@ def get_max_answer_id():
 
 
 def write_answer_to_csv(id, submission_time, vote_number, question_id, message, image):
-    with open(ANSWER_DATA_PATH, 'a', newline='') as file:
+    with open(ANSWER_DATA_PATH, 'a', newline='', encoding="UTF-8") as file:
         writer = csv.DictWriter(file, fieldnames=ANSWER_HEADERS)
         writer.writerow(
             {ANSWER_HEADERS[0]: id,
