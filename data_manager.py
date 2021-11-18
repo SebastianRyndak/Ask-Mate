@@ -5,6 +5,7 @@ from operator import itemgetter
 import datetime
 import csv
 
+
 ANSWER_DATA_PATH = os.getenv("ANSWER_DATA_PATH") if "ANSWER_DATA_PATH" in os.environ else "sample_data/answer.csv"
 QUESTION_HEADERS = ["id", "submission_time", "view_number", "vote_number", "title", "message", "image"]
 ANSWER_HEADERS = ["id", "submission_time", "vote_number", "question_id", "message", "image"]
@@ -53,7 +54,6 @@ def find_all_answer_to_question(question_id):
                     pass
         else:
             pass
-
     answer_len = len(answer)
     pack = list(zip(answer, vote, id_list)) # WITOLD
     return pack, answer_len
@@ -98,6 +98,7 @@ def ID_gen():
     for dic in date:
         id_list.append(int(dic["id"]))
     return max(id_list) + 1
+
   
   
 def get_answer_by_id(answer_id):
@@ -166,4 +167,5 @@ def vote_counter(id, value, data=QUESTION_LIST, key_name="id"):
                 votes = int(dic["vote_number"]) - 1
                 dic["vote_number"] = str(votes)
     return data
+
 

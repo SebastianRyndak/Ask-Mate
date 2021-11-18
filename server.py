@@ -5,8 +5,10 @@ import data_manager
 
 
 app = Flask(__name__)
-pictures = ".\\static\\uploads_picture"
-app.config["UPLOAD_PICTURE_FOLDER"] = pictures
+pictures_questions = ".\\static\\uploads_picture_questions"
+app.config["UPLOAD_PICTURE_FOLDER"] = pictures_questions
+app.config["ALLOWED_IMAGE_EXTENSIONS"] = ["JPG", "PNG"]
+
 
 pictures_answers = '.\\static\\upload_pictures_answers'
 app.config["UPLOAD_PICTURE_ANSWERS"] = pictures_answers
@@ -35,8 +37,14 @@ def add_information_about_question():
         question = request.form["question"]
         if request.files:
             image = request.files["image"]
-            image.save(os.path.join(app.config["UPLOAD_PICTURE_FOLDER"], image.filename))
-            dic = {"id": str(ID), "submission_time": str(unix_time), "view_number": "0", "vote_number": "0", "title": title, "message": question, "Image": "./static/uploads_picture/" + str(image.filename)}
+            if image.filename != "":
+                if not allowed_image(image.filename):
+                    return redirect(request.url)
+                image.save(os.path.join(app.config["UPLOAD_PICTURE_FOLDER"], image.filename))
+                dic = {"id": str(ID), "submission_time": str(unix_time), "view_number": "0", "vote_number": "0", "title": title, "message": question, "Image": "./static/uploads_picture_questions/" + str(image.filename)}
+            else:
+                image = ""
+                dic = {"id": str(ID), "submission_time": str(unix_time), "view_number": "0", "vote_number": "0", "title": title, "message": question, "Image": str(image)}
             connection.export_data("./sample_data/question.csv", "a", dic)
             questions_list, table_headers = data_manager.prepare_table_to_display()
             return render_template("list.html", questions_list=questions_list, table_headers=table_headers)
@@ -83,6 +91,17 @@ def delete_answer(answer_id):
         title, message = data_manager.find_title_and_message(question_id)
         pack, answer_len = data_manager.find_all_answer_to_question(question_id)
     return render_template("question.html", answer_id=answer_id, head_title=title, title_message=message, package=pack, lenth=answer_len,question_id=question_id)
+
+
+
+def allowed_image(filename):
+    if not "." in filename:
+        return False
+    ext = filename.rsplit(".", 1)[1]
+    if ext.upper() in app.config["ALLOWED_IMAGE_EXTENSIONS"]:
+        return True
+    else:
+        return False
 
 
 if __name__ == "__main__":
