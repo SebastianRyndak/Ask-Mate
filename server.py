@@ -9,7 +9,14 @@ pictures = ".\\static\\uploads_picture"
 app.config["UPLOAD_PICTURE_FOLDER"] = pictures
 
 pictures_answers = '.\\static\\upload_pictures_answers'
-app.config["UPLOAD_PICTURE_FOLDER"] = pictures_answers
+app.config["UPLOAD_PICTURE_ANSWERS"] = pictures_answers
+
+
+@app.route("/vote/<id>/<value>")
+def list_voting(id, value):
+    data = data_manager.vote_counter(id, value)
+    connection.export_data("./sample_data/question.csv", "w", data)
+    return redirect("/")
 
 
 @app.route("/")

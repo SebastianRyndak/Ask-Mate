@@ -152,3 +152,18 @@ def delete_answer_from_csv_by_id(answer_id):
         writer = csv.DictWriter(write_file, fieldnames=ANSWER_HEADERS)
         writer.writeheader()
         writer.writerows(answer_list_after_deletion)
+
+
+
+
+def vote_counter(id, value, data=QUESTION_LIST, key_name="id"):
+    for dic in data:
+        if dic[key_name] == id:
+            if value == "+":
+                votes = int(dic["vote_number"]) + 1
+                dic["vote_number"] = str(votes)
+            elif int(dic["vote_number"]) > 0:
+                votes = int(dic["vote_number"]) - 1
+                dic["vote_number"] = str(votes)
+    return data
+
