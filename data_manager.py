@@ -169,10 +169,3 @@ def vote_counter(id, value, data=QUESTION_LIST, key_name="id"):
                 votes = int(dic["vote_number"]) - 1
                 dic["vote_number"] = str(votes)
     return data
-
-
-def upload_picture(id,data):
-    for dic in data:
-        if dic["id"] == id:
-            return dic['image']
-
