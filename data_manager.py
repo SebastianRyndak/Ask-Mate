@@ -19,7 +19,7 @@ reverse = 0  # global variable
 
 
 def add_new_answer(question_id, message, image):
-    answer_id = int(get_max_answer_id()) + 1
+    answer_id = ID_gen("./sample_data/answer.csv")
     submission_time = int(time.time())
     write_answer_to_csv(answer_id, submission_time, 0, question_id, message, image)
 
@@ -91,8 +91,8 @@ def change_date_format(data):
                 record[key] = date_time.strftime('%Y-%m-%d %H:%M:%S')
 
 
-def ID_gen():
-    date = connection.import_data("./sample_data/question.csv")
+def ID_gen(path="./sample_data/question.csv"):
+    date = connection.import_data(path)
     id_list = []
     for dic in date:
         id_list.append(int(dic["id"]))
