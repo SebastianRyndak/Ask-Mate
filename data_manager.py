@@ -112,7 +112,7 @@ def get_answer_by_id(answer_id):
 #Witold
 def get_question_id_by_answer_id(answer_id):
     question_id = 0
-    for item in ANSWER_LIST:
+    for item in connection.import_data(file="./sample_data/answer.csv"):
         if item["id"] == answer_id:
             question_id = item["question_id"]
     return question_id
@@ -146,8 +146,6 @@ def delete_answer_from_csv_by_id(answer_id):
         for row in reader:
             if row['id'] != answer_id:
                 answer_list_after_deletion.append(row)
-
-
     with open(ANSWER_DATA_PATH, 'w', encoding="UTF-8", newline='') as write_file:
         writer = csv.DictWriter(write_file, fieldnames=ANSWER_HEADERS)
         writer.writeheader()
