@@ -19,6 +19,13 @@ def list_voting(id, value):
     return redirect("/")
 
 
+@app.route("/question/vote/<question_id>/<answer_id>/<value>")
+def list_voting(value, question_id, answer_id):
+    data = data_manager.vote_counter(question_id, value, data=data_manager.ANSWER_LIST)
+    connection.export_data("./sample_data/answer.csv", "w", data)
+    return redirect(f"/question/{question_id}")
+
+
 @app.route("/")
 @app.route("/list")
 def question_list():
@@ -81,9 +88,9 @@ def delete_answer(answer_id):
     question_id = data_manager.get_question_id_by_answer_id(answer_id)
     if request.method == "GET":
         data_manager.delete_answer_from_csv_by_id(answer_id)
-        title, message = data_manager.find_title_and_message(question_id)
+        title, message, image = data_manager.find_title_and_message(question_id)
         pack, answer_len = data_manager.find_all_answer_to_question(question_id)
-    return render_template("question.html", answer_id=answer_id, head_title=title, title_message=message, package=pack, lenth=answer_len,question_id=question_id)
+    return render_template("question.html", answer_id=answer_id, head_title=title, title_message=message, package=pack, lenth=answer_len,question_id=question_id, image=image)
 
 
 @app.route('/question/<int:question_id>/delete', methods=["POST"])

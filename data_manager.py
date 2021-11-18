@@ -159,12 +159,6 @@ def delete_question(question_id):
         if i["id"] == str(question_id):
             QUESTION_LIST.remove(i)
     connection.overwrite_csv(QUESTION_LIST)
-    #czy to dzaiała
-   # with open(ANSWER_DATA_PATH, 'w', encoding="UTF-8", newline='') as write_file:
-      #  writer = csv.DictWriter(write_file, fieldnames=QUESTION_HEADERS)
-       # writer.writeheader()
-      #  writer.writerows(QUESTION_LIST)
-
 
 def vote_counter(id, value, data=QUESTION_LIST, key_name="id"):
     for dic in data:
@@ -176,10 +170,3 @@ def vote_counter(id, value, data=QUESTION_LIST, key_name="id"):
                 votes = int(dic["vote_number"]) - 1
                 dic["vote_number"] = str(votes)
     return data
-
-
-def upload_picture(id,data):
-    for dic in data:
-        if dic["id"] == id:
-            return dic['image']
-
