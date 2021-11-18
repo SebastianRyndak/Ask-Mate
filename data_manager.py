@@ -24,14 +24,6 @@ def add_new_answer(question_id, message, image):
     write_answer_to_csv(answer_id, submission_time, 0, question_id, message, image)
 
 
-def delete_answer_by_id(answer_id):
-    answers_list = connection.get_all_answers()
-    for answer in answers_list:
-        if answer['id'] == answer_id:
-            answers_list.remove(answer)
-    return answers_list
-
-
 def find_title_and_message(question_id):
     for i in QUESTION_LIST:
         if i["id"] == str(question_id):
@@ -46,9 +38,11 @@ def find_all_answer_to_question(question_id):
     vote = []
     id_list = []
     image = []
-    for i in QUESTION_LIST:
+    x = QUESTION_LIST
+    for i in x:
         if i["id"] == str(question_id):
-            for j in ANSWER_LIST:
+            y = connection.import_data(file="./sample_data/answer.csv")
+            for j in y:
                 if j["question_id"] == str(question_id):
                     answer.append(j.get("message"))
                     vote.append(j.get("vote_number"))
