@@ -5,14 +5,11 @@ import data_manager
 
 
 app = Flask(__name__)
-pictures_questions = ".\\static\\uploads_picture_questions"
+pictures_questions = ".\\static\\uploads_pictures_questions"
 app.config["UPLOAD_PICTURE_FOLDER"] = pictures_questions
-app.config["ALLOWED_IMAGE_EXTENSIONS"] = ["JPG", "PNG"]
-
-
-pictures_answers = '.\\static\\upload_pictures_answers'
+pictures_answers = '.\\static\\uploads_pictures_answers'
 app.config["UPLOAD_PICTURE_ANSWERS"] = pictures_answers
-
+app.config["ALLOWED_IMAGE_EXTENSIONS"] = ["JPG", "PNG"]
 
 @app.route("/vote/<id>/<value>")
 def list_voting(id, value):
@@ -41,7 +38,7 @@ def add_information_about_question():
                 if not allowed_image(image.filename):
                     return redirect(request.url)
                 image.save(os.path.join(app.config["UPLOAD_PICTURE_FOLDER"], image.filename))
-                dic = {"id": str(ID), "submission_time": str(unix_time), "view_number": "0", "vote_number": "0", "title": title, "message": question, "Image": "./static/uploads_picture_questions/" + str(image.filename)}
+                dic = {"id": str(ID), "submission_time": str(unix_time), "view_number": "0", "vote_number": "0", "title": title, "message": question, "Image": "../static/uploads_pictures_questions/" + str(image.filename)}
             else:
                 image = ""
                 dic = {"id": str(ID), "submission_time": str(unix_time), "view_number": "0", "vote_number": "0", "title": title, "message": question, "Image": str(image)}
@@ -62,7 +59,7 @@ def prepare_sorted_table_to_display(descend, value):
 @app.route('/question/<question_id>', methods=["POST", "GET"])
 def question(question_id):
     try:
-        title, message = data_manager.find_title_and_message(question_id)
+        title, message, image = data_manager.find_title_and_message(question_id)
         pack, answer_len = data_manager.find_all_answer_to_question(question_id)
     except UnboundLocalError:
         return "Page doesn't exist"
@@ -72,9 +69,9 @@ def question(question_id):
         message = request.form.get("message")
         if request.files:
             image = request.files["image"]
-            image.save(os.path.join(app.config["UPLOAD_PICTURE_FOLDER"], image.filename))
-        data_manager.add_new_answer(int(question_id), message, image.filename)
-    return render_template('question.html', head_title=title, title_message=message, package=pack, lenth=answer_len, question_id=question_id)
+            image.save(os.path.join(app.config["UPLOAD_PICTURE_ANSWERS"], image.filename))
+        data_manager.add_new_answer(int(question_id), message, "../static/uploads_pictures_answers/" + image.filename)
+    return render_template('question.html', head_title=title, title_message=message, package=pack, lenth=answer_len, question_id=question_id, image=image)
 
 
 @app.route("/question/<question_id>/new-answer", methods=["POST", "GET"])
@@ -91,7 +88,6 @@ def delete_answer(answer_id):
         title, message = data_manager.find_title_and_message(question_id)
         pack, answer_len = data_manager.find_all_answer_to_question(question_id)
     return render_template("question.html", answer_id=answer_id, head_title=title, title_message=message, package=pack, lenth=answer_len,question_id=question_id)
-
 
 
 def allowed_image(filename):
