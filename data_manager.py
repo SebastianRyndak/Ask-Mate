@@ -170,3 +170,28 @@ def vote_counter(id, value, path="./sample_data/question.csv", key_name="id"):
                 votes = int(dic["vote_number"]) - 1
                 dic["vote_number"] = str(votes)
     return data
+
+def vote_for_answers(answer_id, value, question_id):
+    ans_list = connection.import_data(file="./sample_data/answer.csv")
+    for i in ans_list:
+        if i["id"] == str(answer_id) and i["question_id"] == str(question_id):
+            if value == "👍":
+                votes = int(i["vote_number"]) + 1
+                i["vote_number"] = votes
+            elif value == "👎":
+                if int(i["vote_number"]) > 0:
+                    votes = int(i["vote_number"]) - 1
+                    i["vote_number"] = votes
+                else:
+                    i["vote_number"] = 0
+    return ans_list
+
+
+
+
+
+
+
+
+
+

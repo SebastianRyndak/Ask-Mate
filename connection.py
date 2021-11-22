@@ -16,7 +16,14 @@ def overwrite_csv(QUESTION_LIST):
         writer = csv.DictWriter(f, keys)
         writer.writeheader()
         writer.writerows(QUESTION_LIST)
-        
+
+
+def overwrite_answer_csv(ans_list):
+    with open("sample_data/answer.csv", "w", buffering=3, encoding="UTF-8") as f:
+        keys = list(ans_list[0].keys())
+        writer = csv.DictWriter(f, keys)
+        writer.writeheader()
+        writer.writerows(ans_list)
 
 def export_data(name_file, mode="a", data={}):
     if mode=="a":

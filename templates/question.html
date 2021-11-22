@@ -21,7 +21,8 @@
 	{% for i in package|batch(3) %}
 	{% for j in i %}
 	<ul>
-		<li><strong>{{ j[0] }}</strong> ----- {{ j[1] }} votes  <div style="text-align: center"><div style="text-align: center"><img src="{{ j[3] }}" alt="Image" width="200" ></div> <a href="/answer/{{j[2]}}/delete">Delete answer</a></li><br>
+		<li><strong>{{ j[0] }}</strong> ----- {{ j[1] }} votes <a href="/question/vote/{{ question_id }}/{{ j[2] }}/👍">&#128077</a> <a href="/question/vote/{{ question_id }}/{{ j[2] }}/👎">&#128078</a>
+            <div style="text-align: center"><div style="text-align: center"><img src="{{ j[3] }}" alt="Image" width="200" ></div> <a href="/answer/{{j[2]}}/delete">Delete answer</a></li><br>
 	</ul>
 	{% endfor %}
 	{% endfor %}

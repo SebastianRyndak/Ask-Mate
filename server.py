@@ -19,11 +19,19 @@ def list_voting(id, value):
     return redirect("/")
 
 
+<<<<<<< Updated upstream
 """@app.route("/question/vote/<question_id>/<answer_id>/<value>")
 def list_voting(value, question_id, answer_id):
     data = data_manager.vote_counter(question_id, value, data=data_manager.ANSWER_LIST)
     connection.export_data("./sample_data/answer.csv", "w", data)
     return redirect(f"/question/{question_id}")"""
+=======
+@app.route("/question/vote/<question_id>/<answer_id>/<value>")
+def list_answer_voting(question_id, answer_id, value):
+    ans_list = data_manager.vote_for_answers(answer_id, value, question_id)
+    connection.overwrite_answer_csv(ans_list)
+    return redirect(f"/question/{question_id}")
+>>>>>>> Stashed changes
 
 
 @app.route("/")
