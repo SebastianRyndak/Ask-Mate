@@ -26,7 +26,6 @@ def overwrite_answer_csv(ans_list):
         writer.writeheader()
         writer.writerows(ans_list)
 
-
 def export_data(name_file, mode="a", data={}):
     if mode == "a":
         with open(name_file, mode, encoding="UTF-8") as f:
