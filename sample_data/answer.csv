@@ -1,3 +1,2 @@
-id,submission_time,vote_number,question_id,message,image
-5,1637245900,16,4,trhrths,../static/uploads_pictures_answers/_117310488_16.jpg
-7,1637252712,0,7,cvb xcbxcvbdfgx gsd,../static/uploads_pictures_answers/_117310488_16.jpg
+id,submission_time,vote_number,question_id,message,image
+1,1493398154,4,1,You need to use brackets: my_list = [],

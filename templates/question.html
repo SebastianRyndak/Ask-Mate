@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang=eng>
+<html lang=eng xmlns="http://www.w3.org/1999/html">
 <head>
 	<meta chrset="utf-8">
 	<title>Question</title>
@@ -8,9 +8,13 @@
 	</style>
 </head>
 <body>
-<a href="/">Back to main page<a>
+<a href="/">Back to main page</a>
 	<h1>{{ head_title }}</h1><br>
+{% if image == "" %}
 	<h2>{{ title_message }}</h2><br>
+{% else %}
+    <h2>{{ title_message }}<br><br><img src="{{ image }}" alt="Image" width="200"></h2>
+{% endif %}
 	{% if lenth == 0 %}
 	<h3>Nothing comment yet.</h3>
 	{% elif lenth == 1 %}
@@ -20,9 +24,16 @@
 	{% endif %}
 	{% for i in package|batch(3) %}
 	{% for j in i %}
-	<ul>
+	<div>
 		<li><strong>{{ j[0] }}</strong> ----- {{ j[1] }} votes <a href="/question/vote/{{ question_id }}/{{ j[2] }}/👍">&#128077</a> <a href="/question/vote/{{ question_id }}/{{ j[2] }}/👎">&#128078</a>
-            <div style="text-align: center"><div style="text-align: center"><img src="{{ j[3] }}" alt="Image" width="200" ></div> <a href="/answer/{{j[2]}}/delete">Delete answer</a></li><br>
+        </li></div>
+    {% if j[3] == "" %}
+        <div>
+        <li><a href="/answer/{{j[2]}}/delete">Delete answer</a></li></div> <br>
+    {% else:  %}
+            <div style="text-align: center"><div style="text-align: center"><img src="{{ j[3] }}" alt="Image" width="200" ></div> <a href="/answer/{{j[2]}}/delete">Delete answer</a></div><br>
+    {% endif %}
+
 	</ul>
 	{% endfor %}
 	{% endfor %}

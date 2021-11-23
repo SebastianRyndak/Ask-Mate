@@ -185,13 +185,3 @@ def vote_for_answers(answer_id, value, question_id):
                 else:
                     i["vote_number"] = 0
     return ans_list
-
-
-
-
-
-
-
-
-
-
