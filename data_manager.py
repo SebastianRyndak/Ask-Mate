@@ -19,21 +19,14 @@ reverse = 0  # global variable
 
 
 def add_new_answer(question_id, message, image):
-    answer_id = int(get_max_answer_id()) + 1
+    answer_id = ID_gen("./sample_data/answer.csv")
     submission_time = int(time.time())
     write_answer_to_csv(answer_id, submission_time, 0, question_id, message, image)
 
 
-def delete_answer_by_id(answer_id):
-    answers_list = connection.get_all_answers()
-    for answer in answers_list:
-        if answer['id'] == answer_id:
-            answers_list.remove(answer)
-    return answers_list
-
-
 def find_title_and_message(question_id):
-    for i in QUESTION_LIST:
+    data = connection.import_data(file="./sample_data/question.csv")
+    for i in data:
         if i["id"] == str(question_id):
             title = i["title"]
             message = i["message"]
@@ -46,9 +39,11 @@ def find_all_answer_to_question(question_id):
     vote = []
     id_list = []
     image = []
-    for i in QUESTION_LIST:
+    x = connection.import_data(file="./sample_data/question.csv")
+    for i in x:
         if i["id"] == str(question_id):
-            for j in ANSWER_LIST:
+            y = connection.import_data(file="./sample_data/answer.csv")
+            for j in y:
                 if j["question_id"] == str(question_id):
                     answer.append(j.get("message"))
                     vote.append(j.get("vote_number"))
@@ -96,8 +91,8 @@ def change_date_format(data):
                 record[key] = date_time.strftime('%Y-%m-%d %H:%M:%S')
 
 
-def ID_gen():
-    date = connection.import_data("./sample_data/question.csv")
+def ID_gen(path="./sample_data/question.csv"):
+    date = connection.import_data(path)
     id_list = []
     for dic in date:
         id_list.append(int(dic["id"]))
@@ -117,7 +112,7 @@ def get_answer_by_id(answer_id):
 #Witold
 def get_question_id_by_answer_id(answer_id):
     question_id = 0
-    for item in ANSWER_LIST:
+    for item in connection.import_data(file="./sample_data/answer.csv"):
         if item["id"] == answer_id:
             question_id = item["question_id"]
     return question_id
@@ -133,7 +128,7 @@ def get_max_answer_id():
 
 
 def write_answer_to_csv(id, submission_time, vote_number, question_id, message, image):
-    with open(ANSWER_DATA_PATH, 'a', newline='') as file:
+    with open(ANSWER_DATA_PATH, 'a', newline='', encoding="UTF-8") as file:
         writer = csv.DictWriter(file, fieldnames=ANSWER_HEADERS)
         writer.writerow(
             {ANSWER_HEADERS[0]: id,
@@ -151,8 +146,6 @@ def delete_answer_from_csv_by_id(answer_id):
         for row in reader:
             if row['id'] != answer_id:
                 answer_list_after_deletion.append(row)
-
-
     with open(ANSWER_DATA_PATH, 'w', encoding="UTF-8", newline='') as write_file:
         writer = csv.DictWriter(write_file, fieldnames=ANSWER_HEADERS)
         writer.writeheader()
@@ -164,14 +157,10 @@ def delete_question(question_id):
         if i["id"] == str(question_id):
             QUESTION_LIST.remove(i)
     connection.overwrite_csv(QUESTION_LIST)
-    #czy to dzaiała
-   # with open(ANSWER_DATA_PATH, 'w', encoding="UTF-8", newline='') as write_file:
-      #  writer = csv.DictWriter(write_file, fieldnames=QUESTION_HEADERS)
-       # writer.writeheader()
-      #  writer.writerows(QUESTION_LIST)
 
 
-def vote_counter(id, value, data=QUESTION_LIST, key_name="id"):
+def vote_counter(id, value, path="./sample_data/question.csv", key_name="id"):
+    data = connection.import_data(path)
     for dic in data:
         if dic[key_name] == id:
             if value == "+":
@@ -183,8 +172,17 @@ def vote_counter(id, value, data=QUESTION_LIST, key_name="id"):
     return data
 
 
-def upload_picture(id,data):
-    for dic in data:
-        if dic["id"] == id:
-            return dic['image']
-
+def vote_for_answers(answer_id, value, question_id):
+    ans_list = connection.import_data(file="./sample_data/answer.csv")
+    for i in ans_list:
+        if i["id"] == str(answer_id) and i["question_id"] == str(question_id):
+            if value == "👍":
+                votes = int(i["vote_number"]) + 1
+                i["vote_number"] = votes
+            elif value == "👎":
+                if int(i["vote_number"]) > 0:
+                    votes = int(i["vote_number"]) - 1
+                    i["vote_number"] = votes
+                else:
+                    i["vote_number"] = 0
+    return ans_list
