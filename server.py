@@ -15,14 +15,14 @@ app.config["ALLOWED_IMAGE_EXTENSIONS"] = ["JPG", "PNG"]
 @app.route("/vote/<id>/<value>")
 def list_voting(id, value):
     data = data_manager.vote_counter(id, value)
-    connection.export_data("./sample_data/question.csv", "w", data)
+    connection.export_data("./sample_data/question.csv", data, data_manager.QUESTION_HEADERS, "w")
     return redirect("/")
 
 
 @app.route("/question/vote/<question_id>/<answer_id>/<value>")
 def list_answer_voting(question_id, answer_id, value):
     ans_list = data_manager.vote_for_answers(answer_id, value, question_id)
-    connection.overwrite_csv("sample_data/answer.csv", ans_list)
+    connection.export_data("sample_data/answer.csv", ans_list, data_manager.ANSWER_HEADERS, "w")
     return redirect(f"/question/{question_id}")
 
  
@@ -48,7 +48,7 @@ def add_information_about_question():
             dic = {"id": str(ID), "submission_time": str(unix_time), "view_number": "0", "vote_number": "0", "title": title, "message": question, "Image": "../static/uploads_pictures_questions/" + str(image.filename)}
         else:
             dic = {"id": str(ID), "submission_time": str(unix_time), "view_number": "0", "vote_number": "0", "title": title, "message": question, "Image": ""}
-        connection.export_data("./sample_data/question.csv", "a", dic)
+        connection.export_data("./sample_data/question.csv", dic, data_manager.QUESTION_HEADERS, "a")
         return redirect("/")
     return render_template("add-question.html")
 
@@ -85,7 +85,7 @@ def delete_answer(answer_id):
 
 @app.route('/question/<int:question_id>/delete', methods=["POST"])
 def delete_question(question_id):
-    del_question = data_manager.delete_question(question_id)
+    data_manager.delete_question(question_id)
     questions_list, table_headers = data_manager.prepare_table_to_display()
     return render_template('list.html', questions_list=questions_list, table_headers=table_headers)
 

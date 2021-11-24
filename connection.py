@@ -11,15 +11,7 @@ def import_data(file, mode="r", buffering=3, encoding="UTF-8"):
     return csv_list
 
 
-def overwrite_csv(file, data):
-    with open(file, "w", buffering=3, encoding="UTF-8") as f:
-        keys = data[0].keys()
-        writer = csv.DictWriter(f, keys)
-        writer.writeheader()
-        writer.writerows(data)
-
-
-def export_data(name_file, mode="a", data={}):
+def export_data(name_file, data, headers, mode="a"):
     if mode == "a":
         with open(name_file, mode, encoding="UTF-8") as f:
             question = list(data.values())
@@ -27,7 +19,6 @@ def export_data(name_file, mode="a", data={}):
             f.write(f"{record}\n")
     if mode == "w":
         with open(name_file, mode, encoding="UTF-8") as f:
-            dic_list = list(data[0].keys())
-            writer = csv.DictWriter(f, fieldnames=dic_list)
+            writer = csv.DictWriter(f, fieldnames=headers)
             writer.writeheader()
             writer.writerows(data)

@@ -12,8 +12,6 @@ ANSWER_HEADERS = ["id", "submission_time", "vote_number", "question_id", "messag
 TABLE_HEADERS = {"vote_number": "Votes", "title": "Title", "message": "Message", "submission_time": "Date",
                  "view_number": "Views"}
 SORT_BY_INT = ["vote_number", "Published on", "view_number"]
-#ANSWER_LIST = connection.import_data(file="./sample_data/answer.csv")
-#QUESTION_LIST = connection.import_data(file="./sample_data/question.csv")
 file_extention = ["JPG", "PNG"]
 reverse = 0  # global variable
 
@@ -47,20 +45,17 @@ def find_all_answer_to_question(question_id):
     vote = []
     id_list = []
     image = []
-    x = connection.import_data(file="./sample_data/question.csv")
-    for i in x:
-        if i["id"] == str(question_id):
-            y = connection.import_data(file="./sample_data/answer.csv")
-            for j in y:
-                if j["question_id"] == str(question_id):
-                    answer.append(j.get("message"))
-                    vote.append(j.get("vote_number"))
-                    id_list.append(j.get("id"))
-                    image.append(j.get("image"))
-                else:
-                    pass
-        else:
-            pass
+    all_question_list = connection.import_data(file="./sample_data/question.csv")
+    all_answer_list = connection.import_data(file="./sample_data/answer.csv")
+    for question_data in all_question_list:
+        if question_data["id"] == str(question_id):
+            for answer_data in all_answer_list:
+                if answer_data["question_id"] == str(question_id):
+                    answer.append(answer_data.get("message"))
+                    vote.append(answer_data.get("vote_number"))
+                    id_list.append(answer_data.get("id"))
+                    image.append(answer_data.get("image"))
+            break
     answer_len = len(answer)
     pack = list(zip(answer, vote, id_list, image))
     return pack, answer_len
@@ -104,20 +99,9 @@ def ID_gen(path="./sample_data/question.csv"):
     id_list = []
     for dic in date:
         id_list.append(int(dic["id"]))
-    return max(id_list) + 1
+    return max(id_list) + 1 if len(id_list) > 0 else 1
 
 
-def get_answer_by_id(answer_id):
-    answer_dict = {}
-    with open(ANSWER_DATA_PATH, 'r') as file:
-        reader = file.DictReader(file)
-        for row in reader:
-            if row['id'] == answer_id:
-                answer_dict = row
-    return answer_dict
-
-
-#Witold
 def get_question_id_by_answer_id(answer_id):
     question_id = 0
     for item in connection.import_data(file="./sample_data/answer.csv"):
@@ -166,11 +150,11 @@ def delete_question(question_id):
     for i in que_list:
         if i["id"] == str(question_id):
             que_list.remove(i)
-    connection.overwrite_csv("sample_data/question.csv", que_list)
+    connection.export_data("sample_data/question.csv", que_list, QUESTION_HEADERS, "w")
     for i in ans_list:
         if i["question_id"] == str(question_id):
             ans_list.remove(i)
-    connection.overwrite_csv("sample_data/answer.csv", ans_list)
+    connection.export_data("sample_data/answer.csv", ans_list, ANSWER_HEADERS, "w")
 
 
 def vote_counter(id, value, path="./sample_data/question.csv", key_name="id"):
