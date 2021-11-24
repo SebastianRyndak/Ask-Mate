@@ -12,10 +12,18 @@ ANSWER_HEADERS = ["id", "submission_time", "vote_number", "question_id", "messag
 TABLE_HEADERS = {"vote_number": "Votes", "title": "Title", "message": "Message", "submission_time": "Date",
                  "view_number": "Views"}
 SORT_BY_INT = ["vote_number", "Published on", "view_number"]
-ANSWER_LIST = connection.import_data(file="./sample_data/answer.csv")
-QUESTION_LIST = connection.import_data(file="./sample_data/question.csv")
+#ANSWER_LIST = connection.import_data(file="./sample_data/answer.csv")
+#QUESTION_LIST = connection.import_data(file="./sample_data/question.csv")
+file_extention = ["JPG", "PNG"]
 reverse = 0  # global variable
 
+
+def save_new_answer(message, image, question_id):
+    if image.filename != "":
+        image.save(os.path.join('.\\static\\uploads_pictures_answers', image.filename))
+        add_new_answer(int(question_id), message, "../static/uploads_pictures_answers/" + image.filename)
+    else:
+        add_new_answer(int(question_id), message, image="")
 
 
 def add_new_answer(question_id, message, image):
@@ -153,10 +161,16 @@ def delete_answer_from_csv_by_id(answer_id):
 
 
 def delete_question(question_id):
-    for i in QUESTION_LIST:
+    que_list = connection.import_data(file="./sample_data/question.csv")
+    ans_list = connection.import_data(file="./sample_data/answer.csv")
+    for i in que_list:
         if i["id"] == str(question_id):
-            QUESTION_LIST.remove(i)
-    connection.overwrite_csv(QUESTION_LIST)
+            que_list.remove(i)
+    connection.overwrite_csv("sample_data/question.csv", que_list)
+    for i in ans_list:
+        if i["question_id"] == str(question_id):
+            ans_list.remove(i)
+    connection.overwrite_csv("sample_data/answer.csv", ans_list)
 
 
 def vote_counter(id, value, path="./sample_data/question.csv", key_name="id"):
@@ -185,3 +199,12 @@ def vote_for_answers(answer_id, value, question_id):
                 else:
                     i["vote_number"] = 0
     return ans_list
+
+def allowed_image(filename):
+    if not "." in filename:
+        return False
+    ext = filename.rsplit(".", 1)[1]
+    if ext.upper() in file_extention:
+        return True
+    else:
+        return False

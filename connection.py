@@ -11,20 +11,13 @@ def import_data(file, mode="r", buffering=3, encoding="UTF-8"):
     return csv_list
 
 
-def overwrite_csv(QUESTION_LIST):
-    with open("sample_data/question.csv", "w", buffering=3, encoding="UTF-8") as f:
-        keys = QUESTION_LIST[0].keys()
+def overwrite_csv(file, data):
+    with open(file, "w", buffering=3, encoding="UTF-8") as f:
+        keys = data[0].keys()
         writer = csv.DictWriter(f, keys)
         writer.writeheader()
-        writer.writerows(QUESTION_LIST)
+        writer.writerows(data)
 
-
-def overwrite_answer_csv(ans_list):
-    with open("sample_data/answer.csv", "w", buffering=3, encoding="UTF-8") as f:
-        keys = list(ans_list[0].keys())
-        writer = csv.DictWriter(f, keys)
-        writer.writeheader()
-        writer.writerows(ans_list)
 
 def export_data(name_file, mode="a", data={}):
     if mode == "a":
