@@ -40,6 +40,14 @@ def find_title_and_message(question_id):
             return title, message, image
 
 
+def overwrite(question_id, new_question):
+    data = connection.import_data(file="./sample_data/question.csv")
+    for question_record in data:
+        if question_record["id"] == str(question_id):
+            question_record.update(new_question)
+    connection.export_data("./sample_data/question.csv", data, QUESTION_HEADERS,"w")
+
+
 def find_question(question_id):
     data = connection.import_data(file="./sample_data/question.csv")
     for question_record in data:

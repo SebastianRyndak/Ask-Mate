@@ -92,7 +92,6 @@ def delete_question(question_id):
 @app.route('/question/<int:question_id>/edit', methods=["GET", "POST"])
 def edit_questions(question_id):
     if request.method == "POST":
-        title, message, image = data_manager.find_title_and_message(question_id)
         question_record = data_manager.find_question(question_id)
         question_record['submission_time'] = str(int(time.time()))
         question_record['title'] = request.form["title"]
@@ -101,8 +100,10 @@ def edit_questions(question_id):
         if image.filename != "":
             if not data_manager.allowed_image(image.filename):
                 return redirect(request.url)
+            image.save(os.path.join(app.config["UPLOAD_PICTURE_FOLDER"], image.filename))
             question_record['image'] = "../static/uploads_pictures_questions/" + str(image.filename)
-        return redirect('/question/<question_id>')
+        data_manager.overwrite(question_id, question_record)
+        return redirect(f'/question/{question_id}')
     title, message, image = data_manager.find_title_and_message(question_id)
     return render_template('edit_questions.html', title=title, message=message, image=image)
 
