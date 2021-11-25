@@ -40,6 +40,13 @@ def find_title_and_message(question_id):
             return title, message, image
 
 
+def find_question(question_id):
+    data = connection.import_data(file="./sample_data/question.csv")
+    for question_record in data:
+        if question_record["id"] == str(question_id):
+            return question_record
+
+
 def find_all_answer_to_question(question_id):
     answer = []
     vote = []
@@ -183,6 +190,7 @@ def vote_for_answers(answer_id, value, question_id):
                 else:
                     i["vote_number"] = 0
     return ans_list
+
 
 def allowed_image(filename):
     if not "." in filename:
