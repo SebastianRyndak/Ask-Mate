@@ -176,7 +176,6 @@ def vote_counter(id, value, path="./sample_data/question.csv", key_name="id"):
                 dic["vote_number"] = str(votes)
     return data
 
-
 def vote_for_answers(answer_id, value, question_id):
     ans_list = connection.import_data(file="./sample_data/answer.csv")
     for i in ans_list:

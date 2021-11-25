@@ -24,7 +24,7 @@ def list_answer_voting(question_id, answer_id, value):
     connection.export_data("sample_data/answer.csv", ans_list, data_manager.ANSWER_HEADERS, "w")
     return redirect(f"/question/{question_id}")
 
-
+ 
 @app.route("/")
 @app.route("/list")
 def question_list():
@@ -44,12 +44,10 @@ def add_information_about_question():
             if not data_manager.allowed_image(image.filename):
                 return redirect(request.url)
             image.save(os.path.join(app.config["UPLOAD_PICTURE_FOLDER"], image.filename))
-            dic = {"id": str(ID), "submission_time": str(unix_time), "view_number": "0", "vote_number": "0",
-                   "title": title, "message": question,
-                   "Image": "../static/uploads_pictures_questions/" + str(image.filename)}
+
+            dic = {"id": str(ID), "submission_time": str(unix_time), "view_number": "0", "vote_number": "0", "title": title, "message": question, "Image": "../static/uploads_pictures_questions/" + str(image.filename)}
         else:
-            dic = {"id": str(ID), "submission_time": str(unix_time), "view_number": "0", "vote_number": "0",
-                   "title": title, "message": question, "Image": ""}
+            dic = {"id": str(ID), "submission_time": str(unix_time), "view_number": "0", "vote_number": "0", "title": title, "message": question, "Image": ""}
         connection.export_data("./sample_data/question.csv", dic, data_manager.QUESTION_HEADERS, "a")
         return redirect("/")
     return render_template("add-question.html")
@@ -68,8 +66,7 @@ def question(question_id):
         data_manager.save_new_answer(request.form.get("message"), request.files["image"], question_id)
     title, message, image = data_manager.find_title_and_message(question_id)
     pack, answer_len = data_manager.find_all_answer_to_question(question_id)
-    return render_template('question.html', head_title=title, title_message=message, package=pack, lenth=answer_len,
-                           question_id=question_id, image=image)
+    return render_template('question.html', head_title=title, title_message=message, package=pack, lenth=answer_len, question_id=question_id, image=image)
 
 
 @app.route("/question/<question_id>/new-answer", methods=["POST", "GET"])
@@ -109,6 +106,6 @@ def edit_questions(question_id):
     title, message, image = data_manager.find_title_and_message(question_id)
     return render_template('edit_questions.html', title=title, message=message, image=image)
 
-
+  
 if __name__ == "__main__":
     app.run(debug=True)
