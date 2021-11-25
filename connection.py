@@ -1,3 +1,4 @@
+
 import csv
 
 QUESTION_HEADERS = ["id", "submission_time", "view_number", "vote_number", "title", "message", "image"]
@@ -11,23 +12,7 @@ def import_data(file, mode="r", buffering=3, encoding="UTF-8"):
     return csv_list
 
 
-def overwrite_csv(QUESTION_LIST):
-    with open("sample_data/question.csv", "w", buffering=3, encoding="UTF-8") as f:
-        keys = QUESTION_LIST[0].keys()
-        writer = csv.DictWriter(f, keys)
-        writer.writeheader()
-        writer.writerows(QUESTION_LIST)
-
-
-def overwrite_answer_csv(ans_list):
-    with open("sample_data/answer.csv", "w", buffering=3, encoding="UTF-8") as f:
-        keys = list(ans_list[0].keys())
-        writer = csv.DictWriter(f, keys)
-        writer.writeheader()
-        writer.writerows(ans_list)
-
-
-def export_data(name_file, mode="a", data={}):
+def export_data(name_file, data, headers, mode="a"):
     if mode == "a":
         with open(name_file, mode, encoding="UTF-8") as f:
             question = list(data.values())
@@ -35,7 +20,6 @@ def export_data(name_file, mode="a", data={}):
             f.write(f"{record}\n")
     if mode == "w":
         with open(name_file, mode, encoding="UTF-8") as f:
-            dic_list = list(data[0].keys())
-            writer = csv.DictWriter(f, fieldnames=dic_list)
+            writer = csv.DictWriter(f, fieldnames=headers)
             writer.writeheader()
             writer.writerows(data)
