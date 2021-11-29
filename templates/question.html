@@ -39,11 +39,14 @@
 	{% endfor %}
   	<br>
   	<form action="/question/{{ question_id }}/delete" method="POST">
-	<input type="submit" name="delete_button" value="Delete question" class="button-red"><br>
-	</form>
-	<form action="/question/{{question_id}}/new-answer" method="post" enctype=multipart/form-data>
-    <input type=submit name="add_na" value="Add"><br>
-    <button><a href="/question/{{ question_id }}/edit">Edit</a></button><br>
-</form>
+        <input type="submit" name="delete_button" value="Delete question" class="button-red"><br>
+    </form>
+    <form action="/question/{{question_id}}/new-answer" method="post" enctype=multipart/form-data>
+        <input type=submit name="add_na" value="Add"><br>
+    </form>
+    <form action="/question/{{ question_id }}/edit">
+        <button>Edit</button>
+    </form>
+    <br>
 </body>
 </html>
