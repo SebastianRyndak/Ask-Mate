@@ -77,8 +77,8 @@ def add_new_answer(question_id):
 
 @app.route("/answer/<answer_id>/delete", methods=["POST", "GET"])
 def delete_answer(answer_id):
-    question_id = data_manager.get_question_id_by_answer_id(answer_id)
-    data_manager.delete_answer_from_csv_by_id(answer_id)
+    question_id = data_manager.get_question_id_by_answer_id_db(answer_id)
+    data_manager.delete_answer_from_cvs_by_id_db(answer_id)
     return redirect(f"../../question/{question_id}")
 
 

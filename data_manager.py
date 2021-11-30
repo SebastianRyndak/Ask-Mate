@@ -130,7 +130,7 @@ def get_question_id_by_answer_id(answer_id):
 
 
 @database_common.connection_handler
-def get_question_id_by_answer_id(cursor, answer_id):
+def get_question_id_by_answer_id_db(cursor, answer_id):
     query = """
         SELECT question_id
         FROM answer
@@ -257,3 +257,19 @@ def allowed_image(filename):
         return True
     else:
         return False
+
+
+@database_common.connection_handler
+def delete_comment_by_question_id(cursor, question_id):
+    query=sql.SQL("""
+    DELETE FROM comment
+    WHERE question_id = %(question_id)s""").format(id=sql.Identifier('question_id'))
+    cursor.execute(query, {"question_id": question_id})
+
+
+@database_common.connection_handler
+def delete_comment_by_answer_id(cursor, answer_id):
+    query = sql.SQL("""
+    DELETE FROM comment
+    WHERE answer_id = %(answer_id)s""").format(id=sql.Identifier('answer_id'))
+    cursor.execute(query, {"answer_id": answer_id})
