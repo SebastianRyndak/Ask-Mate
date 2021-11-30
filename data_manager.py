@@ -4,7 +4,7 @@ import os
 from operator import itemgetter
 import datetime
 import csv
-
+import database_common
 
 ANSWER_DATA_PATH = os.getenv("ANSWER_DATA_PATH") if "ANSWER_DATA_PATH" in os.environ else "sample_data/answer.csv"
 QUESTION_HEADERS = ["id", "submission_time", "view_number", "vote_number", "title", "message", "image"]
@@ -184,6 +184,7 @@ def vote_counter(id, value, path="./sample_data/question.csv", key_name="id"):
                 dic["vote_number"] = str(votes)
     return data
 
+
 def vote_for_answers(answer_id, value, question_id):
     ans_list = connection.import_data(file="./sample_data/answer.csv")
     for i in ans_list:
@@ -208,3 +209,12 @@ def allowed_image(filename):
         return True
     else:
         return False
+
+
+@database_common.connection_handler
+def get_question_bd(cursor):
+    cursor.execute("""
+        SELECT *
+        FROM question
+        """)
+    return cursor.fetchall()
