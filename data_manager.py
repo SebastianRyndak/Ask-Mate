@@ -19,11 +19,12 @@ reverse = 0  # global variable
 
 
 def save_new_answer(message, image, question_id):
-    if image.filename != "":
-        image.save(os.path.join('.\\static\\uploads_pictures_answers', image.filename))
-        add_new_answer(int(question_id), message, "../static/uploads_pictures_answers/" + image.filename)
-    else:
-        add_new_answer(int(question_id), message, image="")
+   # if image.filename == "":
+    #    write_answer_to_db(datetime.datetime.now(), 0, question_id, message, "")
+  #  else:
+       # image.save(os.path.join('.\\static\\uploads_pictures_answers', image.filename))
+        # add_new_answer(int(question_id), message, "../static/uploads_pictures_answers/" + image.filename)
+        write_answer_to_db(datetime.datetime.now(), 0, question_id, message, image)
 
 
 # Witold - propably unnecesary to convert to db
@@ -181,7 +182,6 @@ def write_answer_to_db(cursor, submission_time, vote_number, question_id, messag
                            "question_id": question_id, "message": message, "image": image})
 
 
-
 # Witold -rewrite to db connection
 def delete_answer_from_csv_by_id(answer_id):
     answer_list_after_deletion = []
@@ -198,13 +198,10 @@ def delete_answer_from_csv_by_id(answer_id):
 
 @database_common.connection_handler
 def delete_answer_from_cvs_by_id_db(cursor, id):
-    query=sql.SQL("""
+    query = sql.SQL("""
     DELETE FROM answer
     WHERE id = %(id)s""").format(id=sql.Identifier('id'))
     cursor.execute(query, {"id": id})
-
-
-delete_answer_from_cvs_by_id_db(4)
 
 
 def delete_question(question_id):
@@ -261,7 +258,7 @@ def allowed_image(filename):
 
 @database_common.connection_handler
 def delete_comment_by_question_id(cursor, question_id):
-    query=sql.SQL("""
+    query = sql.SQL("""
     DELETE FROM comment
     WHERE question_id = %(question_id)s""").format(id=sql.Identifier('question_id'))
     cursor.execute(query, {"question_id": question_id})
