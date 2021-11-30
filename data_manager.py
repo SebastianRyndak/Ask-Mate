@@ -26,7 +26,7 @@ def save_new_answer(message, image, question_id):
         add_new_answer(int(question_id), message, image="")
 
 
-# Witold
+# Witold - propably unnecesary
 def add_new_answer(question_id, message, image):
     answer_id = ID_gen("./sample_data/answer.csv")
     submission_time = int(time.time())
@@ -124,7 +124,7 @@ def ID_gen(path="./sample_data/question.csv"):
     return max(id_list) + 1 if len(id_list) > 0 else 1
 
 
-# Witold
+# Witold - rewritten to db
 def get_question_id_by_answer_id(answer_id):
     question_id = 0
     for item in connection.import_data(file="./sample_data/answer.csv"):
@@ -133,7 +133,22 @@ def get_question_id_by_answer_id(answer_id):
     return question_id
 
 
-# Witold - do usunięcia w Postresie niepotrzebne
+@database_common.connection_handler
+def get_question_id_by_answer_id(cursor, answer_id):
+    query = """
+        SELECT question_id
+        FROM answer
+        WHERE id=%s
+    """
+    cursor.execute(query, (answer_id,))
+    real_dict = cursor.fetchall()
+    real_dict_to_list = []
+    for item in real_dict:
+        real_dict_to_list.append(dict(item))
+    return real_dict_to_list[0]["question_id"]
+
+
+# Witold - unneeded in PostgreSQL
 def get_max_answer_id():
     id_list = []
     with open(ANSWER_DATA_PATH, "r") as file:
@@ -143,7 +158,7 @@ def get_max_answer_id():
     return max(id_list)
 
 
-# Witold
+# Witold - rewrite to db connection
 def write_answer_to_csv(id, submission_time, vote_number, question_id, message, image):
     with open(ANSWER_DATA_PATH, 'a', newline='', encoding="UTF-8") as file:
         writer = csv.DictWriter(file, fieldnames=ANSWER_HEADERS)
