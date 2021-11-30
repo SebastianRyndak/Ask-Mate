@@ -12,9 +12,7 @@ def get_connection_string():
     password = os.environ.get('PSQL_PASSWORD')
     host = os.environ.get('PSQL_HOST')
     database_name = os.environ.get('PSQL_DB_NAME')
-
     env_variables_defined = user_name and password and host and database_name
-
     if env_variables_defined:
         # this string describes all info for psycopg2 to connect to the database
         return 'postgresql://{user_name}:{password}@{host}/{database_name}'.format(
@@ -47,5 +45,4 @@ def connection_handler(function):
         dict_cur.close()
         connection.close()
         return ret_value
-
     return wrapper
