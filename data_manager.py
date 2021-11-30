@@ -26,15 +26,11 @@ def save_new_answer(message, image, question_id):
         add_new_answer(int(question_id), message, image="")
 
 
-# Witold - propably unnecesary
+# Witold - propably unnecesary to convert to db
 def add_new_answer(question_id, message, image):
     answer_id = ID_gen("./sample_data/answer.csv")
     submission_time = int(time.time())
     write_answer_to_csv(answer_id, submission_time, 0, question_id, message, image)
-
-
-def add_new_answer_db(question_id, message, image):
-    pass
 
 
 def find_title_and_message(question_id):
@@ -186,7 +182,7 @@ def write_answer_to_db(cursor, submission_time, vote_number, question_id, messag
 
 
 
-# Witold
+# Witold -rewrite to db connection
 def delete_answer_from_csv_by_id(answer_id):
     answer_list_after_deletion = []
     with open(ANSWER_DATA_PATH, "r") as read_file:
@@ -198,6 +194,17 @@ def delete_answer_from_csv_by_id(answer_id):
         writer = csv.DictWriter(write_file, fieldnames=ANSWER_HEADERS)
         writer.writeheader()
         writer.writerows(answer_list_after_deletion)
+
+
+@database_common.connection_handler
+def delete_answer_from_cvs_by_id_db(cursor, id):
+    query=sql.SQL("""
+    DELETE FROM answer
+    WHERE id = %(id)s""").format(id=sql.Identifier('id'))
+    cursor.execute(query, {"id": id})
+
+
+delete_answer_from_cvs_by_id_db(4)
 
 
 def delete_question(question_id):
