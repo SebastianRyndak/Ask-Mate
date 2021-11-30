@@ -4,7 +4,9 @@ import os
 from operator import itemgetter
 import datetime
 import csv
+from psycopg2 import sql
 
+import database_common
 
 ANSWER_DATA_PATH = os.getenv("ANSWER_DATA_PATH") if "ANSWER_DATA_PATH" in os.environ else "sample_data/answer.csv"
 QUESTION_HEADERS = ["id", "submission_time", "view_number", "vote_number", "title", "message", "image"]
@@ -24,10 +26,15 @@ def save_new_answer(message, image, question_id):
         add_new_answer(int(question_id), message, image="")
 
 
+# Witold
 def add_new_answer(question_id, message, image):
     answer_id = ID_gen("./sample_data/answer.csv")
     submission_time = int(time.time())
     write_answer_to_csv(answer_id, submission_time, 0, question_id, message, image)
+
+
+def add_new_answer_db(question_id, message, image):
+    pass
 
 
 def find_title_and_message(question_id):
@@ -45,7 +52,7 @@ def overwrite(question_id, new_question):
     for question_record in data:
         if question_record["id"] == str(question_id):
             question_record.update(new_question)
-    connection.export_data("./sample_data/question.csv", data, QUESTION_HEADERS,"w")
+    connection.export_data("./sample_data/question.csv", data, QUESTION_HEADERS, "w")
 
 
 def find_question(question_id):
@@ -117,6 +124,7 @@ def ID_gen(path="./sample_data/question.csv"):
     return max(id_list) + 1 if len(id_list) > 0 else 1
 
 
+# Witold
 def get_question_id_by_answer_id(answer_id):
     question_id = 0
     for item in connection.import_data(file="./sample_data/answer.csv"):
@@ -125,6 +133,7 @@ def get_question_id_by_answer_id(answer_id):
     return question_id
 
 
+# Witold - do usunięcia w Postresie niepotrzebne
 def get_max_answer_id():
     id_list = []
     with open(ANSWER_DATA_PATH, "r") as file:
@@ -134,6 +143,7 @@ def get_max_answer_id():
     return max(id_list)
 
 
+# Witold
 def write_answer_to_csv(id, submission_time, vote_number, question_id, message, image):
     with open(ANSWER_DATA_PATH, 'a', newline='', encoding="UTF-8") as file:
         writer = csv.DictWriter(file, fieldnames=ANSWER_HEADERS)
@@ -146,6 +156,22 @@ def write_answer_to_csv(id, submission_time, vote_number, question_id, message, 
              ANSWER_HEADERS[5]: image})
 
 
+@database_common.connection_handler
+def write_answer_to_db(cursor, submission_time, vote_number, question_id, message, image):
+    query = sql.SQL("""
+    INSERT INTO answer (submission_time, vote_number, question_id, message, image) 
+    VALUES (%(submission_time)s,%(vote_number)s,%(question_id)s,%(message)s,%(image)s)
+    """).format(submission_time=sql.Identifier('submission_time'),
+                vote_number=sql.Identifier('vote_number'),
+                question_id=sql.Identifier('question_id'),
+                message=sql.Identifier('message'),
+                image=sql.Identifier('image'))
+    cursor.execute(query, {'submission_time': submission_time, 'vote_number': vote_number,
+                           "question_id": question_id, "message": message, "image": image})
+
+
+
+# Witold
 def delete_answer_from_csv_by_id(answer_id):
     answer_list_after_deletion = []
     with open(ANSWER_DATA_PATH, "r") as read_file:
@@ -183,6 +209,7 @@ def vote_counter(id, value, path="./sample_data/question.csv", key_name="id"):
                 votes = int(dic["vote_number"]) - 1
                 dic["vote_number"] = str(votes)
     return data
+
 
 def vote_for_answers(answer_id, value, question_id):
     ans_list = connection.import_data(file="./sample_data/answer.csv")
