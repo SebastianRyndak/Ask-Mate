@@ -6,7 +6,6 @@
 
 {% block content %}
 
-    <a href="/">Back to main page</a>
     {% for data in question_data %}
 	<h1>{{ data.title }}</h1><br>
     <h2>{{ data.message }}</h2><br>
@@ -40,18 +39,18 @@
             <a href="/edit_answer/{{ answer.id }}">Edit answer</a>
     </ul>
 	{% endfor %}
-  	<br>
-  	<form action="/question/{{ question_id }}/delete" method="POST">
-        <input type="submit" name="delete_button" value="Delete question"><br>
+  	<form action="/question/{{ question_id }}/delete" method="POST"><br>
+        <input type="submit" name="delete_button" value="Delete question">
     </form>
-    <form action="/new_answer/{{ question_id }}">
+    <form action="/new_answer/{{ question_id }}"><br>
         <button>Add new answer</button>
 {#        method="post" enctype=multipart/form-data#}
 {#        <input type=submit name="add_na" value="Add"><br>#}
     </form>
-    <form action="/question/{{ question_id }}/edit">
-        <button>Edit</button>
+    <form action="/edit_question/{{ question_id }}"><br>
+        <button>Edit question</button>
     </form>
-    <br>
+
+    <a href="/">Back to main page</a>
 
 {% endblock %}

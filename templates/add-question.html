@@ -1,25 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>add-questions</title>
-</head>
-<body>
-<h1>Add Question</h1>
-<form action="/add-question" method="POST" enctype="multipart/form-data">
-  <label for="title">Title:</label><br>
-  <input type="text" id="title" name="title" minlength="5"><br><br>
+{% extends "layout.html" %}
 
-  <label for="question">Your question:</label><br>
-  <textarea id="story_id" name="question" rows="4" cols="25"></textarea><br><br>
+{% block page_title %}
+    Add Question
+{% endblock %}
 
-  <label for="image">Add Image:</label><br>
-  <input type="file" name="image" class="custom-file-input"><br><br>
+{% block content %}
+    <form action="/new_question/add_new_question" method="POST">
+        <label for="title">Title:</label><br>
+        <input id="title" type="text" name="title" placeholder="Title..."><br><br>
 
-  <input type="submit" value="Submit">
-</form>
+        <label for="question-id">Your question:</label><br>
+        <textarea id="question-id" name="question" rows="15" cols="80"></textarea><br><br>
+
+        <label for="image">Add Image:</label><br>
+        <input type="file" name="image" class="custom-file-input"><br><br>
+
+        <button type="submit">Submit</button>
+    </form>
 
 
    <a href="/list">Back to List </a>
-</body>
-</html>
+
+{% endblock %}
