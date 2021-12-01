@@ -1,0 +1,16 @@
+Index: requirements.txt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/requirements.txt b/requirements.txt
+--- a/requirements.txt	(revision ecfd4c9dd63c6bb4e314c0216c4eb7a82df63bef)
++++ b/requirements.txt	(date 1638191447164)
+@@ -1,0 +1,7 @@
++click==8.0.3
++colorama==0.4.4
++Flask==2.0.2
++itsdangerous==2.0.1
++Jinja2==3.0.3
++MarkupSafe==2.0.1
++Werkzeug==2.0.2

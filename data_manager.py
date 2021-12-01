@@ -1,10 +1,14 @@
 import connection
+from datetime import datetime
 import time
 import os
 from operator import itemgetter
 import datetime
 import csv
-
+from typing import List, Dict
+from psycopg2 import sql
+from psycopg2.extras import RealDictCursor
+import database_common
 
 ANSWER_DATA_PATH = os.getenv("ANSWER_DATA_PATH") if "ANSWER_DATA_PATH" in os.environ else "sample_data/answer.csv"
 QUESTION_HEADERS = ["id", "submission_time", "view_number", "vote_number", "title", "message", "image"]
@@ -16,195 +20,146 @@ file_extention = ["JPG", "PNG"]
 reverse = 0  # global variable
 
 
-def save_new_answer(message, image, question_id):
-    if image.filename != "":
-        image.save(os.path.join('.\\static\\uploads_pictures_answers', image.filename))
-        add_new_answer(int(question_id), message, "../static/uploads_pictures_answers/" + image.filename)
-    else:
-        add_new_answer(int(question_id), message, image="")
+@database_common.connection_handler
+def get_question_bd(cursor):
+    cursor.execute("""
+        SELECT *
+        FROM question
+        """)
+    return cursor.fetchall()
 
 
-def add_new_answer(question_id, message, image):
-    answer_id = ID_gen("./sample_data/answer.csv")
-    submission_time = int(time.time())
-    write_answer_to_csv(answer_id, submission_time, 0, question_id, message, image)
+@database_common.connection_handler
+def vote_for_answers(cursor, answer_id, vote_number, question_id):
+    query = """
+        UPDATE answer
+        SET vote_number = %(vote_number)s,
+            question_id = %(question_id)s
+        WHERE id = %(answer_id)"""
+    cursor.execute(query, {'vote_number': vote_number, 'answer_id': answer_id, 'question_id': question_id})
+    return cursor.fetchall()
 
 
-def find_title_and_message(question_id):
-    data = connection.import_data(file="./sample_data/question.csv")
-    for i in data:
-        if i["id"] == str(question_id):
-            title = i["title"]
-            message = i["message"]
-            image = i["image"]
-            return title, message, image
+@database_common.connection_handler
+def edit_answer(cursor, answer_id, edited_answer):
+    query = sql.SQL("""
+        UPDATE answer
+        SET message = %(edited_answer)s
+        WHERE id = %(answer_id)s
+        """).format(
+        answer_id=sql.Identifier('id'),
+        edited_answer=sql.Identifier('message')
+    )
+    cursor.execute(query, {'answer_id': answer_id, 'edited_answer': edited_answer})
 
 
-def overwrite(question_id, new_question):
-    data = connection.import_data(file="./sample_data/question.csv")
-    for question_record in data:
-        if question_record["id"] == str(question_id):
-            question_record.update(new_question)
-    connection.export_data("./sample_data/question.csv", data, QUESTION_HEADERS,"w")
+@database_common.connection_handler
+def return_question_id_and_message(cursor, answer_id):
+    query = """
+        SELECT question_id, message
+        FROM answer
+        WHERE id = %(answer_id)s"""
+    cursor.execute(query, {'answer_id': answer_id})
+    return cursor.fetchall()
+
+@database_common.connection_handler
+def find_title_and_message(cursor, question_id):
+    query = sql.SQL("""
+        SELECT title, message, image
+        FROM question
+        WHERE id = %(question_id)s
+        ORDER BY title""").format(
+        question_id=sql.Identifier('question_id')
+    )
+    cursor.execute(query, {'question_id': question_id})
+    return cursor.fetchall()
+
+@database_common.connection_handler
+def get_question_db_by_question_id(cursor, question_id):
+    query = """
+        SELECT *
+        FROM question
+        WHERE id = %(question_id)s
+        """
+    cursor.execute(query, {'question_id': question_id})
+    return cursor.fetchall()
+
+@database_common.connection_handler
+def save_new_answer(cursor, message, question_id, vote_number, submission_time, image):
+    query = """
+        INSERT INTO answer
+        (submission_time, vote_number, question_id, message, image)
+        VALUES (%(submission_time)s, %(vote_number)s, %(question_id)s, %(message)s, %(image)s);"""
+
+    cursor.execute(query, {'submission_time': submission_time, 'vote_number': vote_number,
+                           'question_id': question_id, 'message': message, 'image': image})
 
 
-def find_question(question_id):
-    data = connection.import_data(file="./sample_data/question.csv")
-    for question_record in data:
-        if question_record["id"] == str(question_id):
-            return question_record
+@database_common.connection_handler
+def save_new_question(cursor, message, vote_number, submission_time, image, title, view_number):
+    query = """
+        INSERT INTO question
+        (submission_time, vote_number, message, image, title, view_number)
+        VALUES (%(submission_time)s, %(vote_number)s, %(message)s, %(image)s, %(title)s, %(view_number)s);"""
+
+    cursor.execute(query, {'submission_time': submission_time, 'vote_number': vote_number,
+                           'view_number': view_number, 'message': message, 'image': image, 'title': title})
 
 
-def find_all_answer_to_question(question_id):
-    answer = []
-    vote = []
-    id_list = []
-    image = []
-    all_question_list = connection.import_data(file="./sample_data/question.csv")
-    all_answer_list = connection.import_data(file="./sample_data/answer.csv")
-    for question_data in all_question_list:
-        if question_data["id"] == str(question_id):
-            for answer_data in all_answer_list:
-                if answer_data["question_id"] == str(question_id):
-                    answer.append(answer_data.get("message"))
-                    vote.append(answer_data.get("vote_number"))
-                    id_list.append(answer_data.get("id"))
-                    image.append(answer_data.get("image"))
-            break
-    answer_len = len(answer)
-    pack = list(zip(answer, vote, id_list, image))
-    return pack, answer_len
+@database_common.connection_handler
+def find_all_answer_to_question(cursor, question_id):
+    query = sql.SQL("""
+        SELECT message, question_id, vote_number, image, id
+        FROM answer
+        WHERE question_id = %(question_id)s""").format(
+        question_id=sql.Identifier('question_id')
+    )
+    cursor.execute(query, {'question_id': question_id})
+    return cursor.fetchall()
+
+@database_common.connection_handler
+def delete_question(cursor, question_id):
+    query = """
+        DELETE FROM question
+        WHERE id = %(question_id)s"""
+    cursor.execute(query, {'question_id': question_id})
 
 
-def prepare_table_to_display(descend=0, sort_value="submission_time"):
-    data = connection.import_data("./sample_data/question.csv")
-    data = dictionaries_sort(data, descend, sort_value)
-    change_date_format(data)
-    return data, TABLE_HEADERS
+@database_common.connection_handler
+def delete_answers_from_question(cursor, question_id):
+    query = """
+        DELETE FROM answer
+        WHERE question_id = %(question_id)s"""
+    cursor.execute(query, {'question_id': question_id})
 
 
-def switch_value_type(data, type):
-    for dic in data:
-        for key, value in dic.items():
-            if key in SORT_BY_INT:
-                dic[key] = type(value)
-    return data
+@database_common.connection_handler
+def delete_answers_from_comment(cursor, question_id):
+    query = """
+        DELETE FROM comment
+        WHERE question_id = %(question_id)s"""
+    cursor.execute(query, {'question_id': question_id})
 
 
-def dictionaries_sort(data, descend, sort_value):
-    global reverse
-    reverse = (reverse + int(descend)) % 2
-    if sort_value in SORT_BY_INT:
-        data = switch_value_type(data, int)
-        sorted_data = sorted(data, key=itemgetter(sort_value), reverse=reverse)
-        return switch_value_type(sorted_data, str)
-    return sorted(data, key=itemgetter(sort_value), reverse=reverse)
+@database_common.connection_handler
+def delete_answers_from_question_tag(cursor, question_id):
+    query = """
+        DELETE FROM question_tag
+        WHERE question_id = %(question_id)s"""
+    cursor.execute(query, {'question_id': question_id})
 
 
-def change_date_format(data):
-    for record in data:
-        for key, value in record.items():
-            if key == "submission_time":
-                date_time = datetime.datetime.fromtimestamp(int(value))
-                record[key] = date_time.strftime('%Y-%m-%d %H:%M:%S')
+@database_common.connection_handler
+def delete_answer_from_db_by_id(cursor, answer_id):
+    query = """
+            DELETE FROM answer
+            WHERE id = %(answer_id)s"""
+    cursor.execute(query, {'answer_id': answer_id})
 
 
-def ID_gen(path="./sample_data/question.csv"):
-    date = connection.import_data(path)
-    id_list = []
-    for dic in date:
-        id_list.append(int(dic["id"]))
-    return max(id_list) + 1 if len(id_list) > 0 else 1
-
-
-def get_question_id_by_answer_id(answer_id):
-    question_id = 0
-    for item in connection.import_data(file="./sample_data/answer.csv"):
-        if item["id"] == answer_id:
-            question_id = item["question_id"]
-    return question_id
-
-
-def get_max_answer_id():
-    id_list = []
-    with open(ANSWER_DATA_PATH, "r") as file:
-        reader = csv.DictReader(file)
-        for row in reader:
-            id_list.append(row['id'])
-    return max(id_list)
-
-
-def write_answer_to_csv(id, submission_time, vote_number, question_id, message, image):
-    with open(ANSWER_DATA_PATH, 'a', newline='', encoding="UTF-8") as file:
-        writer = csv.DictWriter(file, fieldnames=ANSWER_HEADERS)
-        writer.writerow(
-            {ANSWER_HEADERS[0]: id,
-             ANSWER_HEADERS[1]: submission_time,
-             ANSWER_HEADERS[2]: vote_number,
-             ANSWER_HEADERS[3]: question_id,
-             ANSWER_HEADERS[4]: message,
-             ANSWER_HEADERS[5]: image})
-
-
-def delete_answer_from_csv_by_id(answer_id):
-    answer_list_after_deletion = []
-    with open(ANSWER_DATA_PATH, "r") as read_file:
-        reader = csv.DictReader(read_file)
-        for row in reader:
-            if row['id'] != answer_id:
-                answer_list_after_deletion.append(row)
-    with open(ANSWER_DATA_PATH, 'w', encoding="UTF-8", newline='') as write_file:
-        writer = csv.DictWriter(write_file, fieldnames=ANSWER_HEADERS)
-        writer.writeheader()
-        writer.writerows(answer_list_after_deletion)
-
-
-def delete_question(question_id):
-    que_list = connection.import_data(file="./sample_data/question.csv")
-    ans_list = connection.import_data(file="./sample_data/answer.csv")
-    for i in que_list:
-        if i["id"] == str(question_id):
-            que_list.remove(i)
-    connection.export_data("sample_data/question.csv", que_list, QUESTION_HEADERS, "w")
-    for i in ans_list:
-        if i["question_id"] == str(question_id):
-            ans_list.remove(i)
-    connection.export_data("sample_data/answer.csv", ans_list, ANSWER_HEADERS, "w")
-
-
-def vote_counter(id, value, path="./sample_data/question.csv", key_name="id"):
-    data = connection.import_data(path)
-    for dic in data:
-        if dic[key_name] == id:
-            if value == "+":
-                votes = int(dic["vote_number"]) + 1
-                dic["vote_number"] = str(votes)
-            elif int(dic["vote_number"]) > 0:
-                votes = int(dic["vote_number"]) - 1
-                dic["vote_number"] = str(votes)
-    return data
-
-def vote_for_answers(answer_id, value, question_id):
-    ans_list = connection.import_data(file="./sample_data/answer.csv")
-    for i in ans_list:
-        if i["id"] == str(answer_id) and i["question_id"] == str(question_id):
-            if value == "👍":
-                votes = int(i["vote_number"]) + 1
-                i["vote_number"] = votes
-            elif value == "👎":
-                if int(i["vote_number"]) > 0:
-                    votes = int(i["vote_number"]) - 1
-                    i["vote_number"] = votes
-                else:
-                    i["vote_number"] = 0
-    return ans_list
-
-
-def allowed_image(filename):
-    if not "." in filename:
-        return False
-    ext = filename.rsplit(".", 1)[1]
-    if ext.upper() in file_extention:
-        return True
-    else:
-        return False
+@database_common.connection_handler
+def delete_answer_from_comment_by_id(cursor, answer_id):
+    query = """
+            DELETE FROM comment
+            WHERE answer_id = %(answer_id)s"""
+    cursor.execute(query, {'answer_id': answer_id})
