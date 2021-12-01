@@ -24,7 +24,7 @@ def list_answer_voting(question_id, answer_id, value):
     connection.export_data("sample_data/answer.csv", ans_list, data_manager.ANSWER_HEADERS, "w")
     return redirect(f"/question/{question_id}")
 
- 
+
 @app.route("/")
 @app.route("/list")
 def question_list():
@@ -46,9 +46,12 @@ def add_information_about_question():
                 return redirect(request.url)
             image.save(os.path.join(app.config["UPLOAD_PICTURE_FOLDER"], image.filename))
 
-            dic = {"id": str(ID), "submission_time": str(unix_time), "view_number": "0", "vote_number": "0", "title": title, "message": question, "Image": "../static/uploads_pictures_questions/" + str(image.filename)}
+            dic = {"id": str(ID), "submission_time": str(unix_time), "view_number": "0", "vote_number": "0",
+                   "title": title, "message": question,
+                   "Image": "../static/uploads_pictures_questions/" + str(image.filename)}
         else:
-            dic = {"id": str(ID), "submission_time": str(unix_time), "view_number": "0", "vote_number": "0", "title": title, "message": question, "Image": ""}
+            dic = {"id": str(ID), "submission_time": str(unix_time), "view_number": "0", "vote_number": "0",
+                   "title": title, "message": question, "Image": ""}
         connection.export_data("./sample_data/question.csv", dic, data_manager.QUESTION_HEADERS, "a")
         return redirect("/")
     return render_template("add-question.html")
@@ -60,14 +63,20 @@ def prepare_sorted_table_to_display(descend, value):
     return render_template("list.html", questions_list=questions_list, table_headers=table_headers)
 
 
+# Witold
 @app.route('/question')
 @app.route('/question/<question_id>', methods=["POST", "GET"])
 def question(question_id):
     if request.method == "POST":
-        data_manager.save_new_answer(request.form.get("message"), request.files["image"], question_id)
+        image = request.files['image']
+        filename = image.filename
+        if filename != "":
+            image.save(os.path.join('.\\static\\uploads_pictures_answers', filename))
+        data_manager.save_new_answer(request.form.get("message"), filename, question_id)
     title, message, image = data_manager.find_title_and_message(question_id)
     pack, answer_len = data_manager.find_all_answer_to_question(question_id)
-    return render_template('question.html', head_title=title, title_message=message, package=pack, lenth=answer_len, question_id=question_id, image=image)
+    return render_template('question.html', head_title=title, title_message=message, package=pack, lenth=answer_len,
+                           question_id=question_id, image=image)
 
 
 @app.route("/question/<question_id>/new-answer", methods=["POST", "GET"])
@@ -78,8 +87,8 @@ def add_new_answer(question_id):
 
 @app.route("/answer/<answer_id>/delete", methods=["POST", "GET"])
 def delete_answer(answer_id):
-    question_id = data_manager.get_question_id_by_answer_id(answer_id)
-    data_manager.delete_answer_from_csv_by_id(answer_id)
+    question_id = data_manager.get_question_id_by_answer_id_db(answer_id)
+    data_manager.delete_answer_from_cvs_by_id_db(answer_id)
     return redirect(f"../../question/{question_id}")
 
 
@@ -108,6 +117,6 @@ def edit_questions(question_id):
     title, message, image = data_manager.find_title_and_message(question_id)
     return render_template('edit_questions.html', title=title, message=message, image=image)
 
-  
+
 if __name__ == "__main__":
     app.run(debug=True)

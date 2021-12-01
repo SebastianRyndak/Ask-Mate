@@ -4,6 +4,7 @@ import os
 from operator import itemgetter
 import datetime
 import csv
+from psycopg2 import sql
 import database_common
 
 ANSWER_DATA_PATH = os.getenv("ANSWER_DATA_PATH") if "ANSWER_DATA_PATH" in os.environ else "sample_data/answer.csv"
@@ -17,13 +18,10 @@ reverse = 0  # global variable
 
 
 def save_new_answer(message, image, question_id):
-    if image.filename != "":
-        image.save(os.path.join('.\\static\\uploads_pictures_answers', image.filename))
-        add_new_answer(int(question_id), message, "../static/uploads_pictures_answers/" + image.filename)
-    else:
-        add_new_answer(int(question_id), message, image="")
+        write_answer_to_db(datetime.datetime.now(), 0, question_id, message, image)
 
 
+# Witold - propably unnecesary to convert to db
 def add_new_answer(question_id, message, image):
     answer_id = ID_gen("./sample_data/answer.csv")
     submission_time = int(time.time())
@@ -45,7 +43,7 @@ def overwrite(question_id, new_question):
     for question_record in data:
         if question_record["id"] == str(question_id):
             question_record.update(new_question)
-    connection.export_data("./sample_data/question.csv", data, QUESTION_HEADERS,"w")
+    connection.export_data("./sample_data/question.csv", data, QUESTION_HEADERS, "w")
 
 
 def find_question(question_id):
@@ -117,6 +115,7 @@ def ID_gen(path="./sample_data/question.csv"):
     return max(id_list) + 1 if len(id_list) > 0 else 1
 
 
+# Witold - rewritten to db
 def get_question_id_by_answer_id(answer_id):
     question_id = 0
     for item in connection.import_data(file="./sample_data/answer.csv"):
@@ -125,6 +124,22 @@ def get_question_id_by_answer_id(answer_id):
     return question_id
 
 
+@database_common.connection_handler
+def get_question_id_by_answer_id_db(cursor, answer_id):
+    query = """
+        SELECT question_id
+        FROM answer
+        WHERE id=%s
+    """
+    cursor.execute(query, (answer_id,))
+    real_dict = cursor.fetchall()
+    real_dict_to_list = []
+    for item in real_dict:
+        real_dict_to_list.append(dict(item))
+    return real_dict_to_list[0]["question_id"]
+
+
+# Witold - unneeded in PostgreSQL
 def get_max_answer_id():
     id_list = []
     with open(ANSWER_DATA_PATH, "r") as file:
@@ -134,6 +149,7 @@ def get_max_answer_id():
     return max(id_list)
 
 
+# Witold - rewrite to db connection
 def write_answer_to_csv(id, submission_time, vote_number, question_id, message, image):
     with open(ANSWER_DATA_PATH, 'a', newline='', encoding="UTF-8") as file:
         writer = csv.DictWriter(file, fieldnames=ANSWER_HEADERS)
@@ -146,6 +162,21 @@ def write_answer_to_csv(id, submission_time, vote_number, question_id, message, 
              ANSWER_HEADERS[5]: image})
 
 
+@database_common.connection_handler
+def write_answer_to_db(cursor, submission_time, vote_number, question_id, message, image):
+    query = sql.SQL("""
+    INSERT INTO answer (submission_time, vote_number, question_id, message, image) 
+    VALUES (%(submission_time)s,%(vote_number)s,%(question_id)s,%(message)s,%(image)s)
+    """).format(submission_time=sql.Identifier('submission_time'),
+                vote_number=sql.Identifier('vote_number'),
+                question_id=sql.Identifier('question_id'),
+                message=sql.Identifier('message'),
+                image=sql.Identifier('image'))
+    cursor.execute(query, {'submission_time': submission_time, 'vote_number': vote_number,
+                           "question_id": question_id, "message": message, "image": image})
+
+
+# Witold -rewrite to db connection
 def delete_answer_from_csv_by_id(answer_id):
     answer_list_after_deletion = []
     with open(ANSWER_DATA_PATH, "r") as read_file:
@@ -157,6 +188,14 @@ def delete_answer_from_csv_by_id(answer_id):
         writer = csv.DictWriter(write_file, fieldnames=ANSWER_HEADERS)
         writer.writeheader()
         writer.writerows(answer_list_after_deletion)
+
+
+@database_common.connection_handler
+def delete_answer_from_cvs_by_id_db(cursor, id):
+    query = sql.SQL("""
+    DELETE FROM answer
+    WHERE id = %(id)s""").format(id=sql.Identifier('id'))
+    cursor.execute(query, {"id": id})
 
 
 def delete_question(question_id):
@@ -212,9 +251,26 @@ def allowed_image(filename):
 
 
 @database_common.connection_handler
+def delete_comment_by_question_id(cursor, question_id):
+    query = sql.SQL("""
+    DELETE FROM comment
+    WHERE question_id = %(question_id)s""").format(id=sql.Identifier('question_id'))
+    cursor.execute(query, {"question_id": question_id})
+
+
+@database_common.connection_handler
+def delete_comment_by_answer_id(cursor, answer_id):
+    query = sql.SQL("""
+    DELETE FROM comment
+    WHERE answer_id = %(answer_id)s""").format(id=sql.Identifier('answer_id'))
+    cursor.execute(query, {"answer_id": answer_id})
+
+    
+@database_common.connection_handler
 def get_question_bd(cursor):
     cursor.execute("""
         SELECT *
         FROM question
         """)
     return cursor.fetchall()
+
