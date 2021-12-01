@@ -35,7 +35,7 @@ def vote_for_answers(cursor, answer_id, vote_number, question_id):
         UPDATE answer
         SET vote_number = %(vote_number)s,
             question_id = %(question_id)s
-        WHERE id = %(answer_id)"""
+        WHERE id = %(answer_id)s"""
     cursor.execute(query, {'vote_number': vote_number, 'answer_id': answer_id, 'question_id': question_id})
     return cursor.fetchall()
 
@@ -61,6 +61,7 @@ def return_question_id_and_message(cursor, answer_id):
         WHERE id = %(answer_id)s"""
     cursor.execute(query, {'answer_id': answer_id})
     return cursor.fetchall()
+
 
 @database_common.connection_handler
 def find_title_and_message(cursor, question_id):
@@ -163,7 +164,8 @@ def delete_answer_from_comment_by_id(cursor, answer_id):
             DELETE FROM comment
             WHERE answer_id = %(answer_id)s"""
     cursor.execute(query, {'answer_id': answer_id})
-=======
+
+
 def save_new_answer(message, image, question_id):
         write_answer_to_db(datetime.datetime.now(), 0, question_id, message, image)
 
@@ -242,3 +244,19 @@ def get_question_bd(cursor):
         """)
     return cursor.fetchall()
 
+
+@database_common.connection_handler
+def add_vote_counter(cursor,id):
+    query = sql.SQL("""
+        UPDATE question
+        SET vote_number = vote_number + 1
+        WHERE id = %(id)s""").format(id=sql.Identifier("id"))
+    cursor.execute(query, {"id": id})
+
+@database_common.connection_handler
+def substract_vote_counter(cursor,id):
+    query = sql.SQL("""
+        UPDATE question
+        SET vote_number = vote_number - 1
+        WHERE id = %(id)s""").format(id=sql.Identifier("id"))
+    cursor.execute(query, {"id": id})

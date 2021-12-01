@@ -12,11 +12,14 @@ app.config["UPLOAD_PICTURE_ANSWERS"] = pictures_answers
 app.config["ALLOWED_IMAGE_EXTENSIONS"] = ["JPG", "PNG"]
 
 
-# @app.route("/vote/<id>/<value>")
-# def list_voting(id, value):
-#     data = data_manager.vote_counter(id, value)
-#     connection.export_data("./sample_data/question.csv", data, data_manager.QUESTION_HEADERS, "w")
-#     return redirect("/")
+@app.route("/vote/<id>/<value>")
+def list_voting(id, value):
+    if value == "+":
+        data_manager.add_vote_counter(id)
+    elif value == "-":
+        data_manager.substract_vote_counter(id)
+    return redirect("/")
+
 
 
 # @app.route("/question/vote/<question_id>/<answer_id>/<vote_number>")
