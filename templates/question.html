@@ -1,52 +1,57 @@
-<!DOCTYPE html>
-<html lang=eng xmlns="http://www.w3.org/1999/html">
-<head>
-	<meta chrset="utf-8">
-	<title>Question</title>
-	<style>
-		.button-red {background-color: #f44336;}
-	</style>
-</head>
-<body>
-<a href="/">Back to main page</a>
-	<h1>{{ head_title }}</h1><br>
-{% if image == "" %}
-	<h2>{{ title_message }}</h2><br>
-{% else %}
-    <h2>{{ title_message }}<br><br><img src="{{ image }}" alt="Image" width="200"></h2>
-{% endif %}
-	{% if lenth == 0 %}
-	<h3>Nothing comment yet.</h3>
-	{% elif lenth == 1 %}
-	<h3>{{ lenth }} answer:</h3>
-	{% else %}
-	<h3>{{ lenth }} answers:</h3>
-	{% endif %}
-	{% for i in package|batch(3) %}
-	{% for j in i %}
-	<div>
-		<li><strong>{{ j[0] }}</strong> ----- {{ j[1] }} votes <a href="/question/vote/{{ question_id }}/{{ j[2] }}/👍">&#128077</a> <a href="/question/vote/{{ question_id }}/{{ j[2] }}/👎">&#128078</a>
-        </li></div>
-    {% if j[3] == "" %}
-        <div>
-        <li><a href="/answer/{{j[2]}}/delete">Delete answer</a></li></div> <br>
-    {% else:  %}
-            <div style="text-align: center"><img src="{{ j[3] }}" alt="Image" width="200" ></div> <a href="/answer/{{j[2]}}/delete">Delete answer</a></div><br>
-    {% endif %}
+{% extends "layout.html" %}
 
-	</ul>
-	{% endfor %}
+{% block page_title %}
+    Hi Mates!
+{% endblock %}
+
+{% block content %}
+
+    <a href="/">Back to main page</a>
+    {% for data in question_data %}
+	<h1>{{ data.title }}</h1><br>
+    <h2>{{ data.message }}</h2><br>
+    <img src="{{ data.image }}" alt="Image" width="200">
+    {% endfor %}
+{#{% if image == "" %}#}
+{#	<h2>{{ question_data.message }}</h2><br>#}
+{#{% else %}#}
+{#    <h2>{{ question_data.message }}<br><br><img src="{{ question_data.image }}" alt="Image" width="200"></h2>#}
+{#{% endif %}#}
+	{% if answers_number == 0 %}
+        <h3>Nothing comment yet.</h3>
+	{% elif answers_number == 1 %}
+	    <h3>{{ answers_number }} answer:</h3>
+	{% else %}
+	    <h2>{{ answers_number }} answers:</h2>
+	{% endif %}
+	{% for answer in answer_data %}
+    <ul>
+	    <li>
+        <strong>{{ answer.message }}</strong> ----- {{ answer.vote_number }} votes
+        <a href="/question/vote/{{ answer.question_id }}/{{ answer.id }}/{{ answer.vote_number + 1 }}">👍</a>
+        <a href="/question/vote/{{ answer.question_id }}/{{ answer.id }}/{{ answer.vote_number - 1 }}">👎</a>
+        </li>
+        {% if answer.image == "" %}
+            <a href="/answer/{{ answer.id }}/delete/{{ answer.question_id }}">Delete answer</a>
+        {% else %}
+            <div style="text-align: center"><img src="{{ answer.image }}" alt="Image" width="200" ></div>
+            <a href="/answer/{{ answer.id }}/delete/{{ answer.question_id }}">Delete answer</a>
+        {% endif %}
+            <a href="/edit_answer/{{ answer.id }}">Edit answer</a>
+    </ul>
 	{% endfor %}
   	<br>
   	<form action="/question/{{ question_id }}/delete" method="POST">
-        <input type="submit" name="delete_button" value="Delete question" class="button-red"><br>
+        <input type="submit" name="delete_button" value="Delete question"><br>
     </form>
-    <form action="/question/{{question_id}}/new-answer" method="post" enctype=multipart/form-data>
-        <input type=submit name="add_na" value="Add"><br>
+    <form action="/new_answer/{{ question_id }}">
+        <button>Add new answer</button>
+{#        method="post" enctype=multipart/form-data#}
+{#        <input type=submit name="add_na" value="Add"><br>#}
     </form>
     <form action="/question/{{ question_id }}/edit">
         <button>Edit</button>
     </form>
     <br>
-</body>
-</html>
+
+{% endblock %}

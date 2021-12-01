@@ -1,0 +1,449 @@
+Index: data_manager.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import connection\r\nimport time\r\nimport os\r\nfrom operator import itemgetter\r\nimport datetime\r\nimport csv\r\n\r\n\r\nANSWER_DATA_PATH = os.getenv(\"ANSWER_DATA_PATH\") if \"ANSWER_DATA_PATH\" in os.environ else \"sample_data/answer.csv\"\r\nQUESTION_HEADERS = [\"id\", \"submission_time\", \"view_number\", \"vote_number\", \"title\", \"message\", \"image\"]\r\nANSWER_HEADERS = [\"id\", \"submission_time\", \"vote_number\", \"question_id\", \"message\", \"image\"]\r\nTABLE_HEADERS = {\"vote_number\": \"Votes\", \"title\": \"Title\", \"message\": \"Message\", \"submission_time\": \"Date\",\r\n                 \"view_number\": \"Views\"}\r\nSORT_BY_INT = [\"vote_number\", \"Published on\", \"view_number\"]\r\nfile_extention = [\"JPG\", \"PNG\"]\r\nreverse = 0  # global variable\r\n\r\n\r\ndef save_new_answer(message, image, question_id):\r\n    if image.filename != \"\":\r\n        image.save(os.path.join('.\\\\static\\\\uploads_pictures_answers', image.filename))\r\n        add_new_answer(int(question_id), message, \"../static/uploads_pictures_answers/\" + image.filename)\r\n    else:\r\n        add_new_answer(int(question_id), message, image=\"\")\r\n\r\n\r\ndef add_new_answer(question_id, message, image):\r\n    answer_id = ID_gen(\"./sample_data/answer.csv\")\r\n    submission_time = int(time.time())\r\n    write_answer_to_csv(answer_id, submission_time, 0, question_id, message, image)\r\n\r\n\r\ndef find_title_and_message(question_id):\r\n    data = connection.import_data(file=\"./sample_data/question.csv\")\r\n    for i in data:\r\n        if i[\"id\"] == str(question_id):\r\n            title = i[\"title\"]\r\n            message = i[\"message\"]\r\n            image = i[\"image\"]\r\n            return title, message, image\r\n\r\n\r\ndef overwrite(question_id, new_question):\r\n    data = connection.import_data(file=\"./sample_data/question.csv\")\r\n    for question_record in data:\r\n        if question_record[\"id\"] == str(question_id):\r\n            question_record.update(new_question)\r\n    connection.export_data(\"./sample_data/question.csv\", data, QUESTION_HEADERS,\"w\")\r\n\r\n\r\ndef find_question(question_id):\r\n    data = connection.import_data(file=\"./sample_data/question.csv\")\r\n    for question_record in data:\r\n        if question_record[\"id\"] == str(question_id):\r\n            return question_record\r\n\r\n\r\ndef find_all_answer_to_question(question_id):\r\n    answer = []\r\n    vote = []\r\n    id_list = []\r\n    image = []\r\n    all_question_list = connection.import_data(file=\"./sample_data/question.csv\")\r\n    all_answer_list = connection.import_data(file=\"./sample_data/answer.csv\")\r\n    for question_data in all_question_list:\r\n        if question_data[\"id\"] == str(question_id):\r\n            for answer_data in all_answer_list:\r\n                if answer_data[\"question_id\"] == str(question_id):\r\n                    answer.append(answer_data.get(\"message\"))\r\n                    vote.append(answer_data.get(\"vote_number\"))\r\n                    id_list.append(answer_data.get(\"id\"))\r\n                    image.append(answer_data.get(\"image\"))\r\n            break\r\n    answer_len = len(answer)\r\n    pack = list(zip(answer, vote, id_list, image))\r\n    return pack, answer_len\r\n\r\n\r\ndef prepare_table_to_display(descend=0, sort_value=\"submission_time\"):\r\n    data = connection.import_data(\"./sample_data/question.csv\")\r\n    data = dictionaries_sort(data, descend, sort_value)\r\n    change_date_format(data)\r\n    return data, TABLE_HEADERS\r\n\r\n\r\ndef switch_value_type(data, type):\r\n    for dic in data:\r\n        for key, value in dic.items():\r\n            if key in SORT_BY_INT:\r\n                dic[key] = type(value)\r\n    return data\r\n\r\n\r\ndef dictionaries_sort(data, descend, sort_value):\r\n    global reverse\r\n    reverse = (reverse + int(descend)) % 2\r\n    if sort_value in SORT_BY_INT:\r\n        data = switch_value_type(data, int)\r\n        sorted_data = sorted(data, key=itemgetter(sort_value), reverse=reverse)\r\n        return switch_value_type(sorted_data, str)\r\n    return sorted(data, key=itemgetter(sort_value), reverse=reverse)\r\n\r\n\r\ndef change_date_format(data):\r\n    for record in data:\r\n        for key, value in record.items():\r\n            if key == \"submission_time\":\r\n                date_time = datetime.datetime.fromtimestamp(int(value))\r\n                record[key] = date_time.strftime('%Y-%m-%d %H:%M:%S')\r\n\r\n\r\ndef ID_gen(path=\"./sample_data/question.csv\"):\r\n    date = connection.import_data(path)\r\n    id_list = []\r\n    for dic in date:\r\n        id_list.append(int(dic[\"id\"]))\r\n    return max(id_list) + 1 if len(id_list) > 0 else 1\r\n\r\n\r\ndef get_question_id_by_answer_id(answer_id):\r\n    question_id = 0\r\n    for item in connection.import_data(file=\"./sample_data/answer.csv\"):\r\n        if item[\"id\"] == answer_id:\r\n            question_id = item[\"question_id\"]\r\n    return question_id\r\n\r\n\r\ndef get_max_answer_id():\r\n    id_list = []\r\n    with open(ANSWER_DATA_PATH, \"r\") as file:\r\n        reader = csv.DictReader(file)\r\n        for row in reader:\r\n            id_list.append(row['id'])\r\n    return max(id_list)\r\n\r\n\r\ndef write_answer_to_csv(id, submission_time, vote_number, question_id, message, image):\r\n    with open(ANSWER_DATA_PATH, 'a', newline='', encoding=\"UTF-8\") as file:\r\n        writer = csv.DictWriter(file, fieldnames=ANSWER_HEADERS)\r\n        writer.writerow(\r\n            {ANSWER_HEADERS[0]: id,\r\n             ANSWER_HEADERS[1]: submission_time,\r\n             ANSWER_HEADERS[2]: vote_number,\r\n             ANSWER_HEADERS[3]: question_id,\r\n             ANSWER_HEADERS[4]: message,\r\n             ANSWER_HEADERS[5]: image})\r\n\r\n\r\ndef delete_answer_from_csv_by_id(answer_id):\r\n    answer_list_after_deletion = []\r\n    with open(ANSWER_DATA_PATH, \"r\") as read_file:\r\n        reader = csv.DictReader(read_file)\r\n        for row in reader:\r\n            if row['id'] != answer_id:\r\n                answer_list_after_deletion.append(row)\r\n    with open(ANSWER_DATA_PATH, 'w', encoding=\"UTF-8\", newline='') as write_file:\r\n        writer = csv.DictWriter(write_file, fieldnames=ANSWER_HEADERS)\r\n        writer.writeheader()\r\n        writer.writerows(answer_list_after_deletion)\r\n\r\n\r\ndef delete_question(question_id):\r\n    que_list = connection.import_data(file=\"./sample_data/question.csv\")\r\n    ans_list = connection.import_data(file=\"./sample_data/answer.csv\")\r\n    for i in que_list:\r\n        if i[\"id\"] == str(question_id):\r\n            que_list.remove(i)\r\n    connection.export_data(\"sample_data/question.csv\", que_list, QUESTION_HEADERS, \"w\")\r\n    for i in ans_list:\r\n        if i[\"question_id\"] == str(question_id):\r\n            ans_list.remove(i)\r\n    connection.export_data(\"sample_data/answer.csv\", ans_list, ANSWER_HEADERS, \"w\")\r\n\r\n\r\ndef vote_counter(id, value, path=\"./sample_data/question.csv\", key_name=\"id\"):\r\n    data = connection.import_data(path)\r\n    for dic in data:\r\n        if dic[key_name] == id:\r\n            if value == \"+\":\r\n                votes = int(dic[\"vote_number\"]) + 1\r\n                dic[\"vote_number\"] = str(votes)\r\n            elif int(dic[\"vote_number\"]) > 0:\r\n                votes = int(dic[\"vote_number\"]) - 1\r\n                dic[\"vote_number\"] = str(votes)\r\n    return data\r\n\r\ndef vote_for_answers(answer_id, value, question_id):\r\n    ans_list = connection.import_data(file=\"./sample_data/answer.csv\")\r\n    for i in ans_list:\r\n        if i[\"id\"] == str(answer_id) and i[\"question_id\"] == str(question_id):\r\n            if value == \"\uD83D\uDC4D\":\r\n                votes = int(i[\"vote_number\"]) + 1\r\n                i[\"vote_number\"] = votes\r\n            elif value == \"\uD83D\uDC4E\":\r\n                if int(i[\"vote_number\"]) > 0:\r\n                    votes = int(i[\"vote_number\"]) - 1\r\n                    i[\"vote_number\"] = votes\r\n                else:\r\n                    i[\"vote_number\"] = 0\r\n    return ans_list\r\n\r\n\r\ndef allowed_image(filename):\r\n    if not \".\" in filename:\r\n        return False\r\n    ext = filename.rsplit(\".\", 1)[1]\r\n    if ext.upper() in file_extention:\r\n        return True\r\n    else:\r\n        return False
+===================================================================
+diff --git a/data_manager.py b/data_manager.py
+--- a/data_manager.py	
++++ b/data_manager.py	
+@@ -4,207 +4,223 @@
+ from operator import itemgetter
+ import datetime
+ import csv
+-
++from typing import List, Dict
+ 
+-ANSWER_DATA_PATH = os.getenv("ANSWER_DATA_PATH") if "ANSWER_DATA_PATH" in os.environ else "sample_data/answer.csv"
+-QUESTION_HEADERS = ["id", "submission_time", "view_number", "vote_number", "title", "message", "image"]
+-ANSWER_HEADERS = ["id", "submission_time", "vote_number", "question_id", "message", "image"]
+-TABLE_HEADERS = {"vote_number": "Votes", "title": "Title", "message": "Message", "submission_time": "Date",
+-                 "view_number": "Views"}
+-SORT_BY_INT = ["vote_number", "Published on", "view_number"]
+-file_extention = ["JPG", "PNG"]
+-reverse = 0  # global variable
++from psycopg2 import sql
++from psycopg2.extras import RealDictCursor
+ 
++import database_common
+ 
+-def save_new_answer(message, image, question_id):
+-    if image.filename != "":
+-        image.save(os.path.join('.\\static\\uploads_pictures_answers', image.filename))
+-        add_new_answer(int(question_id), message, "../static/uploads_pictures_answers/" + image.filename)
+-    else:
+-        add_new_answer(int(question_id), message, image="")
+ 
++@database_common.connection_handler
++def get_questions(cursor):
++    query = """
++        SELECT *
++        FROM question
++        ORDER BY submission_time"""
++    cursor.execute(query)
++    return cursor.fetchall()
+ 
+-def add_new_answer(question_id, message, image):
+-    answer_id = ID_gen("./sample_data/answer.csv")
+-    submission_time = int(time.time())
+-    write_answer_to_csv(answer_id, submission_time, 0, question_id, message, image)
+ 
+-
+-def find_title_and_message(question_id):
+-    data = connection.import_data(file="./sample_data/question.csv")
+-    for i in data:
+-        if i["id"] == str(question_id):
+-            title = i["title"]
+-            message = i["message"]
+-            image = i["image"]
+-            return title, message, image
+-
+-
+-def overwrite(question_id, new_question):
+-    data = connection.import_data(file="./sample_data/question.csv")
+-    for question_record in data:
+-        if question_record["id"] == str(question_id):
+-            question_record.update(new_question)
+-    connection.export_data("./sample_data/question.csv", data, QUESTION_HEADERS,"w")
+-
+-
+-def find_question(question_id):
+-    data = connection.import_data(file="./sample_data/question.csv")
+-    for question_record in data:
+-        if question_record["id"] == str(question_id):
+-            return question_record
+-
+-
+-def find_all_answer_to_question(question_id):
+-    answer = []
+-    vote = []
+-    id_list = []
+-    image = []
+-    all_question_list = connection.import_data(file="./sample_data/question.csv")
+-    all_answer_list = connection.import_data(file="./sample_data/answer.csv")
+-    for question_data in all_question_list:
+-        if question_data["id"] == str(question_id):
+-            for answer_data in all_answer_list:
+-                if answer_data["question_id"] == str(question_id):
+-                    answer.append(answer_data.get("message"))
+-                    vote.append(answer_data.get("vote_number"))
+-                    id_list.append(answer_data.get("id"))
+-                    image.append(answer_data.get("image"))
+-            break
+-    answer_len = len(answer)
+-    pack = list(zip(answer, vote, id_list, image))
+-    return pack, answer_len
+-
+-
+-def prepare_table_to_display(descend=0, sort_value="submission_time"):
+-    data = connection.import_data("./sample_data/question.csv")
+-    data = dictionaries_sort(data, descend, sort_value)
+-    change_date_format(data)
+-    return data, TABLE_HEADERS
+-
+-
+-def switch_value_type(data, type):
+-    for dic in data:
+-        for key, value in dic.items():
+-            if key in SORT_BY_INT:
+-                dic[key] = type(value)
+-    return data
+-
+-
+-def dictionaries_sort(data, descend, sort_value):
+-    global reverse
+-    reverse = (reverse + int(descend)) % 2
+-    if sort_value in SORT_BY_INT:
+-        data = switch_value_type(data, int)
+-        sorted_data = sorted(data, key=itemgetter(sort_value), reverse=reverse)
+-        return switch_value_type(sorted_data, str)
+-    return sorted(data, key=itemgetter(sort_value), reverse=reverse)
+-
+-
+-def change_date_format(data):
+-    for record in data:
+-        for key, value in record.items():
+-            if key == "submission_time":
+-                date_time = datetime.datetime.fromtimestamp(int(value))
+-                record[key] = date_time.strftime('%Y-%m-%d %H:%M:%S')
+-
+-
+-def ID_gen(path="./sample_data/question.csv"):
+-    date = connection.import_data(path)
+-    id_list = []
+-    for dic in date:
+-        id_list.append(int(dic["id"]))
+-    return max(id_list) + 1 if len(id_list) > 0 else 1
+-
+-
+-def get_question_id_by_answer_id(answer_id):
+-    question_id = 0
+-    for item in connection.import_data(file="./sample_data/answer.csv"):
+-        if item["id"] == answer_id:
+-            question_id = item["question_id"]
+-    return question_id
+-
+-
+-def get_max_answer_id():
+-    id_list = []
+-    with open(ANSWER_DATA_PATH, "r") as file:
+-        reader = csv.DictReader(file)
+-        for row in reader:
+-            id_list.append(row['id'])
+-    return max(id_list)
+-
+-
+-def write_answer_to_csv(id, submission_time, vote_number, question_id, message, image):
+-    with open(ANSWER_DATA_PATH, 'a', newline='', encoding="UTF-8") as file:
+-        writer = csv.DictWriter(file, fieldnames=ANSWER_HEADERS)
+-        writer.writerow(
+-            {ANSWER_HEADERS[0]: id,
+-             ANSWER_HEADERS[1]: submission_time,
+-             ANSWER_HEADERS[2]: vote_number,
+-             ANSWER_HEADERS[3]: question_id,
+-             ANSWER_HEADERS[4]: message,
+-             ANSWER_HEADERS[5]: image})
+-
+-
+-def delete_answer_from_csv_by_id(answer_id):
+-    answer_list_after_deletion = []
+-    with open(ANSWER_DATA_PATH, "r") as read_file:
+-        reader = csv.DictReader(read_file)
+-        for row in reader:
+-            if row['id'] != answer_id:
+-                answer_list_after_deletion.append(row)
+-    with open(ANSWER_DATA_PATH, 'w', encoding="UTF-8", newline='') as write_file:
+-        writer = csv.DictWriter(write_file, fieldnames=ANSWER_HEADERS)
+-        writer.writeheader()
+-        writer.writerows(answer_list_after_deletion)
+-
+-
+-def delete_question(question_id):
+-    que_list = connection.import_data(file="./sample_data/question.csv")
+-    ans_list = connection.import_data(file="./sample_data/answer.csv")
+-    for i in que_list:
+-        if i["id"] == str(question_id):
+-            que_list.remove(i)
+-    connection.export_data("sample_data/question.csv", que_list, QUESTION_HEADERS, "w")
+-    for i in ans_list:
+-        if i["question_id"] == str(question_id):
+-            ans_list.remove(i)
+-    connection.export_data("sample_data/answer.csv", ans_list, ANSWER_HEADERS, "w")
+-
+-
+-def vote_counter(id, value, path="./sample_data/question.csv", key_name="id"):
+-    data = connection.import_data(path)
+-    for dic in data:
+-        if dic[key_name] == id:
+-            if value == "+":
+-                votes = int(dic["vote_number"]) + 1
+-                dic["vote_number"] = str(votes)
+-            elif int(dic["vote_number"]) > 0:
+-                votes = int(dic["vote_number"]) - 1
+-                dic["vote_number"] = str(votes)
+-    return data
+-
+-def vote_for_answers(answer_id, value, question_id):
+-    ans_list = connection.import_data(file="./sample_data/answer.csv")
+-    for i in ans_list:
+-        if i["id"] == str(answer_id) and i["question_id"] == str(question_id):
+-            if value == "👍":
+-                votes = int(i["vote_number"]) + 1
+-                i["vote_number"] = votes
+-            elif value == "👎":
+-                if int(i["vote_number"]) > 0:
+-                    votes = int(i["vote_number"]) - 1
+-                    i["vote_number"] = votes
+-                else:
+-                    i["vote_number"] = 0
+-    return ans_list
+-
+-
+-def allowed_image(filename):
+-    if not "." in filename:
+-        return False
+-    ext = filename.rsplit(".", 1)[1]
+-    if ext.upper() in file_extention:
+-        return True
+-    else:
+-        return False
+\ No newline at end of file
++# ANSWER_DATA_PATH = os.getenv("ANSWER_DATA_PATH") if "ANSWER_DATA_PATH" in os.environ else "sample_data/answer.csv"
++# QUESTION_HEADERS = ["id", "submission_time", "view_number", "vote_number", "title", "message", "image"]
++# ANSWER_HEADERS = ["id", "submission_time", "vote_number", "question_id", "message", "image"]
++# TABLE_HEADERS = {"vote_number": "Votes", "title": "Title", "message": "Message", "submission_time": "Date",
++#                  "view_number": "Views"}
++# SORT_BY_INT = ["vote_number", "Published on", "view_number"]
++# file_extention = ["JPG", "PNG"]
++# reverse = 0  # global variable
++#
++#
++# def save_new_answer(message, image, question_id):
++#     if image.filename != "":
++#         image.save(os.path.join('.\\static\\uploads_pictures_answers', image.filename))
++#         add_new_answer(int(question_id), message, "../static/uploads_pictures_answers/" + image.filename)
++#     else:
++#         add_new_answer(int(question_id), message, image="")
++#
++#
++# def add_new_answer(question_id, message, image):
++#     answer_id = ID_gen("./sample_data/answer.csv")
++#     submission_time = int(time.time())
++#     write_answer_to_csv(answer_id, submission_time, 0, question_id, message, image)
++#
++#
++# def find_title_and_message(question_id):
++#     data = connection.import_data(file="./sample_data/question.csv")
++#     for i in data:
++#         if i["id"] == str(question_id):
++#             title = i["title"]
++#             message = i["message"]
++#             image = i["image"]
++#             return title, message, image
++#
++#
++# def overwrite(question_id, new_question):
++#     data = connection.import_data(file="./sample_data/question.csv")
++#     for question_record in data:
++#         if question_record["id"] == str(question_id):
++#             question_record.update(new_question)
++#     connection.export_data("./sample_data/question.csv", data, QUESTION_HEADERS,"w")
++#
++#
++# def find_question(question_id):
++#     data = connection.import_data(file="./sample_data/question.csv")
++#     for question_record in data:
++#         if question_record["id"] == str(question_id):
++#             return question_record
++#
++#
++# def find_all_answer_to_question(question_id):
++#     answer = []
++#     vote = []
++#     id_list = []
++#     image = []
++#     all_question_list = connection.import_data(file="./sample_data/question.csv")
++#     all_answer_list = connection.import_data(file="./sample_data/answer.csv")
++#     for question_data in all_question_list:
++#         if question_data["id"] == str(question_id):
++#             for answer_data in all_answer_list:
++#                 if answer_data["question_id"] == str(question_id):
++#                     answer.append(answer_data.get("message"))
++#                     vote.append(answer_data.get("vote_number"))
++#                     id_list.append(answer_data.get("id"))
++#                     image.append(answer_data.get("image"))
++#             break
++#     answer_len = len(answer)
++#     pack = list(zip(answer, vote, id_list, image))
++#     return pack, answer_len
++#
++#
++# def prepare_table_to_display(descend=0, sort_value="submission_time"):
++#     data = connection.import_data("./sample_data/question.csv")
++#     data = dictionaries_sort(data, descend, sort_value)
++#     change_date_format(data)
++#     return data, TABLE_HEADERS
++#
++#
++# def switch_value_type(data, type):
++#     for dic in data:
++#         for key, value in dic.items():
++#             if key in SORT_BY_INT:
++#                 dic[key] = type(value)
++#     return data
++#
++#
++# def dictionaries_sort(data, descend, sort_value):
++#     global reverse
++#     reverse = (reverse + int(descend)) % 2
++#     if sort_value in SORT_BY_INT:
++#         data = switch_value_type(data, int)
++#         sorted_data = sorted(data, key=itemgetter(sort_value), reverse=reverse)
++#         return switch_value_type(sorted_data, str)
++#     return sorted(data, key=itemgetter(sort_value), reverse=reverse)
++#
++#
++# def change_date_format(data):
++#     for record in data:
++#         for key, value in record.items():
++#             if key == "submission_time":
++#                 date_time = datetime.datetime.fromtimestamp(int(value))
++#                 record[key] = date_time.strftime('%Y-%m-%d %H:%M:%S')
++#
++#
++# def ID_gen(path="./sample_data/question.csv"):
++#     date = connection.import_data(path)
++#     id_list = []
++#     for dic in date:
++#         id_list.append(int(dic["id"]))
++#     return max(id_list) + 1 if len(id_list) > 0 else 1
++#
++#
++# def get_question_id_by_answer_id(answer_id):
++#     question_id = 0
++#     for item in connection.import_data(file="./sample_data/answer.csv"):
++#         if item["id"] == answer_id:
++#             question_id = item["question_id"]
++#     return question_id
++#
++#
++# def get_max_answer_id():
++#     id_list = []
++#     with open(ANSWER_DATA_PATH, "r") as file:
++#         reader = csv.DictReader(file)
++#         for row in reader:
++#             id_list.append(row['id'])
++#     return max(id_list)
++#
++#
++# def write_answer_to_csv(id, submission_time, vote_number, question_id, message, image):
++#     with open(ANSWER_DATA_PATH, 'a', newline='', encoding="UTF-8") as file:
++#         writer = csv.DictWriter(file, fieldnames=ANSWER_HEADERS)
++#         writer.writerow(
++#             {ANSWER_HEADERS[0]: id,
++#              ANSWER_HEADERS[1]: submission_time,
++#              ANSWER_HEADERS[2]: vote_number,
++#              ANSWER_HEADERS[3]: question_id,
++#              ANSWER_HEADERS[4]: message,
++#              ANSWER_HEADERS[5]: image})
++#
++#
++# def delete_answer_from_csv_by_id(answer_id):
++#     answer_list_after_deletion = []
++#     with open(ANSWER_DATA_PATH, "r") as read_file:
++#         reader = csv.DictReader(read_file)
++#         for row in reader:
++#             if row['id'] != answer_id:
++#                 answer_list_after_deletion.append(row)
++#     with open(ANSWER_DATA_PATH, 'w', encoding="UTF-8", newline='') as write_file:
++#         writer = csv.DictWriter(write_file, fieldnames=ANSWER_HEADERS)
++#         writer.writeheader()
++#         writer.writerows(answer_list_after_deletion)
++#
++#
++# def delete_question(question_id):
++#     que_list = connection.import_data(file="./sample_data/question.csv")
++#     ans_list = connection.import_data(file="./sample_data/answer.csv")
++#     for i in que_list:
++#         if i["id"] == str(question_id):
++#             que_list.remove(i)
++#     connection.export_data("sample_data/question.csv", que_list, QUESTION_HEADERS, "w")
++#     for i in ans_list:
++#         if i["question_id"] == str(question_id):
++#             ans_list.remove(i)
++#     connection.export_data("sample_data/answer.csv", ans_list, ANSWER_HEADERS, "w")
++#
++#
++# def vote_counter(id, value, path="./sample_data/question.csv", key_name="id"):
++#     data = connection.import_data(path)
++#     for dic in data:
++#         if dic[key_name] == id:
++#             if value == "+":
++#                 votes = int(dic["vote_number"]) + 1
++#                 dic["vote_number"] = str(votes)
++#             elif int(dic["vote_number"]) > 0:
++#                 votes = int(dic["vote_number"]) - 1
++#                 dic["vote_number"] = str(votes)
++#     return data
++#
++# def vote_for_answers(answer_id, value, question_id):
++#     ans_list = connection.import_data(file="./sample_data/answer.csv")
++#     for i in ans_list:
++#         if i["id"] == str(answer_id) and i["question_id"] == str(question_id):
++#             if value == "👍":
++#                 votes = int(i["vote_number"]) + 1
++#                 i["vote_number"] = votes
++#             elif value == "👎":
++#                 if int(i["vote_number"]) > 0:
++#                     votes = int(i["vote_number"]) - 1
++#                     i["vote_number"] = votes
++#                 else:
++#                     i["vote_number"] = 0
++#     return ans_list
++#
++#
++# def allowed_image(filename):
++#     if not "." in filename:
++#         return False
++#     ext = filename.rsplit(".", 1)[1]
++#     if ext.upper() in file_extention:
++#         return True
++#     else:
++#         return False
+\ No newline at end of file
+Index: .gitignore
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>__pycache__/\r\n/venv\r\n/.idea/misc.xml\r\n/.idea/modules.xml\r\n/.idea/inspectionProfiles/profiles_settings.xml\r\n/.idea/vcs.xml\r\n/.idea/ask-mate-1-python-SebastianRyndak.iml\r\n/test.py\r\n__pycache__\r\n.idea/ask-mate-2-python-kuba-bogacki.iml
+===================================================================
+diff --git a/.gitignore b/.gitignore
+--- a/.gitignore	
++++ b/.gitignore	
+@@ -6,5 +6,4 @@
+ /.idea/vcs.xml
+ /.idea/ask-mate-1-python-SebastianRyndak.iml
+ /test.py
+-__pycache__
+-.idea/ask-mate-2-python-kuba-bogacki.iml
+\ No newline at end of file
++__pycache__
+\ No newline at end of file
