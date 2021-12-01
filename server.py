@@ -28,8 +28,9 @@ def list_answer_voting(question_id, answer_id, value):
 @app.route("/")
 @app.route("/list")
 def question_list():
-    questions_list, table_headers = data_manager.prepare_table_to_display()
-    return render_template("list.html", questions_list=questions_list, table_headers=table_headers)
+    # questions_list, table_headers = data_manager.prepare_table_to_display()
+    questions_list = data_manager.get_question_bd()
+    return render_template("list.html", questions_list=questions_list, table_headers=data_manager.TABLE_HEADERS)
 
 
 @app.route("/add-question", methods=['GET', 'POST'])

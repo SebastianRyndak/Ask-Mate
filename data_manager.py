@@ -5,7 +5,6 @@ from operator import itemgetter
 import datetime
 import csv
 from psycopg2 import sql
-
 import database_common
 
 ANSWER_DATA_PATH = os.getenv("ANSWER_DATA_PATH") if "ANSWER_DATA_PATH" in os.environ else "sample_data/answer.csv"
@@ -265,3 +264,13 @@ def delete_comment_by_answer_id(cursor, answer_id):
     DELETE FROM comment
     WHERE answer_id = %(answer_id)s""").format(id=sql.Identifier('answer_id'))
     cursor.execute(query, {"answer_id": answer_id})
+
+    
+@database_common.connection_handler
+def get_question_bd(cursor):
+    cursor.execute("""
+        SELECT *
+        FROM question
+        """)
+    return cursor.fetchall()
+
