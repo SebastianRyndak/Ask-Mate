@@ -19,11 +19,6 @@ reverse = 0  # global variable
 
 
 def save_new_answer(message, image, question_id):
-   # if image.filename == "":
-    #    write_answer_to_db(datetime.datetime.now(), 0, question_id, message, "")
-  #  else:
-       # image.save(os.path.join('.\\static\\uploads_pictures_answers', image.filename))
-        # add_new_answer(int(question_id), message, "../static/uploads_pictures_answers/" + image.filename)
         write_answer_to_db(datetime.datetime.now(), 0, question_id, message, image)
 
 
