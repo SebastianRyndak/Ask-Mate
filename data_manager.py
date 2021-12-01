@@ -14,7 +14,7 @@ ANSWER_DATA_PATH = os.getenv("ANSWER_DATA_PATH") if "ANSWER_DATA_PATH" in os.env
 QUESTION_HEADERS = ["id", "submission_time", "view_number", "vote_number", "title", "message", "image"]
 ANSWER_HEADERS = ["id", "submission_time", "vote_number", "question_id", "message", "image"]
 TABLE_HEADERS = {"vote_number": "Votes", "title": "Title", "message": "Message", "submission_time": "Date",
-                 "view_number": "Views"}
+                 "view_number": "Views", "id":""}
 SORT_BY_INT = ["vote_number", "Published on", "view_number"]
 file_extention = ["JPG", "PNG"]
 reverse = 0  # global variable
@@ -163,7 +163,8 @@ def delete_answer_from_comment_by_id(cursor, answer_id):
             DELETE FROM comment
             WHERE answer_id = %(answer_id)s"""
     cursor.execute(query, {'answer_id': answer_id})
-=======
+
+
 def save_new_answer(message, image, question_id):
         write_answer_to_db(datetime.datetime.now(), 0, question_id, message, image)
 
@@ -183,7 +184,6 @@ def get_question_id_by_answer_id_db(cursor, answer_id):
     return real_dict_to_list[0]["question_id"]
 
 
-
 @database_common.connection_handler
 def write_answer_to_db(cursor, submission_time, vote_number, question_id, message, image):
     query = sql.SQL("""
@@ -198,14 +198,12 @@ def write_answer_to_db(cursor, submission_time, vote_number, question_id, messag
                            "question_id": question_id, "message": message, "image": image})
 
 
-
 @database_common.connection_handler
 def delete_answer_from_cvs_by_id_db(cursor, id):
     query = sql.SQL("""
     DELETE FROM answer
     WHERE id = %(id)s""").format(id=sql.Identifier('id'))
     cursor.execute(query, {"id": id})
-
 
 
 def allowed_image(filename):
@@ -242,3 +240,13 @@ def get_question_bd(cursor):
         """)
     return cursor.fetchall()
 
+
+@database_common.connection_handler
+def get_data_to_main_list(cursor):
+    cursor.execute("""
+        SELECT title, message, submission_time,  vote_number, view_number, id
+        FROM question
+        ORDER BY id DESC 
+        LIMIT 5;
+        """)
+    return cursor.fetchall()
