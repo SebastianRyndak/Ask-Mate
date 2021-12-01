@@ -2,41 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e980080a-e612-4768-b6ff-74e4fef8831d" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/ask-mate-2-python-kuba-bogacki.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources/021d5feb-abd0-4f27-a892-32765f318f15.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources/021d5feb-abd0-4f27-a892-32765f318f15/storage_v2/_src_/database/ask_mate.C-nC2w.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources/021d5feb-abd0-4f27-a892-32765f318f15/storage_v2/_src_/database/ask_mate.C-nC2w/schema/information_schema.FNRwLQ.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources/021d5feb-abd0-4f27-a892-32765f318f15/storage_v2/_src_/database/ask_mate.C-nC2w/schema/pg_catalog.0S1ZNQ.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources/021d5feb-abd0-4f27-a892-32765f318f15/storage_v2/_src_/database/ask_mate.C-nC2w/schema/public.abK9xQ.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources/79718fe7-406a-4514-89a5-fd87434a77a9.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources/79718fe7-406a-4514-89a5-fd87434a77a9/storage_v2/_src_/database/ask_mate.C-nC2w.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources/79718fe7-406a-4514-89a5-fd87434a77a9/storage_v2/_src_/database/ask_mate.C-nC2w/schema/information_schema.FNRwLQ.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources/79718fe7-406a-4514-89a5-fd87434a77a9/storage_v2/_src_/database/ask_mate.C-nC2w/schema/pg_catalog.0S1ZNQ.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources/79718fe7-406a-4514-89a5-fd87434a77a9/storage_v2/_src_/database/ask_mate.C-nC2w/schema/public.abK9xQ.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_29_11_2021_21_04_[Changes]/shelved.patch" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_29_11_2021_21_04__Changes_.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_30_11_2021_09_25_[Changes]/shelved.patch" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_30_11_2021_09_25_[Changes]1/shelved.patch" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_30_11_2021_09_25__Changes_.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_30_11_2021_09_25__Changes_1.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/sqldialects.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/database_common.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/edit_answer.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_29_11_2021_21_04__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_29_11_2021_21_04__Changes_.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_30_11_2021_09_25__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_30_11_2021_09_25__Changes_.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_30_11_2021_09_25__Changes_1.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_30_11_2021_09_25__Changes_1.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/data_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/data_manager.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sample_data/askmatepart2-sample-data.sql" beforeDir="false" afterPath="$PROJECT_DIR$/sample_data/askmatepart2-sample-data.sql" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/server.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/base.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/base.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/edit_questions.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/edit_questions.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/add-question.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/add-question.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/edit_questions.html" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/list.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/list.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/new_answer.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/new_answer.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/question.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/question.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -141,7 +116,7 @@
       <updated>1638191280071</updated>
       <workItem from="1638191281772" duration="2288000" />
       <workItem from="1638213380144" duration="8000" />
-      <workItem from="1638213442444" duration="68867000" />
+      <workItem from="1638213442444" duration="77820000" />
     </task>
     <servers />
   </component>
@@ -160,6 +135,6 @@
     </option>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/ask_mate_2_python_kuba_bogacki$ask_mate_2_python_kuba_bogacki.coverage" NAME="ask-mate-2-python-kuba-bogacki Coverage Results" MODIFIED="1638360307757" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/ask_mate_2_python_kuba_bogacki$ask_mate_2_python_kuba_bogacki.coverage" NAME="ask-mate-2-python-kuba-bogacki Coverage Results" MODIFIED="1638369418788" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
