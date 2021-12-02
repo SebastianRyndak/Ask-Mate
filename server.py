@@ -1,7 +1,10 @@
-from flask import Flask, render_template, request, redirect, url_for
-from datetime import datetime
-import time, connection
+import connection
 import os
+import time
+from datetime import datetime
+
+from flask import Flask, render_template, request, redirect
+
 import data_manager
 
 app = Flask(__name__)
@@ -80,15 +83,13 @@ def prepare_sorted_table_to_display(value,descend=1):
 def question(question_id):
     question_data = data_manager.find_title_and_message(int(question_id))
     answer_data = data_manager.find_all_answer_to_question(question_id)
-    answers_number = len(answer_data)
     return render_template('question.html', question_data=question_data, question_id=question_id,
-                           answer_data=answer_data, answers_number=answers_number)
+                           answer_data=answer_data)
 
 
 @app.route('/new_answer/<question_id>')
 def saving_new_answer(question_id):
     question_data = data_manager.get_question_db_by_question_id(int(question_id))
-
     return render_template("new_answer.html", question_data=question_data)
 
 
@@ -97,9 +98,12 @@ def summary_new_answer(question_id):
     question_id = int(question_id)
     if request.method == "POST":
         message = request.form.get("message")
-        image = "None"
-        data_manager.write_answer_to_db(question_id, message, image)
-
+        image = request.files['image']
+        if image.filename != "":
+            if not data_manager.allowed_image(image.filename):
+                return redirect(request.url)
+            image.save(os.path.join(app.config["UPLOAD_PICTURE_ANSWERS"], image.filename))
+        data_manager.write_answer_to_db(question_id, message, "../static/uploads_pictures_answers/"+image.filename)
     return redirect(f'/question/{question_id}')
 
 
@@ -114,15 +118,12 @@ def summary_new_question():
     if request.method == "POST":
         title = request.form.get("title")
         message = request.form.get("question")
-        submission_time = str(datetime.now())[:-7]
-        vote_number = 0
-        view_number = 0
-        image = "None"
-        # image_file = request.files['image']
-        # image = image_file.filename
-        # if image != "":
-        #     image_file.save(os.path.join('E:\\Web and SQL - Python Flask\\ask-mate-2-python-kuba-bogacki\\static\\uploads_pictures_answers', image))
-        data_manager.save_new_question(message, title, vote_number, view_number, submission_time, image)
+        image = request.files['image']
+        if image.filename != "":
+            if not data_manager.allowed_image(image.filename):
+                return redirect(request.url)
+            image.save(os.path.join(app.config["UPLOAD_PICTURE_FOLDER"], image.filename))
+        data_manager.save_new_question(message, title, "../static/uploads_pictures_questions/"+image.filename)
 
     return redirect('/list')
 

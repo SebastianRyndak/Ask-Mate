@@ -6,24 +6,22 @@
 
 {% block content %}
 
-    {% for data in question_data %}
-	<h1>{{ data.title }}</h1><br>
-    <h2>{{ data.message }}</h2><br>
-    <a href="/add_comment_to_answer/{{ question_id }}">Comment Question</a><br><br>
-    <img src="{{ data.image }}" alt="Image" width="200">
-    {% endfor %}
-{#{% if image == "" %}#}
-{#	<h2>{{ question_data.message }}</h2><br>#}
-{#{% else %}#}
-{#    <h2>{{ question_data.message }}<br><br><img src="{{ question_data.image }}" alt="Image" width="200"></h2>#}
-{#{% endif %}#}
-	{% if answers_number == 0 %}
+        <h1>{{ question_data[0].get("title") }}</h1><br>
+        {% if question_data[0].get("image") == "" %}
+	        <h3>{{ question_data[0].get("message") }}</h3><br>
+        {% else %}
+            <h3>{{ question_data[0].get("message") }}<br><br><img src="{{ question_data[0].get("image") }}" alt="Image" width="200"></h3>
+        {% endif %}
+
+
+	{% if answer_data|length == 0 %}
         <h3>Nothing comment yet.</h3>
-	{% elif answers_number == 1 %}
+	{% elif answer_data|length == 1 %}
 	    <h3>{{ answers_number }} answer:</h3>
 	{% else %}
-	    <h2>{{ answers_number }} answers:</h2>
+	    <h3>{{ answers_number }} answers:</h3>
 	{% endif %}
+
 	{% for answer in answer_data %}
     <ul>
 
@@ -48,8 +46,6 @@
     </form>
     <form action="/new_answer/{{ question_id }}"><br>
         <button>Add new answer</button>
-{#        method="post" enctype=multipart/form-data#}
-{#        <input type=submit name="add_na" value="Add"><br>#}
     </form>
     <form action="/edit_question/{{ question_id }}"><br>
         <button>Edit question</button>

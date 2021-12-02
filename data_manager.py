@@ -99,16 +99,14 @@ def save_new_answer(cursor, message, question_id, submission_time, image):
 
 
 @database_common.connection_handler
-def save_new_question(cursor, message, title, submission_time, image):
+def save_new_question(cursor, message, title, image):
     query = """
         INSERT INTO question
         (submission_time, message, image, title)
-        VALUES (%(submission_time)s,
+        VALUES (NOW(),
                 %(message)s, %(image)s,
-                %(title)s;"""
-
-    cursor.execute(query, {'submission_time': submission_time,
-                           'title': title, 'message': message, 'image': image})
+                %(title)s);"""
+    cursor.execute(query, {'title': title, 'message': message, 'image': image})
 
 
 @database_common.connection_handler
