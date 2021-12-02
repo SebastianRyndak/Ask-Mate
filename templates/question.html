@@ -9,6 +9,7 @@
     {% for data in question_data %}
 	<h1>{{ data.title }}</h1><br>
     <h2>{{ data.message }}</h2><br>
+    <a href="/add_comment_to_answer/{{ question_id }}">Comment Question</a><br><br>
     <img src="{{ data.image }}" alt="Image" width="200">
     {% endfor %}
 {#{% if image == "" %}#}
@@ -25,6 +26,7 @@
 	{% endif %}
 	{% for answer in answer_data %}
     <ul>
+
 	    <li>
         <strong>{{ answer.message }}</strong> ----- {{ answer.vote_number }} votes
         <a href="/question/vote/{{ answer.question_id }}/{{ answer.id }}/{{ answer.vote_number + 1 }}">👍</a>
@@ -36,11 +38,13 @@
             <div style="text-align: center"><img src="{{ answer.image }}" alt="Image" width="200" ></div>
             <a href="/answer/{{ answer.id }}/delete/{{ answer.question_id }}">Delete answer</a>
         {% endif %}
-            <a href="/edit_answer/{{ answer.id }}">Edit answer</a>
+            <a href="/edit_answer/{{ answer.id }}">Edit answer</a><br>
+        <a href="/add_comment_to_answer/{{ question_id }}/{{ answer.id }}">Comment Answer</a>
     </ul>
 	{% endfor %}
+
   	<form action="/question/{{ question_id }}/delete" method="POST"><br>
-        <input type="submit" name="delete_button" value="Delete question">
+        <input type="submit" name="delete_button" value="Delete question"><br>
     </form>
     <form action="/new_answer/{{ question_id }}"><br>
         <button>Add new answer</button>
