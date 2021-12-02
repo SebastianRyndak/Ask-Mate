@@ -12,11 +12,14 @@ app.config["UPLOAD_PICTURE_ANSWERS"] = pictures_answers
 app.config["ALLOWED_IMAGE_EXTENSIONS"] = ["JPG", "PNG"]
 
 
-# @app.route("/vote/<id>/<value>")
-# def list_voting(id, value):
-#     data = data_manager.vote_counter(id, value)
-#     connection.export_data("./sample_data/question.csv", data, data_manager.QUESTION_HEADERS, "w")
-#     return redirect("/")
+@app.route("/vote/<id>/<value>")
+def list_voting(id, value):
+    if value == "+":
+        data_manager.add_vote_counter(id)
+    elif value == "-":
+        data_manager.substract_vote_counter(id)
+    return redirect("/")
+
 
 
 # @app.route("/question/vote/<question_id>/<answer_id>/<vote_number>")
@@ -35,7 +38,6 @@ def main():
 
 @app.route("/list")
 def question_list():
-    # questions_list, table_headers = data_manager.prepare_table_to_display()
     questions_list = data_manager.get_question_bd()
     
     return render_template("list.html", questions_list=questions_list, table_headers=data_manager.TABLE_HEADERS)
@@ -73,8 +75,9 @@ def add_information_about_question():
 
 
 @app.route("/<value>/<descend>")
-def prepare_sorted_table_to_display(descend, value):
-    questions_list, table_headers = data_manager.prepare_table_to_display(int(descend), value)
+def prepare_sorted_table_to_display(value,descend=1):
+    questions_list = data_manager.sort_questions_by_column(value)
+    table_headers = data_manager.TABLE_HEADERS
     return render_template("list.html", questions_list=questions_list, table_headers=table_headers)
 
 
@@ -223,7 +226,6 @@ def get_search():
 # def after_edit_comment(comment_id, question_id):
 #
 #     return redirect(f'/question/{question_id}')
-
 
 
 if __name__ == "__main__":
