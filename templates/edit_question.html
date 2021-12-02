@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block page_title %}
+    Edit question
+{% endblock %}
+
+{% block content %}
+
+<h1>Edit Question</h1>
+    {% for data in question_data %}
+    <form action="/edit_question/{{ question_id }}/edited_question" method="POST">
+        <label for="title">Title:</label><br>
+        <input id="title" type="text" name="title" value="{{ data.title }}"><br><br>
+        <label for="question">Your question:</label><br>
+        <textarea id="question" name="question" rows="10" cols="75" >{{ data.message }}</textarea><br><br>
+
+    {#  <div style="text-align: center"><img src="/{{ image }}" alt="Image" width="200" ></div>#}
+    {##}
+    {#  <label for="image">New Image:</label><br>#}
+    {#  <input type="file" name="image" class="custom-file-input"><br><br>#}
+
+        <button type="submit">Submit</button>
+    </form>
+    {% endfor %}
+
+   <a href="/list">Back to List </a>
+
+{% endblock %}

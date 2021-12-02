@@ -99,14 +99,40 @@ def save_new_answer(cursor, message, question_id, vote_number, submission_time, 
 
 
 @database_common.connection_handler
-def save_new_question(cursor, message, vote_number, submission_time, image, title, view_number):
+def save_new_question(cursor, message, title, vote_number, view_number, submission_time, image):
     query = """
         INSERT INTO question
         (submission_time, vote_number, message, image, title, view_number)
-        VALUES (%(submission_time)s, %(vote_number)s, %(message)s, %(image)s, %(title)s, %(view_number)s);"""
+        VALUES (%(submission_time)s, %(vote_number)s,
+                %(message)s, %(image)s,
+                %(title)s, %(view_number)s);"""
 
     cursor.execute(query, {'submission_time': submission_time, 'vote_number': vote_number,
-                           'view_number': view_number, 'message': message, 'image': image, 'title': title})
+                           'title': title, 'message': message, 'image': image, 'view_number': view_number})
+
+
+@database_common.connection_handler
+def save_edited_question(cursor, message, submission_time, image, title, view_number, vote_number, question_id):
+    query = sql.SQL("""
+        UPDATE question
+        SET submission_time = %(submission_time)s,
+            message = %(message)s,
+            image = %(image)s,
+            title = %(title)s,
+            view_number = %(view_number)s,
+            vote_number = %(vote_number)s
+        WHERE id = %(question_id)""").format(
+        submission_time=sql.Identifier('submission_time'),
+        message=sql.Identifier('message'),
+        image=sql.Identifier('image'),
+        title=sql.Identifier('title'),
+        view_number=sql.Identifier('view_number'),
+        vote_number=sql.Identifier('vote_number'),
+        id=sql.Identifier('id')
+    )
+    cursor.execute(query, {'submission_time': submission_time, 'message': message,
+                           'image': image, 'title': title, 'question_id': question_id,
+                           'view_number': view_number, 'vote_number': vote_number})
 
 
 @database_common.connection_handler

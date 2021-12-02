@@ -114,30 +114,56 @@ def summary_new_answer(question_id):
     return redirect(f'/question/{question_id}')
 
 
-# @app.route('/edit_question/<question_id>')
-# def saving_edit_question(question_id):
-#     question_data = data_manager.get_question_db_by_question_id(int(question_id) - 1)
-#
-#     return render_template("edit_question.html", question_data=question_data)
-#
-#
-# @app.route('/edit_question/<question_id>/edit_question', methods=["POST"])
-# def summary_new_question(question_id):
-#     question_id = int(question_id) - 1
-#     if request.method == "POST":
-#         message = request.form.get("message")
-#         title = request.form.get("title")
-#         submission_time = str(datetime.now())[:-7]
-#         view_number = 0
-#         vote_number = 0
-#         image = "None"
-#         # image_file = request.files['image']
-#         # image = image_file.filename
-#         # if image != "":
-#         #     image_file.save(os.path.join('E:\\Web and SQL - Python Flask\\ask-mate-2-python-kuba-bogacki\\static\\uploads_pictures_answers', image))
-#         data_manager.save_new_question(message, vote_number, submission_time, image, title, view_number)
-#
-#     return redirect(f'/question/{question_id}')
+@app.route('/new_question')
+def add_new_question():
+
+    return render_template("add-question.html")
+
+
+@app.route('/new_question/add_new_question', methods=["POST"])
+def summary_new_question():
+    if request.method == "POST":
+        title = request.form.get("title")
+        message = request.form.get("question")
+        submission_time = str(datetime.now())[:-7]
+        vote_number = 0
+        view_number = 0
+        image = "None"
+        # image_file = request.files['image']
+        # image = image_file.filename
+        # if image != "":
+        #     image_file.save(os.path.join('E:\\Web and SQL - Python Flask\\ask-mate-2-python-kuba-bogacki\\static\\uploads_pictures_answers', image))
+        data_manager.save_new_question(message, title, vote_number, view_number, submission_time, image)
+
+    return redirect('/list')
+
+
+@app.route('/edit_question/<question_id>')
+def saving_edit_question(question_id):
+    question_data = data_manager.get_question_db_by_question_id(int(question_id) - 1)
+    print(question_id)
+
+    return render_template("edit_question.html", question_data=question_data, question_id=question_id)
+
+
+@app.route('/edit_question/<question_id>/edited_question', methods=["POST"])
+def summary_edited_question(question_id):
+    if request.method == "POST":
+        question_id = int(question_id) + 1
+        title = request.form.get("title")
+        message = request.form.get("question")
+        submission_time = str(datetime.now())[:-7]
+        image = "None"
+        vote_number = 0
+        view_number = 0
+        print(question_id, title, message, submission_time, image, vote_number, view_number)
+        # image_file = request.files['image']
+        # image = image_file.filename
+        # if image != "":
+        #     image_file.save(os.path.join('E:\\Web and SQL - Python Flask\\ask-mate-2-python-kuba-bogacki\\static\\uploads_pictures_answers', image))
+        data_manager.save_edited_question(question_id, title, message, submission_time, image, vote_number, view_number)
+
+    return redirect(f'/question/{question_id}')
 
 
 @app.route("/answer/<answer_id>/delete/<question_id>", methods=["POST", "GET"])
