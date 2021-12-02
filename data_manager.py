@@ -17,7 +17,7 @@ TABLE_HEADERS = {"vote_number": "Votes", "title": "Title", "message": "Message",
                  "view_number": "Views", "id":""}
 SORT_BY_INT = ["vote_number", "Published on", "view_number"]
 file_extention = ["JPG", "PNG"]
-reverse = 0  # global variable
+reverse = 0
 
 
 @database_common.connection_handler
@@ -269,6 +269,15 @@ def get_question_bd(cursor):
         """)
     return cursor.fetchall()
 
+
+@database_common.connection_handler
+def add_comment(cursor, message, question_id, answer_id):
+    query = """
+            INSERT INTO comment (question_id, answer_id, message, submission_time, edited_count) 
+            VALUES (%(question_id)s, %(answer_id)s, %(message)s, NOW(), 0)
+    """
+    arguments = {'message': message, 'question_id': question_id, 'answer_id': answer_id}
+    cursor.execute(query, arguments)
 
 @database_common.connection_handler
 def get_data_to_main_list(cursor):

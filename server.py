@@ -12,21 +12,6 @@ app.config["UPLOAD_PICTURE_ANSWERS"] = pictures_answers
 app.config["ALLOWED_IMAGE_EXTENSIONS"] = ["JPG", "PNG"]
 
 
-# @app.route("/vote/<id>/<value>")
-# def list_voting(id, value):
-#     data = data_manager.vote_counter(id, value)
-#     connection.export_data("./sample_data/question.csv", data, data_manager.QUESTION_HEADERS, "w")
-#     return redirect("/")
-
-
-# @app.route("/question/vote/<question_id>/<answer_id>/<vote_number>")
-# def list_answer_voting(question_id, answer_id, vote_number):
-#     print(vote_number)
-#     print(answer_id)
-#     data_manager.vote_for_answers(answer_id, vote_number, question_id)
-#     # connection.export_data("sample_data/answer.csv", ans_list, data_manager.ANSWER_HEADERS, "w")
-#     return redirect(f"/question/{question_id}")
-
 @app.route("/")
 def main():
     questions = data_manager.get_data_to_main_list()
@@ -35,17 +20,9 @@ def main():
 
 @app.route("/list")
 def question_list():
-    # questions_list, table_headers = data_manager.prepare_table_to_display()
     questions_list = data_manager.get_question_bd()
     
     return render_template("list.html", questions_list=questions_list, table_headers=data_manager.TABLE_HEADERS)
-
-
-
-# @app.route("/<value>/<descend>")
-# def prepare_sorted_table_to_display(descend, value):
-#     questions_list, table_headers = data_manager.prepare_table_to_display(int(descend), value)
-#     return render_template("list.html", questions_list=questions_list, table_headers=table_headers)
 
 
 @app.route("/add-question", methods=['GET', 'POST'])
@@ -78,14 +55,12 @@ def prepare_sorted_table_to_display(descend, value):
     return render_template("list.html", questions_list=questions_list, table_headers=table_headers)
 
 
-# Witold
 @app.route('/question')
-@app.route('/question/<question_id>')
+@app.route('/question/<int:question_id>')
 def question(question_id):
     question_data = data_manager.find_title_and_message(int(question_id))
     answer_data = data_manager.find_all_answer_to_question(question_id)
     answers_number = len(answer_data)
-
     return render_template('question.html', question_data=question_data, question_id=question_id,
                            answer_data=answer_data, answers_number=answers_number)
 
@@ -99,16 +74,12 @@ def saving_new_answer(question_id):
 
 @app.route('/new_answer/<question_id>/new-answer', methods=["POST"])
 def summary_new_answer(question_id):
-    question_id = int(question_id) - 1
+    question_id = int(question_id)
     if request.method == "POST":
         message = request.form.get("message")
         submission_time = str(datetime.now())[:-7]
         vote_number = 0
         image = "None"
-        # image_file = request.files['image']
-        # image = image_file.filename
-        # if image != "":
-        #     image_file.save(os.path.join('E:\\Web and SQL - Python Flask\\ask-mate-2-python-kuba-bogacki\\static\\uploads_pictures_answers', image))
         data_manager.save_new_answer(message, question_id, vote_number, submission_time, image)
 
     return redirect(f'/question/{question_id}')
@@ -197,8 +168,16 @@ def after_edit_answer(answer_id, question_id):
     if request.method == "POST":
         edited_answer = request.form.get('new-answer')
         data_manager.edit_answer(answer_id, edited_answer)
-
     return redirect(f'/question/{question_id}')
+
+
+@app.route("/add_comment_to_answer/<question_id>/<answer_id>", methods=["POST", "GET"])
+def comment_answer(question_id, answer_id):
+    if request.method == "POST":
+        comment = request.form["comment"]
+        data_manager.add_comment(comment,question_id, answer_id)
+        return redirect(f"/question/{question_id}")
+    return render_template("Comment_Answer.html", question_id=question_id, answer_id=answer_id)
 
 
 @app.route('/search')
@@ -210,20 +189,13 @@ def get_search():
     return render_template("search.html", questions=questions, answers=answers, searching_phrase=searching_phrase, comments=comments)
 
 
-
-
-# @app.route('/comment/<comment_id>')
-# def edit_comment(comment_id):
-#     data_manager.
-#
-#     return render_template('comment.html', comment_id=comment_id)
-#
-#
-# @app.route('/comment/<comment_id>/edit/<question_id>', methods=["POST"])
-# def after_edit_comment(comment_id, question_id):
-#
-#     return redirect(f'/question/{question_id}')
-
+@app.route("/add_comment_to_answer/<question_id>", methods=["POST", "GET"])
+def comment_questions(question_id):
+    if request.method == "POST":
+        comment = request.form["comment"]
+        data_manager.add_comment(comment,question_id, None)
+        return redirect(f"/question/{question_id}")
+    return render_template("Comment_questions.html", question_id=question_id)
 
 
 if __name__ == "__main__":
