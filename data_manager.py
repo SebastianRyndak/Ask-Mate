@@ -62,6 +62,7 @@ def return_question_id_and_message(cursor, answer_id):
     cursor.execute(query, {'answer_id': answer_id})
     return cursor.fetchall()
 
+
 @database_common.connection_handler
 def find_title_and_message(cursor, question_id):
     query = sql.SQL("""
@@ -74,6 +75,7 @@ def find_title_and_message(cursor, question_id):
     cursor.execute(query, {'question_id': question_id})
     return cursor.fetchall()
 
+
 @database_common.connection_handler
 def get_question_db_by_question_id(cursor, question_id):
     query = """
@@ -83,6 +85,7 @@ def get_question_db_by_question_id(cursor, question_id):
         """
     cursor.execute(query, {'question_id': question_id})
     return cursor.fetchall()
+
 
 @database_common.connection_handler
 def save_new_answer(cursor, message, question_id, vote_number, submission_time, image):
@@ -249,4 +252,43 @@ def get_data_to_main_list(cursor):
         ORDER BY id DESC 
         LIMIT 5;
         """)
+    return cursor.fetchall()
+
+
+@database_common.connection_handler
+def search_user_phrase_question(cursor, searching_phrase):
+    query = """
+        SELECT title, message, submission_time, id
+        FROM question
+        WHERE title LIKE %(searching_phrase)s or
+        message LIKE %(searching_phrase)s 
+        ORDER BY id DESC ;
+        """
+    cursor.execute(query, {"searching_phrase": f"%{searching_phrase}%"})
+    return cursor.fetchall()
+
+
+@database_common.connection_handler
+def search_user_phrase_answer(cursor, searching_phrase):
+    query = ("""
+        SELECT message, submission_time, question_id
+        FROM answer
+        WHERE message LIKE %(searching_phrase)s
+        ORDER BY id DESC;
+        """)
+
+    cursor.execute(query, {"searching_phrase": f"%{searching_phrase}%"})
+    return cursor.fetchall()
+
+
+@database_common.connection_handler
+def search_user_phrase_comment(cursor, searching_phrase):
+    query = ("""
+        SELECT message, submission_time, question_id
+        FROM comment
+        WHERE message LIKE %(searching_phrase)s
+        ORDER BY id DESC;
+        """)
+
+    cursor.execute(query, {"searching_phrase": f"%{searching_phrase}%"})
     return cursor.fetchall()

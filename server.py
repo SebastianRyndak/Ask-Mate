@@ -175,6 +175,17 @@ def after_edit_answer(answer_id, question_id):
     return redirect(f'/question/{question_id}')
 
 
+@app.route('/search')
+def get_search():
+    searching_phrase = request.args.get("q")
+    questions = data_manager.search_user_phrase_question(searching_phrase)
+    answers = data_manager.search_user_phrase_answer(searching_phrase)
+    comments = data_manager.search_user_phrase_comment(searching_phrase)
+    return render_template("search.html", questions=questions, answers=answers, searching_phrase=searching_phrase, comments=comments)
+
+
+
+
 # @app.route('/comment/<comment_id>')
 # def edit_comment(comment_id):
 #     data_manager.
