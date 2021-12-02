@@ -1,17 +1,18 @@
 {% extends "layout.html" %}
 
 {% block page_title %}
-    Edit answer
+    Edit comment
 {% endblock %}
 
 {% block content %}
 
     {% for data in comment_data %}
-    <form action="/edit_comment/{{ answer_id }}/edit/{{ data.question_id }}" method="POST">
-        <label for="new-answer-input">Edit answer:</label>
-        <textarea id="new-answer-input" name="new-answer" rows="4" cols="50">{{ data.message }}</textarea>
+    <form action="/edit_comment/{{ data.id }}/{{ data.question_id }}/{{ data.edited_count }}/edit" method="POST">
+        <label for="new-comment-input">Edit comment:</label>
+        <textarea id="new-comment-input" name="message" rows="4" cols="50">{{ data.message }}</textarea>
         <button type="submit">Submit</button>
     </form>
+        <p>Edited {{ edited_count }} times</p>
     {% endfor %}
 
 {% endblock %}
