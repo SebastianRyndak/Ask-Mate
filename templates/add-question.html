@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-    <form action="/new_question/add_new_question" method="POST">
+    <form action="/new_question/add_new_question" method="POST" enctype=multipart/form-data>
         <label for="title">Title:</label><br>
         <input id="title" type="text" name="title" placeholder="Title..."><br><br>
 

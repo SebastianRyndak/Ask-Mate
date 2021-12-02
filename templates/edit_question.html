@@ -14,11 +14,9 @@
         <input id="title" type="text" name="title" value="{{ data.title }}"><br><br>
         <label for="question">Your question:</label><br>
         <textarea id="question" name="question" rows="10" cols="75" >{{ data.message }}</textarea><br><br>
-
-    {#  <div style="text-align: center"><img src="/{{ image }}" alt="Image" width="200" ></div>#}
-    {##}
-    {#  <label for="image">New Image:</label><br>#}
-    {#  <input type="file" name="image" class="custom-file-input"><br><br>#}
+        <div style="text-align: center"><img src="/{{ data.image }}" alt="Image" width="200" ></div>
+        <label for="image">New Image:</label><br>
+        <input type="file" name="image" class="custom-file-input"><br><br>
 
         <button type="submit">Submit</button>
     </form>

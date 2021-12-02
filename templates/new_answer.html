@@ -8,12 +8,12 @@
 <h1>Answer the question</h1>
     {% for data in question_data %}
     <h3>Question: {{ data.title }}</h3>
+    <form action="/new_answer/{{ data.id }}/new-answer" method="POST" enctype=multipart/form-data>
     {% endfor %}
-    <form action="/new_answer/{{ question_id }}/new-answer" method="POST">
         <label for="new-answer-input">Your answer:</label>
         <textarea id="new-answer-input" name="message" rows="4" cols="50" placeholder="Your answer..."></textarea>
-{#        <label for="image">Add Image:</label><br>#}
-{#        <input type="file" id="image" name="image" class="custom-file-input"><br><br>#}
+        <label for="image">Add Image:</label><br>
+        <input type="file" id="image" name="image" class="custom-file-input"><br><br>
         <button type="submit">Submit</button>
     </form>
 

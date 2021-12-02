@@ -17,7 +17,7 @@ TABLE_HEADERS = {"vote_number": "Votes", "title": "Title", "message": "Message",
                  "view_number": "Views", "id":""}
 SORT_BY_INT = ["vote_number", "Published on", "view_number"]
 file_extention = ["JPG", "PNG"]
-reverse = 0  # global variable
+reverse = 0
 
 
 @database_common.connection_handler
@@ -88,31 +88,29 @@ def get_question_db_by_question_id(cursor, question_id):
 
 
 @database_common.connection_handler
-def save_new_answer(cursor, message, question_id, vote_number, submission_time, image):
+def save_new_answer(cursor, message, question_id, submission_time, image):
     query = """
         INSERT INTO answer
         (submission_time, vote_number, question_id, message, image)
-        VALUES (%(submission_time)s, %(vote_number)s, %(question_id)s, %(message)s, %(image)s);"""
+        VALUES (%(submission_time)s, %(question_id)s, %(message)s, %(image)s);"""
 
-    cursor.execute(query, {'submission_time': submission_time, 'vote_number': vote_number,
+    cursor.execute(query, {'submission_time': submission_time,
                            'question_id': question_id, 'message': message, 'image': image})
 
 
 @database_common.connection_handler
-def save_new_question(cursor, message, title, vote_number, view_number, submission_time, image):
+def save_new_question(cursor, message, title, image):
     query = """
         INSERT INTO question
-        (submission_time, vote_number, message, image, title, view_number)
-        VALUES (%(submission_time)s, %(vote_number)s,
+        (submission_time, message, image, title)
+        VALUES (NOW(),
                 %(message)s, %(image)s,
-                %(title)s, %(view_number)s);"""
-
-    cursor.execute(query, {'submission_time': submission_time, 'vote_number': vote_number,
-                           'title': title, 'message': message, 'image': image, 'view_number': view_number})
+                %(title)s);"""
+    cursor.execute(query, {'title': title, 'message': message, 'image': image})
 
 
 @database_common.connection_handler
-def save_edited_question(cursor, message, image, title, question_id):
+def save_edited_question(cursor, title, message, image, question_id):
     query = sql.SQL("""
         UPDATE question
         SET message = %(message)s,
@@ -203,17 +201,12 @@ def get_question_id_by_answer_id_db(cursor, answer_id):
 
 
 @database_common.connection_handler
-def write_answer_to_db(cursor, submission_time, vote_number, question_id, message, image):
-    query = sql.SQL("""
-    INSERT INTO answer (submission_time, vote_number, question_id, message, image) 
-    VALUES (%(submission_time)s,%(vote_number)s,%(question_id)s,%(message)s,%(image)s)
-    """).format(submission_time=sql.Identifier('submission_time'),
-                vote_number=sql.Identifier('vote_number'),
-                question_id=sql.Identifier('question_id'),
-                message=sql.Identifier('message'),
-                image=sql.Identifier('image'))
-    cursor.execute(query, {'submission_time': submission_time, 'vote_number': vote_number,
-                           "question_id": question_id, "message": message, "image": image})
+def write_answer_to_db(cursor, question_id, message, image):
+    query = """
+    INSERT INTO answer (submission_time, question_id, message, image) 
+    VALUES (NOW(),%(question_id)s,%(message)s,%(image)s)
+    """
+    cursor.execute(query, {"question_id": question_id, "message": message, "image": image})
 
 
 @database_common.connection_handler
@@ -290,13 +283,25 @@ def get_comment_data_by_answer_id(cursor, answer_id):
     cursor.execute(query, {'answer_id': answer_id})
     return cursor.fetchall()
 
+
+@database_common.connection_handler
 def get_question_bd(cursor):
     cursor.execute("""
         SELECT *
         FROM question
+        ORDER BY submission_time DESC 
         """)
     return cursor.fetchall()
 
+
+@database_common.connection_handler
+def add_comment(cursor, message, question_id, answer_id):
+    query = """
+            INSERT INTO comment (question_id, answer_id, message, submission_time) 
+            VALUES (%(question_id)s, %(answer_id)s, %(message)s, NOW())
+    """
+    arguments = {'message': message, 'question_id': question_id, 'answer_id': answer_id}
+    cursor.execute(query, arguments)
 
 @database_common.connection_handler
 def add_vote_counter(cursor,id):
@@ -326,6 +331,7 @@ def sort_questions_by_column(cursor, column):
     return cursor.fetchall()
 
 
+@database_common.connection_handler
 def get_data_to_main_list(cursor):
     cursor.execute("""
         SELECT title, message, submission_time,  vote_number, view_number, id
