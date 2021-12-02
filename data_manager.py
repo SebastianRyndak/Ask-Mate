@@ -112,33 +112,22 @@ def save_new_question(cursor, message, title, vote_number, view_number, submissi
 
 
 @database_common.connection_handler
-def save_edited_question(cursor, message, submission_time, image, title, view_number, vote_number, question_id):
+def save_edited_question(cursor, message, image, title, question_id):
     query = sql.SQL("""
         UPDATE question
-        SET submission_time = %(submission_time)s,
-            message = %(message)s,
+        SET message = %(message)s,
             image = %(image)s,
-            title = %(title)s,
-            view_number = %(view_number)s,
-            vote_number = %(vote_number)s
-        WHERE id = %(question_id)""").format(
-        submission_time=sql.Identifier('submission_time'),
-        message=sql.Identifier('message'),
-        image=sql.Identifier('image'),
-        title=sql.Identifier('title'),
-        view_number=sql.Identifier('view_number'),
-        vote_number=sql.Identifier('vote_number'),
-        id=sql.Identifier('id')
+            title = %(title)s
+        WHERE id = %(question_id)s""").format(
+        question_id=sql.Identifier('question_id')
     )
-    cursor.execute(query, {'submission_time': submission_time, 'message': message,
-                           'image': image, 'title': title, 'question_id': question_id,
-                           'view_number': view_number, 'vote_number': vote_number})
+    cursor.execute(query, {'image': image, 'title': title, 'question_id': question_id, 'message': message})
 
 
 @database_common.connection_handler
 def find_all_answer_to_question(cursor, question_id):
     query = sql.SQL("""
-        SELECT message, question_id, vote_number, image, id
+        SELECT *
         FROM answer
         WHERE question_id = %(question_id)s""").format(
         question_id=sql.Identifier('question_id')
@@ -181,16 +170,16 @@ def delete_answers_from_question_tag(cursor, question_id):
 @database_common.connection_handler
 def delete_answer_from_db_by_id(cursor, answer_id):
     query = """
-            DELETE FROM answer
-            WHERE id = %(answer_id)s"""
+        DELETE FROM answer
+        WHERE id = %(answer_id)s"""
     cursor.execute(query, {'answer_id': answer_id})
 
 
 @database_common.connection_handler
 def delete_answer_from_comment_by_id(cursor, answer_id):
     query = """
-            DELETE FROM comment
-            WHERE answer_id = %(answer_id)s"""
+        DELETE FROM comment
+        WHERE answer_id = %(answer_id)s"""
     cursor.execute(query, {'answer_id': answer_id})
 
 
@@ -262,6 +251,45 @@ def delete_comment_by_answer_id(cursor, answer_id):
 
     
 @database_common.connection_handler
+def get_comment_data_by_comment_id(cursor, comment_id):
+    query = """
+        SELECT * FROM comment
+        WHERE id = %(comment_id)"""
+    cursor.execute(query, {'comment_id': comment_id})
+    return cursor.fetchall()
+
+
+@database_common.connection_handler
+def edit_comment_by_comment_id(cursor, comment_id, edited_count, submission_time, message):
+    query = """
+        UPDATE comment
+        SET edited_count = %(edited_count)s,
+            submission_time = %(submission_time)s,
+            message = %(message)s
+        WHERE id = %(comment_id)s"""
+    cursor.execute(query, {'edited_count': edited_count, 'submission_time': submission_time,
+                           'message': message, 'comment_id': comment_id})
+
+
+@database_common.connection_handler
+def get_comment_data_by_question_id(cursor, question_id):
+    query = """
+        SELECT * 
+        FROM comment
+        WHERE question_id = %(question_id)s"""
+    cursor.execute(query, {'question_id': question_id})
+    return cursor.fetchall()
+
+
+@database_common.connection_handler
+def get_comment_data_by_answer_id(cursor, answer_id):
+    query = """
+        SELECT * 
+        FROM comment
+        WHERE answer_id = %(answer_id)s"""
+    cursor.execute(query, {'answer_id': answer_id})
+    return cursor.fetchall()
+
 def get_question_bd(cursor):
     cursor.execute("""
         SELECT *

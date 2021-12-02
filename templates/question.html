@@ -7,10 +7,21 @@
 {% block content %}
 
     {% for data in question_data %}
+<<<<<<< HEAD
 	<h1>{{ data.title }}</h1><br>
     <h2>{{ data.message }}</h2><br>
     <a href="/add_comment_to_answer/{{ question_id }}">Comment Question</a><br><br>
     <img src="{{ data.image }}" alt="Image" width="200">
+=======
+	    <h1>{{ data.title }}</h1><br>
+        <h4>{{ data.message }}</h4><br>
+        <img src="{{ data.image }}" alt="Image" width="200">
+    {% endfor %}
+    {% for data in comment_to_question_data %}
+        <ul>
+            <li>{{ data.message }}</li>
+        </ul>
+>>>>>>> kuba-bogacki
     {% endfor %}
 {#{% if image == "" %}#}
 {#	<h2>{{ question_data.message }}</h2><br>#}
@@ -25,6 +36,7 @@
 	    <h2>{{ answers_number }} answers:</h2>
 	{% endif %}
 	{% for answer in answer_data %}
+<<<<<<< HEAD
     <ul>
 
 	    <li>
@@ -55,6 +67,66 @@
         <button>Edit question</button>
     </form>
 
+=======
+    <table>
+{#    <ul>#}
+{#	    <li>#}
+        <thead>
+            <tr>
+                <th><strong>{{ answer.message }}</strong></th>
+                <th>{{ answer.vote_number }} votes</th>
+                <th>
+                <a href="/question/vote/{{ answer.question_id }}/{{ answer.id }}/{{ answer.vote_number + 1 }}">👍</a>
+                <a href="/question/vote/{{ answer.question_id }}/{{ answer.id }}/{{ answer.vote_number - 1 }}">👎</a>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+            {% if answer.image == "" %}
+                <a href="/answer/{{ answer.id }}/delete/{{ answer.question_id }}">Delete answer </a>
+            {% else %}
+                <div style="text-align: center"><img src="{{ answer.image }}" alt="Image" width="200" ></div>
+                <a href="/answer/{{ answer.id }}/delete/{{ answer.question_id }}">Delete answer </a>
+            {% endif %}
+                <a href="/edit_answer/{{ answer.id }}">Edit answer</a>
+                </td>
+            </tr>
+            <tr>
+                {% for data in comment_to_answer_data %}
+                <td>{{ data.message }}</td>
+                {% endfor %}
+            </tr>
+        </tbody>
+{#        </li>#}
+{#    </ul>#}
+    </table>
+	{% endfor %}
+    <table>
+        <thead>
+            <tr>
+                <th>
+                <form action="/question/{{ question_id }}/delete" method="POST"><br>
+                    <input type="submit" name="delete_button" value="Delete question">
+                </form>
+                </th>
+                <th>
+                <form action="/new_answer/{{ question_id }}"><br>
+                    <button>Add new answer</button>
+            {#        method="post" enctype=multipart/form-data#}
+            {#        <input type=submit name="add_na" value="Add"><br>#}
+                </form>
+                </th>
+                <th>
+                <form action="/edit_question/{{ question_id }}"><br>
+                    <button>Edit question</button>
+                </form>
+                </th>
+            </tr>
+        </thead>
+    </table>
+>>>>>>> kuba-bogacki
     <a href="/">Back to main page</a>
 
 {% endblock %}

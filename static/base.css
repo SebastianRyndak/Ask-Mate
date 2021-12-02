@@ -1,4 +1,64 @@
+
 body {
-    background-color: khaki;
+    background-image: url("https://kc.localacura.com/wp-content/uploads/2018/03/question-background-v1a-1.png");
+    height: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+a:link {
+    text-decoration: none;
+}
+
+#header-title {
+    color: steelblue;
+}
+
+table, th, td {
+    background-color: snow;
+    border-radius: 10px;
+    border-style: inset;
+}
+
+input, textarea {
+    border: black, 2pt palegreen;
+    border-radius: 4pt;
+    padding: 4pt 12pt;
+}
+
+button {
+    border: black, 2pt palegreen;
+    border-radius: 4pt;
     color: black;
+    padding: 4pt 12pt;
+    text-decoration: none;
+    margin: 2pt 2pt;
+    cursor: pointer;
+}
+
+footer {
+    height: 36pt;
+    position: fixed;
+    padding: 6pt;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: darkkhaki;
+    color: black;
+    text-align: center;
+}
+
+h1, h2, h3, table, form, div {
+   font-family: 'Consolas', 'Monaco', 'Bitstream Vera Sans Mono', monospace;
+    color: rgba(33,33,33,0.94);
+}
+
+a {
+   font-family: 'Consolas', 'Monaco', 'Bitstream Vera Sans Mono', monospace;
+    color: black;
+}
+
+.content-wrapper {
+    padding: 10%;
 }
