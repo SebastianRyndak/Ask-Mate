@@ -260,3 +260,20 @@ def substract_vote_counter(cursor,id):
         SET vote_number = vote_number - 1
         WHERE id = %(id)s""").format(id=sql.Identifier("id"))
     cursor.execute(query, {"id": id})
+
+
+@database_common.connection_handler
+def sort_questions_by_column(cursor, column):
+    query = sql.SQL("""
+    SELECT id, submission_time,view_number,vote_number,title,message,image
+     FROM question
+    ORDER BY %s::text""")
+    print(column)
+    cursor.execute(query, (column,))
+    return cursor.fetchall()
+
+
+print(sort_questions_by_column('submission_time'))
+print(sort_questions_by_column('id'))
+print(sort_questions_by_column('view_number'))
+print(sort_questions_by_column('vote_number'))

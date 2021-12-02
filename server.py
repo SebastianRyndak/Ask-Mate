@@ -35,7 +35,6 @@ def list_voting(id, value):
 @app.route("/")
 @app.route("/list")
 def question_list():
-    # questions_list, table_headers = data_manager.prepare_table_to_display()
     questions_list = data_manager.get_question_bd()
     
     return render_template("list.html", questions_list=questions_list, table_headers=data_manager.TABLE_HEADERS)
@@ -73,8 +72,9 @@ def add_information_about_question():
 
 
 @app.route("/<value>/<descend>")
-def prepare_sorted_table_to_display(descend, value):
-    questions_list, table_headers = data_manager.prepare_table_to_display(int(descend), value)
+def prepare_sorted_table_to_display(value,descend=1):
+    questions_list = data_manager.sort_questions_by_column(value)
+    table_headers = data_manager.TABLE_HEADERS
     return render_template("list.html", questions_list=questions_list, table_headers=table_headers)
 
 
@@ -186,7 +186,6 @@ def after_edit_answer(answer_id, question_id):
 # def after_edit_comment(comment_id, question_id):
 #
 #     return redirect(f'/question/{question_id}')
-
 
 
 if __name__ == "__main__":
