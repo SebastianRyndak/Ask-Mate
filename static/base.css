@@ -21,6 +21,14 @@ table, th, td {
     border-style: inset;
 }
 
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin-left: fill;
+    margin-right: auto;
+}
+
 input, textarea {
     border: black, 2pt palegreen;
     border-radius: 4pt;
