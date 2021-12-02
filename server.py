@@ -27,9 +27,12 @@ app.config["ALLOWED_IMAGE_EXTENSIONS"] = ["JPG", "PNG"]
 #     # connection.export_data("sample_data/answer.csv", ans_list, data_manager.ANSWER_HEADERS, "w")
 #     return redirect(f"/question/{question_id}")
 
-
-
 @app.route("/")
+def main():
+    questions = data_manager.get_data_to_main_list()
+    return render_template("index.html", questions=questions, table_header=data_manager.TABLE_HEADERS)
+
+
 @app.route("/list")
 def question_list():
     # questions_list, table_headers = data_manager.prepare_table_to_display()
@@ -79,7 +82,7 @@ def prepare_sorted_table_to_display(descend, value):
 @app.route('/question')
 @app.route('/question/<question_id>')
 def question(question_id):
-    question_data = data_manager.find_title_and_message(int(question_id) - 1)
+    question_data = data_manager.find_title_and_message(int(question_id))
     answer_data = data_manager.find_all_answer_to_question(question_id)
     answers_number = len(answer_data)
 
@@ -89,7 +92,7 @@ def question(question_id):
 
 @app.route('/new_answer/<question_id>')
 def saving_new_answer(question_id):
-    question_data = data_manager.get_question_db_by_question_id(int(question_id) - 1)
+    question_data = data_manager.get_question_db_by_question_id(int(question_id))
 
     return render_template("new_answer.html", question_data=question_data)
 
@@ -196,6 +199,17 @@ def after_edit_answer(answer_id, question_id):
         data_manager.edit_answer(answer_id, edited_answer)
 
     return redirect(f'/question/{question_id}')
+
+
+@app.route('/search')
+def get_search():
+    searching_phrase = request.args.get("q")
+    questions = data_manager.search_user_phrase_question(searching_phrase)
+    answers = data_manager.search_user_phrase_answer(searching_phrase)
+    comments = data_manager.search_user_phrase_comment(searching_phrase)
+    return render_template("search.html", questions=questions, answers=answers, searching_phrase=searching_phrase, comments=comments)
+
+
 
 
 # @app.route('/comment/<comment_id>')
