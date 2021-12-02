@@ -180,6 +180,10 @@ def delete_answer_from_comment_by_id(cursor, answer_id):
     cursor.execute(query, {'answer_id': answer_id})
 
 
+def save_new_answer(message, image, question_id):
+        write_answer_to_db(datetime.datetime.now(), 0, question_id, message, image)
+
+
 @database_common.connection_handler
 def get_question_id_by_answer_id_db(cursor, answer_id):
     query = """
@@ -285,3 +289,11 @@ def get_comment_data_by_answer_id(cursor, answer_id):
         WHERE answer_id = %(answer_id)s"""
     cursor.execute(query, {'answer_id': answer_id})
     return cursor.fetchall()
+
+def get_question_bd(cursor):
+    cursor.execute("""
+        SELECT *
+        FROM question
+        """)
+    return cursor.fetchall()
+
