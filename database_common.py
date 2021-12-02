@@ -4,11 +4,6 @@ import os
 import psycopg2
 import psycopg2.extras
 
-os.environ['PSQL_USER_NAME'] = 'postgres'
-os.environ['PSQL_PASSWORD'] = 'dupa'
-os.environ['PSQL_HOST'] = 'localhost'
-os.environ['PSQL_DB_NAME'] = 'ask-mate-2'
-
 
 def get_connection_string():
     # setup connection string

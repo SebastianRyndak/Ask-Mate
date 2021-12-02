@@ -18,7 +18,7 @@ def list_voting(id, value):
         data_manager.add_vote_counter(id)
     elif value == "-":
         data_manager.substract_vote_counter(id)
-    return redirect("/")
+    return redirect("/list")
 
 
 
@@ -97,10 +97,8 @@ def summary_new_answer(question_id):
     question_id = int(question_id)
     if request.method == "POST":
         message = request.form.get("message")
-        submission_time = str(datetime.now())[:-7]
-        vote_number = 0
         image = "None"
-        data_manager.save_new_answer(message, question_id, vote_number, submission_time, image)
+        data_manager.write_answer_to_db(question_id, message, image)
 
     return redirect(f'/question/{question_id}')
 
@@ -188,6 +186,7 @@ def after_edit_answer(answer_id, question_id):
     if request.method == "POST":
         edited_answer = request.form.get('new-answer')
         data_manager.edit_answer(answer_id, edited_answer)
+
     return redirect(f'/question/{question_id}')
 
 
@@ -213,9 +212,10 @@ def get_search():
 def comment_questions(question_id):
     if request.method == "POST":
         comment = request.form["comment"]
-        data_manager.add_comment(comment,question_id, None)
+        data_manager.add_comment(comment, question_id, None)
         return redirect(f"/question/{question_id}")
     return render_template("Comment_questions.html", question_id=question_id)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
