@@ -1,6 +1,10 @@
+import connection
 import os
+import time
 from datetime import datetime
+
 from flask import Flask, render_template, request, redirect
+
 import data_manager
 
 app = Flask(__name__)
@@ -18,7 +22,6 @@ def list_voting(id, value):
     elif value == "-":
         data_manager.substract_vote_counter(id)
     return redirect("/list")
-
 
 
 @app.route("/question/vote/<question_id>/<answer_id>/<vote_number>")
@@ -39,6 +42,28 @@ def question_list():
     return render_template("list.html", questions_list=questions_list, table_headers=data_manager.TABLE_HEADERS)
 
 
+@app.route("/add-question", methods=['GET', 'POST'])
+def add_information_about_question():
+    if request.method == "POST":
+        ID = data_manager.ID_gen()
+        unix_time = int(time.time())
+        title = request.form["title"]
+        question = request.form["question"]
+        image = request.files["image"]
+        if image.filename != "":
+            if not data_manager.allowed_image(image.filename):
+                return redirect(request.url)
+            image.save(os.path.join(app.config["UPLOAD_PICTURE_FOLDER"], image.filename))
+
+            dic = {"id": str(ID), "submission_time": str(unix_time), "view_number": "0", "vote_number": "0",
+                   "title": title, "message": question,
+                   "Image": "../static/uploads_pictures_questions/" + str(image.filename)}
+        else:
+            dic = {"id": str(ID), "submission_time": str(unix_time), "view_number": "0", "vote_number": "0",
+                   "title": title, "message": question, "Image": ""}
+        connection.export_data("./sample_data/question.csv", dic, data_manager.QUESTION_HEADERS, "a")
+        return redirect("/")
+    return render_template("add-question.html")
 
 
 @app.route("/<value>/<descend>")
@@ -64,18 +89,19 @@ def saving_new_answer(question_id):
     return render_template("new_answer.html", question_data=question_data, question_id=question_id)
 
 
-
 @app.route('/new_answer/<question_id>/new-answer', methods=["POST"])
 def summary_new_answer(question_id):
     question_id = int(question_id)
     if request.method == "POST":
         message = request.form.get("message")
         image = request.files['image']
-        if image.filename != "":
+        if image.filename != "" and image.filename is not None:
             if not data_manager.allowed_image(image.filename):
                 return redirect(request.url)
             image.save(os.path.join(app.config["UPLOAD_PICTURE_ANSWERS"], image.filename))
-        data_manager.write_answer_to_db(question_id, message, "../static/uploads_pictures_answers/"+image.filename)
+            data_manager.write_answer_to_db(question_id, message, "../static/uploads_pictures_answers/"+image.filename)
+        else:
+            data_manager.write_answer_to_db(question_id, message)
     return redirect(f'/question/{question_id}')
 
 
@@ -90,11 +116,12 @@ def summary_new_question():
         title = request.form.get("title")
         message = request.form.get("question")
         image = request.files['image']
-        if image.filename != "":
+        if image.filename != "" and image.filename is not None:
             if not data_manager.allowed_image(image.filename):
                 return redirect(request.url)
             image.save(os.path.join(app.config["UPLOAD_PICTURE_FOLDER"], image.filename))
-        data_manager.save_new_question(message, title, "../static/uploads_pictures_questions/"+image.filename)
+        else:
+            data_manager.save_new_question(message, title)
     return redirect('/list')
 
 

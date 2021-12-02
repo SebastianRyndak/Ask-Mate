@@ -7,10 +7,10 @@
 {% block content %}
 
     <h1>{{ question_data[0].get("title") }}</h1><br>
-    {% if question_data[0].get("image") == "" %}
+    {% if question_data[0].get("image") == "" or question_data[0].get("image") == None %}
         <h3>{{ question_data[0].get("message") }}</h3><br>
     {% else %}
-        <h3>{{ question_data[0].get("message") }}<br><br><img src="{{ question_data[0].get("image") }}" alt="Image" width="200"></h3>
+        <h3>{{ question_data[0].get("message") }}<br><br><img src="{{ question_data[0].get("image") }}" alt="Image" width="300"></h3>
     {% endif %}
 
 	{% if answer_data|length == 0 %}
@@ -21,61 +21,63 @@
 	    <h3>{{ answer_data|length }} answers:</h3>
 	{% endif %}
 
-    <a href="/add_comment_to_question/{{ question_id }}">Comment Answer</a>
+    <a href="/add_comment_to_question/{{ question_id }}">Comment Question</a>
 
-    <table>
-        <thead>
-            {% for answer in answer_data %}
-            <tr>
-                <th><strong>{{ answer.message }}</strong></th>
-                <th>{{ answer.vote_number }} votes</th>
-                <th>
-                <a href="/question/vote/{{ answer.question_id }}/{{ answer.id }}/{{ answer.vote_number + 1 }}">👍</a>
-                <a href="/question/vote/{{ answer.question_id }}/{{ answer.id }}/{{ answer.vote_number - 1 }}">👎</a>
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>
-            {% if answer.image == "" %}
-                <a href="/answer/{{ answer.id }}/delete/{{ answer.question_id }}">Delete answer</a>
-            {% else %}
-                <div style="text-align: center"><img src="{{ answer.image }}" alt="Image" width="200" ></div>
-                <a href="/answer/{{ answer.id }}/delete/{{ answer.question_id }}">Delete answer</a>
-            {% endif %}
-                <a href="/edit_answer/{{ answer.id }}">Edit answer</a><br>
-                <a href="/add_comment_to_answer/{{ question_id }}/{{ answer.id }}">Comment Answer</a>
-                </td>
-            </tr>
-                {% for comment in comments_data %}
-                {% if comment.answer_id == answer.id %}
+    {% for answer in answer_data %}
+        <table class="answer-table">
+            <thead>
+                <tr>
+                    <th><strong>{{ answer.message }}</strong></th>
+                    <th>{{ answer.vote_number }} votes</th>
+                    <th>
+                    <a href="/question/vote/{{ answer.question_id }}/{{ answer.id }}/{{ answer.vote_number + 1 }}">👍</a>
+                    <a href="/question/vote/{{ answer.question_id }}/{{ answer.id }}/{{ answer.vote_number - 1 }}">👎</a>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
                 <tr>
                     <td>
-                        <p class="comments">{{ comment.message }} {{ comment.submission_time }}</p>
+                {% if answer.image == "" or answer.image == None %}
+                    <a href="/answer/{{ answer.id }}/delete/{{ answer.question_id }}" class="link-inside-table">Delete answer</a>
+                {% else %}
+                    <div style="text-align: center"><img src="{{ answer.image }}" alt="Image" width="300" ></div>
+                    <a href="/answer/{{ answer.id }}/delete/{{ answer.question_id }}" class="link-inside-table">Delete answer</a>
+                {% endif %}
+                    <a href="/edit_answer/{{ answer.id }}" class="link-inside-table">Edit answer</a><br>
+                    <a href="/add_comment_to_answer/{{ question_id }}/{{ answer.id }}" class="link-inside-table">Comment Answer</a>
                     </td>
                 </tr>
-                {% endif %}
-                {% endfor %}
-            {% endfor %}
-        </tbody>
-    </table>
+                    {% for comment in comments_data %}
+                    {% if comment.answer_id == answer.id %}
+                        {% set submission_date = comment.submission_time|string() %}
+                    <tr>
+                        <td>
+                            <p class="comments">{{ comment.message }} </p>
+                            <p class="comment-date">{{ submission_date[:-7] }}</p>
+                        </td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
 
+            </tbody>
+        </table>
+    {% endfor %}
     <table>
         <thead>
             <tr>
                 <th>
-                <form action="/question/{{ question_id }}/delete" method="POST"><br>
+                <form action="/question/{{ question_id }}/delete" method="POST">
                     <input type="submit" name="delete_button" value="Delete question">
                 </form>
                 </th>
                 <th>
-                <form action="/new_answer/{{ question_id }}"><br>
+                <form action="/new_answer/{{ question_id }}">
                     <button>Add new answer</button>
                 </form>
                 </th>
                 <th>
-                <form action="/edit_question/{{ question_id }}"><br>
+                <form action="/edit_question/{{ question_id }}">
                     <button>Edit question</button>
                 </form>
                 </th>
@@ -83,6 +85,6 @@
         </thead>
     </table>
 
-    <a href="/">Back to main page</a>
+    <a href="/list">Back to main page</a>
 
 {% endblock %}

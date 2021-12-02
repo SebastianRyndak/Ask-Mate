@@ -11,7 +11,7 @@
     <form action="/new_answer/{{ data.id }}/new-answer" method="POST" enctype=multipart/form-data>
     {% endfor %}
         <label for="new-answer-input">Your answer:</label>
-        <textarea id="new-answer-input" name="message" rows="4" cols="50" placeholder="Your answer..."></textarea>
+        <textarea id="new-answer-input" name="message" rows="4" cols="50" placeholder="Your answer..." minlength="1"></textarea>
         <label for="image">Add Image:</label><br>
         <input type="file" id="image" name="image" class="custom-file-input"><br><br>
         <button type="submit">Submit</button>

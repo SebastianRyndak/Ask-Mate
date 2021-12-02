@@ -14,7 +14,7 @@ ANSWER_DATA_PATH = os.getenv("ANSWER_DATA_PATH") if "ANSWER_DATA_PATH" in os.env
 QUESTION_HEADERS = ["id", "submission_time", "view_number", "vote_number", "title", "message", "image"]
 ANSWER_HEADERS = ["id", "submission_time", "vote_number", "question_id", "message", "image"]
 TABLE_HEADERS = {"vote_number": "Votes", "title": "Title", "message": "Message", "submission_time": "Date",
-                 "view_number": "Views", "id":""}
+                 "view_number": "Views", "id":"ID"}
 SORT_BY_INT = ["vote_number", "Published on", "view_number"]
 file_extention = ["JPG", "PNG"]
 reverse = 0
@@ -98,7 +98,7 @@ def save_new_answer(cursor, message, question_id, submission_time, image):
 
 
 @database_common.connection_handler
-def save_new_question(cursor, message, title, image):
+def save_new_question(cursor, message, title, image=None):
     query = """
         INSERT INTO question
         (submission_time, message, image, title)
@@ -201,7 +201,7 @@ def get_question_id_by_answer_id_db(cursor, answer_id):
 
 
 @database_common.connection_handler
-def write_answer_to_db(cursor, question_id, message, image):
+def write_answer_to_db(cursor, question_id, message, image=None):
     query = """
     INSERT INTO answer (submission_time, question_id, message, image) 
     VALUES (NOW(),%(question_id)s,%(message)s,%(image)s)
