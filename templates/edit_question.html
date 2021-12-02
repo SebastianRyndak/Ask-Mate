@@ -7,20 +7,22 @@
 {% block content %}
 
 <h1>Edit Question</h1>
-<form action="#" method="POST" enctype="multipart/form-data">
-  <label for="title">Title:</label><br>
-  <input type="text" id="title" name="title" minlength="5" value="{{ title }}"><br><br>
 
-  <label for="question">Your question:</label><br>
-  <textarea id="story_id" name="question" rows="4" cols="25" >{{ message }}</textarea><br><br>
+    {% for data in question_data %}
+    <form action="/edit_question/{{ question_id }}/edited_question" method="POST">
+        <label for="title">Title:</label><br>
+        <input id="title" type="text" name="title" value="{{ data.title }}"><br><br>
+        <label for="question">Your question:</label><br>
+        <textarea id="question" name="question" rows="10" cols="75" >{{ data.message }}</textarea><br><br>
 
-  <div style="text-align: center"><img src="/{{ image }}" alt="Image" width="200" ></div>
+    {#  <div style="text-align: center"><img src="/{{ image }}" alt="Image" width="200" ></div>#}
+    {##}
+    {#  <label for="image">New Image:</label><br>#}
+    {#  <input type="file" name="image" class="custom-file-input"><br><br>#}
 
-  <label for="image">New Image:</label><br>
-  <input type="file" name="image" class="custom-file-input"><br><br>
-
-  <input type="submit" value="Submit">
-</form>
+        <button type="submit">Submit</button>
+    </form>
+    {% endfor %}
 
    <a href="/list">Back to List </a>
 

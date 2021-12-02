@@ -14,7 +14,7 @@ ANSWER_DATA_PATH = os.getenv("ANSWER_DATA_PATH") if "ANSWER_DATA_PATH" in os.env
 QUESTION_HEADERS = ["id", "submission_time", "view_number", "vote_number", "title", "message", "image"]
 ANSWER_HEADERS = ["id", "submission_time", "vote_number", "question_id", "message", "image"]
 TABLE_HEADERS = {"vote_number": "Votes", "title": "Title", "message": "Message", "submission_time": "Date",
-                 "view_number": "Views"}
+                 "view_number": "Views", "id":""}
 SORT_BY_INT = ["vote_number", "Published on", "view_number"]
 file_extention = ["JPG", "PNG"]
 reverse = 0  # global variable
@@ -75,6 +75,7 @@ def find_title_and_message(cursor, question_id):
     cursor.execute(query, {'question_id': question_id})
     return cursor.fetchall()
 
+
 @database_common.connection_handler
 def get_question_db_by_question_id(cursor, question_id):
     query = """
@@ -84,6 +85,7 @@ def get_question_db_by_question_id(cursor, question_id):
         """
     cursor.execute(query, {'question_id': question_id})
     return cursor.fetchall()
+
 
 @database_common.connection_handler
 def save_new_answer(cursor, message, question_id, vote_number, submission_time, image):
@@ -97,14 +99,40 @@ def save_new_answer(cursor, message, question_id, vote_number, submission_time, 
 
 
 @database_common.connection_handler
-def save_new_question(cursor, message, vote_number, submission_time, image, title, view_number):
+def save_new_question(cursor, message, title, vote_number, view_number, submission_time, image):
     query = """
         INSERT INTO question
         (submission_time, vote_number, message, image, title, view_number)
-        VALUES (%(submission_time)s, %(vote_number)s, %(message)s, %(image)s, %(title)s, %(view_number)s);"""
+        VALUES (%(submission_time)s, %(vote_number)s,
+                %(message)s, %(image)s,
+                %(title)s, %(view_number)s);"""
 
     cursor.execute(query, {'submission_time': submission_time, 'vote_number': vote_number,
-                           'view_number': view_number, 'message': message, 'image': image, 'title': title})
+                           'title': title, 'message': message, 'image': image, 'view_number': view_number})
+
+
+@database_common.connection_handler
+def save_edited_question(cursor, message, submission_time, image, title, view_number, vote_number, question_id):
+    query = sql.SQL("""
+        UPDATE question
+        SET submission_time = %(submission_time)s,
+            message = %(message)s,
+            image = %(image)s,
+            title = %(title)s,
+            view_number = %(view_number)s,
+            vote_number = %(vote_number)s
+        WHERE id = %(question_id)""").format(
+        submission_time=sql.Identifier('submission_time'),
+        message=sql.Identifier('message'),
+        image=sql.Identifier('image'),
+        title=sql.Identifier('title'),
+        view_number=sql.Identifier('view_number'),
+        vote_number=sql.Identifier('vote_number'),
+        id=sql.Identifier('id')
+    )
+    cursor.execute(query, {'submission_time': submission_time, 'message': message,
+                           'image': image, 'title': title, 'question_id': question_id,
+                           'view_number': view_number, 'vote_number': vote_number})
 
 
 @database_common.connection_handler
@@ -185,7 +213,6 @@ def get_question_id_by_answer_id_db(cursor, answer_id):
     return real_dict_to_list[0]["question_id"]
 
 
-
 @database_common.connection_handler
 def write_answer_to_db(cursor, submission_time, vote_number, question_id, message, image):
     query = sql.SQL("""
@@ -200,14 +227,12 @@ def write_answer_to_db(cursor, submission_time, vote_number, question_id, messag
                            "question_id": question_id, "message": message, "image": image})
 
 
-
 @database_common.connection_handler
 def delete_answer_from_cvs_by_id_db(cursor, id):
     query = sql.SQL("""
     DELETE FROM answer
     WHERE id = %(id)s""").format(id=sql.Identifier('id'))
     cursor.execute(query, {"id": id})
-
 
 
 def allowed_image(filename):
@@ -273,7 +298,50 @@ def sort_questions_by_column(cursor, column):
     return cursor.fetchall()
 
 
-print(sort_questions_by_column('submission_time'))
-print(sort_questions_by_column('id'))
-print(sort_questions_by_column('view_number'))
-print(sort_questions_by_column('vote_number'))
+def get_data_to_main_list(cursor):
+    cursor.execute("""
+        SELECT title, message, submission_time,  vote_number, view_number, id
+        FROM question
+        ORDER BY id DESC 
+        LIMIT 5;
+        """)
+    return cursor.fetchall()
+
+
+@database_common.connection_handler
+def search_user_phrase_question(cursor, searching_phrase):
+    query = """
+        SELECT title, message, submission_time, id
+        FROM question
+        WHERE title LIKE %(searching_phrase)s or
+        message LIKE %(searching_phrase)s 
+        ORDER BY id DESC ;
+        """
+    cursor.execute(query, {"searching_phrase": f"%{searching_phrase}%"})
+    return cursor.fetchall()
+
+
+@database_common.connection_handler
+def search_user_phrase_answer(cursor, searching_phrase):
+    query = ("""
+        SELECT message, submission_time, question_id
+        FROM answer
+        WHERE message LIKE %(searching_phrase)s
+        ORDER BY id DESC;
+        """)
+
+    cursor.execute(query, {"searching_phrase": f"%{searching_phrase}%"})
+    return cursor.fetchall()
+
+
+@database_common.connection_handler
+def search_user_phrase_comment(cursor, searching_phrase):
+    query = ("""
+        SELECT message, submission_time, question_id
+        FROM comment
+        WHERE message LIKE %(searching_phrase)s
+        ORDER BY id DESC;
+        """)
+
+    cursor.execute(query, {"searching_phrase": f"%{searching_phrase}%"})
+    return cursor.fetchall()
