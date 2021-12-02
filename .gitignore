@@ -9,7 +9,6 @@ __pycache__/*
 __pycache__
 .idea/ask-mate-2-python-kuba-bogacki.iml
 .idea/
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -145,3 +144,7 @@ dmypy.json
 
 # pytype static type analyzer
 .pytype/
+
+
+# Cython debug symbols
+cython_debug/
