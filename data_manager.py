@@ -35,7 +35,7 @@ def vote_for_answers(cursor, answer_id, vote_number, question_id):
         UPDATE answer
         SET vote_number = %(vote_number)s,
             question_id = %(question_id)s
-        WHERE id = %(answer_id)"""
+        WHERE id = %(answer_id)s"""
     cursor.execute(query, {'vote_number': vote_number, 'answer_id': answer_id, 'question_id': question_id})
     return cursor.fetchall()
 
@@ -271,6 +271,33 @@ def get_question_bd(cursor):
 
 
 @database_common.connection_handler
+def add_vote_counter(cursor,id):
+    query = sql.SQL("""
+        UPDATE question
+        SET vote_number = vote_number + 1
+        WHERE id = %(id)s""").format(id=sql.Identifier("id"))
+    cursor.execute(query, {"id": id})
+
+@database_common.connection_handler
+def substract_vote_counter(cursor,id):
+    query = sql.SQL("""
+        UPDATE question
+        SET vote_number = vote_number - 1
+        WHERE id = %(id)s""").format(id=sql.Identifier("id"))
+    cursor.execute(query, {"id": id})
+
+
+@database_common.connection_handler
+def sort_questions_by_column(cursor, column):
+    query = sql.SQL("""
+    SELECT id, submission_time,view_number,vote_number,title,message,image
+     FROM question
+    ORDER BY %s::text""")
+    print(column)
+    cursor.execute(query, (column,))
+    return cursor.fetchall()
+
+
 def get_data_to_main_list(cursor):
     cursor.execute("""
         SELECT title, message, submission_time,  vote_number, view_number, id
