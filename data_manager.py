@@ -37,7 +37,6 @@ def vote_for_answers(cursor, answer_id, vote_number, question_id):
             question_id = %(question_id)s
         WHERE id = %(answer_id)s"""
     cursor.execute(query, {'vote_number': vote_number, 'answer_id': answer_id, 'question_id': question_id})
-    return cursor.fetchall()
 
 
 @database_common.connection_handler
@@ -127,7 +126,8 @@ def find_all_answer_to_question(cursor, question_id):
     query = sql.SQL("""
         SELECT *
         FROM answer
-        WHERE question_id = %(question_id)s""").format(
+        WHERE question_id = %(question_id)s
+        ORDER BY vote_number DESC""").format(
         question_id=sql.Identifier('question_id')
     )
     cursor.execute(query, {'question_id': question_id})
