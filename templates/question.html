@@ -13,22 +13,26 @@
             <h3>{{ question_data[0].get("message") }}<br><br><img src="{{ question_data[0].get("image") }}" alt="Image" width="200"></h3>
         {% endif %}
 
+    <a href="/add_comment_to_question/{{ question_id }}">Comment Answer</a>
 
-	{% if answer_data|length == 0 %}
-        <h3>Nothing comment yet.</h3>
-	{% elif answer_data|length == 1 %}
-	    <h3>{{ answers_number }} answer:</h3>
-	{% else %}
-	    <h3>{{ answers_number }} answers:</h3>
-	{% endif %}
-
-	{% for answer in answer_data %}
+        {% if answer_data|length == 0 %}
+            <h3>Nothing comment yet.</h3>
+        {% elif answer_data|length == 1 %}
+            <h3>{{ answers_number }} answer:</h3>
+        {% else %}
+            <h3>{{ answers_number }} answers:</h3>
+        {% endif %}
     <ul>
 
-	    <li>
+            {% for answer in answer_data %}
+        <li>
         <strong>{{ answer.message }}</strong> ----- {{ answer.vote_number }} votes
         <a href="/question/vote/{{ answer.question_id }}/{{ answer.id }}/{{ answer.vote_number + 1 }}">👍</a>
         <a href="/question/vote/{{ answer.question_id }}/{{ answer.id }}/{{ answer.vote_number - 1 }}">👎</a>
+            {% for comment in comments_data %}
+                {% if comment.answer_id == answer.id %}
+                <p class="comments">{{ comment.message }} {{ comment.submission_time }}</p>
+            {% endif %}{% endfor %}
         </li>
         {% if answer.image == "" %}
             <a href="/answer/{{ answer.id }}/delete/{{ answer.question_id }}">Delete answer</a>

@@ -265,7 +265,7 @@ def get_question_bd(cursor):
 
 
 @database_common.connection_handler
-def add_comment(cursor, message, question_id, answer_id):
+def add_comment(cursor, message, question_id, answer_id=None):
     query = """
             INSERT INTO comment (question_id, answer_id, message, submission_time) 
             VALUES (%(question_id)s, %(answer_id)s, %(message)s, NOW())
@@ -296,7 +296,6 @@ def sort_questions_by_column(cursor, column):
     SELECT id, submission_time,view_number,vote_number,title,message,image
      FROM question
     ORDER BY %s::text""")
-    print(column)
     cursor.execute(query, (column,))
     return cursor.fetchall()
 
@@ -346,6 +345,17 @@ def search_user_phrase_comment(cursor, searching_phrase):
         WHERE message LIKE %(searching_phrase)s
         ORDER BY id DESC;
         """)
-
     cursor.execute(query, {"searching_phrase": f"%{searching_phrase}%"})
+    return cursor.fetchall()
+
+
+@database_common.connection_handler
+def search_comment_by_id(cursor, question_id):
+    query = ("""
+        SELECT message, submission_time, answer_id
+        FROM comment
+        WHERE question_id = %(question_id)s
+        ORDER BY id ASC;
+        """)
+    cursor.execute(query, {"question_id": f"{question_id}"})
     return cursor.fetchall()

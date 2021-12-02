@@ -82,9 +82,11 @@ def prepare_sorted_table_to_display(value,descend=1):
 @app.route('/question/<int:question_id>')
 def question(question_id):
     question_data = data_manager.find_title_and_message(int(question_id))
+    print(question_data)
     answer_data = data_manager.find_all_answer_to_question(question_id)
+    comments_data = data_manager.search_comment_by_id(question_id)
     return render_template('question.html', question_data=question_data, question_id=question_id,
-                           answer_data=answer_data)
+                           answer_data=answer_data, comments_data=comments_data)
 
 
 @app.route('/new_answer/<question_id>')
@@ -131,8 +133,6 @@ def summary_new_question():
 @app.route('/edit_question/<question_id>')
 def saving_edit_question(question_id):
     question_data = data_manager.get_question_db_by_question_id(int(question_id) - 1)
-    print(question_id)
-
     return render_template("edit_question.html", question_data=question_data, question_id=question_id)
 
 
@@ -146,7 +146,6 @@ def summary_edited_question(question_id):
         image = "None"
         vote_number = 0
         view_number = 0
-        print(question_id, title, message, submission_time, image, vote_number, view_number)
         # image_file = request.files['image']
         # image = image_file.filename
         # if image != "":
@@ -209,11 +208,11 @@ def get_search():
     return render_template("search.html", questions=questions, answers=answers, searching_phrase=searching_phrase, comments=comments)
 
 
-@app.route("/add_comment_to_answer/<question_id>", methods=["POST", "GET"])
+@app.route("/add_comment_to_question/<question_id>", methods=["POST", "GET"])
 def comment_questions(question_id):
     if request.method == "POST":
         comment = request.form["comment"]
-        data_manager.add_comment(comment, question_id, None)
+        data_manager.add_comment(comment, question_id)
         return redirect(f"/question/{question_id}")
     return render_template("Comment_questions.html", question_id=question_id)
 
