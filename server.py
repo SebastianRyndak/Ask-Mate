@@ -50,11 +50,12 @@ def prepare_sorted_table_to_display(value,descend=1):
 @app.route('/question')
 @app.route('/question/<int:question_id>')
 def question(question_id):
+    tags = data_manager.get_tags(question_id)
     question_data = data_manager.find_title_and_message(int(question_id))
     answer_data = data_manager.find_all_answer_to_question(question_id)
     comments_data = data_manager.search_comment_by_id(question_id)
     return render_template('question.html', question_data=question_data, question_id=question_id,
-                           answer_data=answer_data, comments_data=comments_data)
+                           answer_data=answer_data, comments_data=comments_data, tags=tags)
 
 
 @app.route('/new_answer/<question_id>')

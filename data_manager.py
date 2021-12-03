@@ -414,3 +414,14 @@ def delete_tag_list(cursor, question_id):
         WHERE question_id = %(question_id)s 
         """)
     cursor.execute(query, {"question_id": f"{question_id}"})
+
+@database_common.connection_handler
+def get_tags(cursor, question_id):
+    query = ("""
+        SELECT t.name FROM question_tag AS qt
+        LEFT JOIN tag AS t
+        ON qt.tag_id = t.id
+        WHERE qt.question_id = %(question_id)s ;
+        """)
+    cursor.execute(query, {"question_id": f"{question_id}"})
+    return cursor.fetchall()

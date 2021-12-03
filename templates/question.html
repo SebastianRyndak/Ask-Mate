@@ -13,6 +13,10 @@
         <h3>{{ question_data[0].get("message") }}<br><br><img src="{{ question_data[0].get("image") }}" alt="Image" width="300"></h3>
     {% endif %}
 
+    {% for tag in tags %}
+        <button disabled class="tag-button">{{ tag.name }}</button>
+    {% endfor %}
+
 	{% if answer_data|length == 0 %}
         <h3>Nothing comment yet.</h3>
 	{% elif answer_data|length == 1 %}
