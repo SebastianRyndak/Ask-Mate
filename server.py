@@ -1,9 +1,7 @@
-import connection
 import os
-import time
 from datetime import datetime
 
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, url_for
 
 import data_manager
 
@@ -196,6 +194,23 @@ def comment_questions(question_id):
         data_manager.add_comment(comment, question_id)
         return redirect(f"/question/{question_id}")
     return render_template("Comment_questions.html", question_id=question_id)
+
+
+@app.route("/question/<question_id>/new-tag", methods=["POST"])
+def save_tags_to_a_question(question_id):
+    tags_id = list(request.form)
+    data_manager.delete_tag_list(question_id)
+    if len(tags_id) > 0:
+        for tag_id in tags_id:
+            data_manager.save_tag_list(question_id, tag_id)
+    return redirect(url_for("question", question_id=question_id))
+
+
+@app.route("/question/<question_id>/new-tag")
+def get_add_new_tag(question_id):
+    question_data = data_manager.get_question_db_by_question_id(question_id)
+    id_list = data_manager.get_id_list()
+    return render_template("new_tag.html", question_id=question_id, question_data=question_data, id_list=id_list)
 
 
 if __name__ == "__main__":

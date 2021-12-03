@@ -389,3 +389,28 @@ def search_comment_by_id(cursor, question_id):
         """)
     cursor.execute(query, {"question_id": f"{question_id}"})
     return cursor.fetchall()
+
+
+@database_common.connection_handler
+def get_id_list(cursor):
+    query = ("""
+        SELECT * FROM tag;
+        """)
+    cursor.execute(query)
+    return cursor.fetchall()
+
+@database_common.connection_handler
+def save_tag_list(cursor, question_id, tag_id):
+    query = ("""
+        INSERT INTO question_tag
+        VALUES (%(question_id)s, %(tag_id)s);
+        """)
+    cursor.execute(query, {"question_id": f"{question_id}", "tag_id": f"{tag_id}"})
+
+@database_common.connection_handler
+def delete_tag_list(cursor, question_id):
+    query = ("""
+        DELETE FROM question_tag
+        WHERE question_id = %(question_id)s 
+        """)
+    cursor.execute(query, {"question_id": f"{question_id}"})

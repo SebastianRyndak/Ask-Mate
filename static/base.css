@@ -90,3 +90,7 @@ a {
 .comments {
     margin: 1vh 0 0;
 }
+
+.tag-button {
+    background: #FFFAFA;
+}
