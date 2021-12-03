@@ -27,6 +27,12 @@ img {
     display: block;
     margin-left: fill;
     margin-right: auto;
+    /*border: 1px solid #ddd;*/
+    border-radius: 16px;
+    border-style: inset;
+    border-color: grey;
+    padding: 5px;
+    width: 250px;
 }
 
 input, textarea {

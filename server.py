@@ -109,12 +109,13 @@ def summary_edited_question(question_id):
     if request.method == "POST":
         title = request.form.get("title")
         message = request.form.get("question")
-        image = request.files['image']
-        if image.filename != "":
-            if not data_manager.allowed_image(image.filename):
-                return redirect(request.url)
-            image.save(os.path.join(app.config["UPLOAD_PICTURE_FOLDER"], image.filename))
-        data_manager.save_edited_question(title, message, "../static/uploads_pictures_questions/"+image.filename, question_id)
+        # image = request.files['image']
+        # if image.filename != "":
+        #     if not data_manager.allowed_image(image.filename):
+        #         return redirect(request.url)
+        #     image.save(os.path.join(app.config["UPLOAD_PICTURE_FOLDER"], image.filename))
+        # data_manager.save_edited_question(title, message, "../static/uploads_pictures_questions/"+image.filename, question_id)
+        data_manager.save_edited_question(title, message, question_id)
     return redirect(f'/question/{question_id}')
 
 
@@ -164,25 +165,23 @@ def get_search():
     questions = data_manager.search_user_phrase_question(searching_phrase)
     answers = data_manager.search_user_phrase_answer(searching_phrase)
     comments = data_manager.search_user_phrase_comment(searching_phrase)
-    return render_template("search.html", questions=questions, answers=answers, searching_phrase=searching_phrase, comments=comments)
+    return render_template("search.html", questions=questions, answers=answers,
+                           searching_phrase=searching_phrase, comments=comments)
 
 
-@app.route('/comment/<comment_id>')
-def edit_comment(comment_id):
+@app.route('/edit_comment/<question_id>/<comment_id>')
+def edit_comment(question_id, comment_id):
     comment_data = data_manager.get_comment_data_by_comment_id(comment_id)
-    edited_count = comment_data['edited_count']
-    if edited_count is None:
-        edited_count = 0
-    return render_template('comment.html', comment_id=comment_id, comment_data=comment_data, edited_count=edited_count)
+    return render_template('edit_comment.html', comment_id=comment_id,
+                           comment_data=comment_data, question_id=question_id)
 
 
-@app.route('/comment/<comment_id>/<question_id>/<edited_count>/edit', methods=["POST"])
-def after_edit_comment(comment_id, question_id, edited_count):
+@app.route('/edit_comment/<question_id>/<comment_id>/<edited_count>/edit', methods=["POST"])
+def after_edit_comment(question_id, comment_id, edited_count):
     if request.method == "POST":
         message = request.form.get("message")
-        edited_count += 1
-        submission_time = str(datetime.now())[:-7]
-        data_manager.edit_comment_by_comment_id(comment_id, edited_count, submission_time, message)
+        edited_count = int(edited_count) + 1
+        data_manager.edit_comment_by_comment_id(message, edited_count, comment_id)
     return redirect(f'/question/{question_id}')
 
 
@@ -193,6 +192,12 @@ def comment_questions(question_id):
         data_manager.add_comment(comment, question_id)
         return redirect(f"/question/{question_id}")
     return render_template("Comment_questions.html", question_id=question_id)
+
+
+@app.route('/comments/<question_id>/<comment_id>/delete')
+def delete_comment(question_id, comment_id):
+    data_manager.delete_comment_from_database(comment_id)
+    return redirect(f'/question/{question_id}')
 
 
 if __name__ == "__main__":

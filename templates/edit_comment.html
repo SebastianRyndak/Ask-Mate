@@ -7,12 +7,16 @@
 {% block content %}
 
     {% for data in comment_data %}
-    <form action="/edit_comment/{{ data.id }}/{{ data.question_id }}/{{ data.edited_count }}/edit" method="POST">
+    <form action="/edit_comment/{{ data.question_id }}/{{ data.id }}/{{ data.edited_count }}/edit" method="POST">
         <label for="new-comment-input">Edit comment:</label>
         <textarea id="new-comment-input" name="message" rows="4" cols="50">{{ data.message }}</textarea>
         <button type="submit">Submit</button>
     </form>
-        <p>Edited {{ edited_count }} times</p>
+    {% if data.edited_count == 0 %}
+        <p>Not edited yet</p>
+    {% else %}
+        <p>Edited {{ data.edited_count }} times</p>
+    {% endif %}
     {% endfor %}
 
 {% endblock %}

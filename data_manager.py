@@ -109,16 +109,15 @@ def save_new_question(cursor, message, title, image):
 
 
 @database_common.connection_handler
-def save_edited_question(cursor, title, message, image, question_id):
+def save_edited_question(cursor, title, message, question_id):
     query = sql.SQL("""
         UPDATE question
         SET message = %(message)s,
-            image = %(image)s,
             title = %(title)s
         WHERE id = %(question_id)s""").format(
         question_id=sql.Identifier('question_id')
     )
-    cursor.execute(query, {'image': image, 'title': title, 'question_id': question_id, 'message': message})
+    cursor.execute(query, {'title': title, 'question_id': question_id, 'message': message})
 
 
 @database_common.connection_handler
@@ -246,22 +245,23 @@ def delete_comment_by_answer_id(cursor, answer_id):
 @database_common.connection_handler
 def get_comment_data_by_comment_id(cursor, comment_id):
     query = """
-        SELECT * FROM comment
-        WHERE id = %(comment_id)"""
+        SELECT *
+        FROM comment
+        WHERE id = %(comment_id)s"""
     cursor.execute(query, {'comment_id': comment_id})
     return cursor.fetchall()
 
 
 @database_common.connection_handler
-def edit_comment_by_comment_id(cursor, comment_id, edited_count, submission_time, message):
+def edit_comment_by_comment_id(cursor, message, edited_count, comment_id):
     query = """
         UPDATE comment
-        SET edited_count = %(edited_count)s,
-            submission_time = %(submission_time)s,
-            message = %(message)s
-        WHERE id = %(comment_id)s"""
-    cursor.execute(query, {'edited_count': edited_count, 'submission_time': submission_time,
-                           'message': message, 'comment_id': comment_id})
+        SET message = %(message)s,
+            edited_count = %(edited_count)s,
+            submission_time = NOW()   
+        WHERE id = %(comment_id)s;"""
+    cursor.execute(query, {'message': message, 'edited_count': edited_count,
+                           'comment_id': comment_id})
 
 
 @database_common.connection_handler
@@ -382,10 +382,18 @@ def search_user_phrase_comment(cursor, searching_phrase):
 @database_common.connection_handler
 def search_comment_by_id(cursor, question_id):
     query = ("""
-        SELECT message, submission_time, answer_id
+        SELECT *
         FROM comment
         WHERE question_id = %(question_id)s
         ORDER BY id ASC;
         """)
     cursor.execute(query, {"question_id": f"{question_id}"})
     return cursor.fetchall()
+
+
+@database_common.connection_handler
+def delete_comment_from_database(cursor, comment_id):
+    query = """
+        DELETE FROM comment
+        WHERE id = %(comment_id)s"""
+    cursor.execute(query, {'comment_id': comment_id})

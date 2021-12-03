@@ -1,15 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>List of questions</title>
-</head>
-<h1>List of questions</h1>
-<a href="/question/<question_id>/new-answer">Add answer</a>
-<form action="/answer/{{question_id}}/delete" method="post" enctype=multipart/form-data>
-    <input type=submit name="Delete_a" value="Delete">
-</form>
-<body>
+{% extends "layout.html" %}
 
-</body>
-</html>
+{% block page_title %}
+    Question list
+{% endblock %}
+
+{% block content %}
+
+    <h1>List of questions</h1>
+    <a href="/question/<question_id>/new-answer">Add answer</a>
+    <form action="/answer/{{question_id}}/delete" method="post" enctype=multipart/form-data>
+        <input type=submit name="Delete_a" value="Delete">
+    </form>
+
+{% endblock %}

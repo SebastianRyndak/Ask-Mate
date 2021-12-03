@@ -8,7 +8,7 @@
         <h1 class="header">Hey Lads! Check latest questions out!</h1>
         <form action="/search" method="get">
             <input type="search" class="search" placeholder="Search..." name="q">
-        </form>
+        </form><br>
         <table class="main_table" title="main_table">
             {% for key in questions[0].keys() %}
                 {% if questions[0].keys() != "id" %}
@@ -26,7 +26,7 @@
                     {% endif %}{% endfor %}
                 </tr>
             {% endfor %}
-        </table>
+        </table><br>
         <form action="/list" method="get">
             <input type="submit" value="All questions" class="all-questions">
         </form>

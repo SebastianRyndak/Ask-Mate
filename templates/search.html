@@ -1,10 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Searching results</title>
-    </head>
-    <body>
+{% extends "layout.html" %}
+
+{% block page_title %}
+    Searching results
+{% endblock %}
+
+{% block content %}
         <h1 class="header"> Results searching "{{ searching_phrase }}" in our database:</h1>
         <h4>We have {{ questions|length + answers|length + comments|length }} hits!</h4>
         <table class="searching-question">
@@ -45,5 +45,5 @@
             {% endif %}
 
         </table>
-    </body>
-</html>
+
+{% endblock %}

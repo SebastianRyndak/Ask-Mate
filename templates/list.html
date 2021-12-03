@@ -22,7 +22,7 @@
             {% if keys == "title" %}
                 <td><a href="/question/{{ user_record["id"]}}">{{ user_record[keys] }}</a></td>
             {% elif keys == "vote_number" %}
-                <td> <a href="/vote/{{ user_record["id"] }}/+">&#9745</a> {{ user_record[keys] }} <a href="/vote/{{ user_record["id"] }}/-">&#9746</a> </td>
+                <td> <a href="/vote/{{ user_record["id"] }}/+">👍</a> {{ user_record[keys] }} <a href="/vote/{{ user_record["id"] }}/-">👎</a> </td>
             {% else: %}
                 <td>{{ user_record[keys] }}</td>
             {% endif %} {% endfor %} </tr> {% endfor %}

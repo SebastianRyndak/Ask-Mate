@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block page_title %}
-
+    🔍 Let's take a look on the problem:
 {% endblock %}
 
 {% block content %}
@@ -13,6 +13,16 @@
         <h3>{{ question_data[0].get("message") }}<br><br><img src="{{ question_data[0].get("image") }}" alt="Image" width="200"></h3>
     {% endif %}
 
+    {% for data in comments_data %}
+    <ul>
+        <li><h4>{{ data.message }}</h4></li>
+    </ul>
+    {% endfor %}
+
+    <form action="/add_comment_to_question/{{ question_id }}"><br>
+    <button type="submit">Comment question</button>
+    </form>
+
 	{% if answer_data|length == 0 %}
         <h3>Nothing comment yet.</h3>
 	{% elif answer_data|length == 1 %}
@@ -21,8 +31,7 @@
 	    <h3>{{ answer_data|length }} answers:</h3>
 	{% endif %}
 
-    <a href="/add_comment_to_question/{{ question_id }}">Comment Answer</a>
-
+    <br>
     <table>
         <thead>
             {% for answer in answer_data %}
@@ -39,13 +48,13 @@
             <tr>
                 <td>
             {% if answer.image == "" %}
-                <a href="/answer/{{ answer.id }}/delete/{{ answer.question_id }}">Delete answer</a>
+                <a href="/answer/{{ answer.id }}/delete/{{ answer.question_id }}">Delete answer 🗑️</a>
             {% else %}
                 <div style="text-align: center"><img src="{{ answer.image }}" alt="Image" width="200" ></div>
-                <a href="/answer/{{ answer.id }}/delete/{{ answer.question_id }}">Delete answer</a>
+                <a href="/answer/{{ answer.id }}/delete/{{ answer.question_id }}">Delete answer 🗑️</a>
             {% endif %}
-                <a href="/edit_answer/{{ answer.id }}">Edit answer</a><br>
-                <a href="/add_comment_to_answer/{{ question_id }}/{{ answer.id }}">Comment Answer</a>
+                <a href="/edit_answer/{{ answer.id }}">Edit answer ✏️</a>
+                <a href="/add_comment_to_answer/{{ question_id }}/{{ answer.id }}">Comment answer 🖊️</a>
                 </td>
             </tr>
                 {% for comment in comments_data %}
@@ -53,6 +62,9 @@
                 <tr>
                     <td>
                         <p class="comments">{{ comment.message }} {{ comment.submission_time }}</p>
+                        <a href="/edit_comment/{{ comment.question_id }}/{{ comment.id }}">Edit comment ✏️</a>
+                        <button onclick="alert('Are you sure to delete?'), location.href = '/comments/{{ comment.question_id }}/{{ comment.id }}/delete';"
+                                id="my_button" class="submit-button">🗑️</button>
                     </td>
                 </tr>
                 {% endif %}
@@ -83,6 +95,6 @@
         </thead>
     </table>
 
-    <a href="/">Back to main page</a>
+    <br><a href="/">Back to main page ↩️</a>
 
 {% endblock %}
