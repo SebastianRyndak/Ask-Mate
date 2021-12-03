@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+
+{% block page_title %}
+    Add tag to the fallowing question:
+{% endblock %}
+
+{% block content %}
+
+    <table class="question-tag">
+        {% for data in question_data %}
+        <thead>
+            <tr class="question-tag-title">
+                <th>{{ data.title }}</th>
+            </tr>
+            <tr class="question-tag-message">
+                <th>{{ data.message }} </th>
+            </tr>
+        </thead>
+        {% endfor %}
+    </table>
+
+    <form action="/question/{{ question_id }}/new-tag" method="post">
+        <label for="id">Choose tag:</label>
+    <button class="tag-button" disabled>
+        {% for id in id_list %}
+            <input type="checkbox" name={{ id.id }}>{{ id.name }}
+        {% endfor %}
+    </button>
+            <input hidden='{{ question_id }}'>
+        <br>
+        <input type="submit" value="Submit">
+    </form>
+    <br>
+    <br>
+   <a href="/question/{{ question_id }}">Back to Question </a>
+
+{% endblock %}

@@ -36,13 +36,13 @@ img {
 }
 
 input, textarea {
-    border: black, 2pt palegreen;
+    /*border: black, 2pt palegreen;*/
     border-radius: 4pt;
     padding: 4pt 12pt;
 }
 
 button {
-    border: black, 2pt palegreen;
+    /*border: black, 2pt palegreen;*/
     border-radius: 4pt;
     color: black;
     padding: 4pt 12pt;
@@ -75,4 +75,28 @@ a {
 
 .content-wrapper {
     padding: 10%;
+}
+
+.comment-date {
+    font-size: 1.5vh;
+    font-style: italic;
+    text-align: end;
+    margin: 0.5vh 0 1vh;
+}
+
+.link-inside-table {
+    font-size: 1.4vh;
+}
+
+.answer-table {
+    width: 418px;
+    margin-top: 0.5vh;
+}
+
+.comments {
+    margin: 1vh 0 0;
+}
+
+.tag-button {
+    background: #FFFAFA;
 }

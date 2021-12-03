@@ -1,6 +1,8 @@
 import os
 from datetime import datetime
-from flask import Flask, render_template, request, redirect
+
+from flask import Flask, render_template, request, redirect, url_for
+
 import data_manager
 
 app = Flask(__name__)
@@ -18,7 +20,6 @@ def list_voting(id, value):
     elif value == "-":
         data_manager.substract_vote_counter(id)
     return redirect("/list")
-
 
 
 @app.route("/question/vote/<question_id>/<answer_id>/<vote_number>")
@@ -39,8 +40,6 @@ def question_list():
     return render_template("list.html", questions_list=questions_list, table_headers=data_manager.TABLE_HEADERS)
 
 
-
-
 @app.route("/<value>/<descend>")
 def prepare_sorted_table_to_display(value,descend=1):
     questions_list = data_manager.sort_questions_by_column(value)
@@ -51,11 +50,12 @@ def prepare_sorted_table_to_display(value,descend=1):
 @app.route('/question')
 @app.route('/question/<int:question_id>')
 def question(question_id):
+    tags = data_manager.get_tags(question_id)
     question_data = data_manager.find_title_and_message(int(question_id))
     answer_data = data_manager.find_all_answer_to_question(question_id)
     comments_data = data_manager.search_comment_by_id(question_id)
     return render_template('question.html', question_data=question_data, question_id=question_id,
-                           answer_data=answer_data, comments_data=comments_data)
+                           answer_data=answer_data, comments_data=comments_data, tags=tags)
 
 
 @app.route('/new_answer/<question_id>')
@@ -64,18 +64,19 @@ def saving_new_answer(question_id):
     return render_template("new_answer.html", question_data=question_data, question_id=question_id)
 
 
-
 @app.route('/new_answer/<question_id>/new-answer', methods=["POST"])
 def summary_new_answer(question_id):
     question_id = int(question_id)
     if request.method == "POST":
         message = request.form.get("message")
         image = request.files['image']
-        if image.filename != "":
+        if image.filename != "" and image.filename is not None:
             if not data_manager.allowed_image(image.filename):
                 return redirect(request.url)
             image.save(os.path.join(app.config["UPLOAD_PICTURE_ANSWERS"], image.filename))
-        data_manager.write_answer_to_db(question_id, message, "../static/uploads_pictures_answers/"+image.filename)
+            data_manager.write_answer_to_db(question_id, message, "../static/uploads_pictures_answers/"+image.filename)
+        else:
+            data_manager.write_answer_to_db(question_id, message)
     return redirect(f'/question/{question_id}')
 
 
@@ -90,11 +91,12 @@ def summary_new_question():
         title = request.form.get("title")
         message = request.form.get("question")
         image = request.files['image']
-        if image.filename != "":
+        if image.filename != "" and image.filename is not None:
             if not data_manager.allowed_image(image.filename):
                 return redirect(request.url)
             image.save(os.path.join(app.config["UPLOAD_PICTURE_FOLDER"], image.filename))
-        data_manager.save_new_question(message, title, "../static/uploads_pictures_questions/"+image.filename)
+        else:
+            data_manager.save_new_question(message, title)
     return redirect('/list')
 
 
@@ -121,8 +123,8 @@ def summary_edited_question(question_id):
 
 @app.route("/answer/<answer_id>/delete/<question_id>", methods=["POST", "GET"])
 def delete_answer(answer_id, question_id):
-    data_manager.delete_answer_from_db_by_id(answer_id)
     data_manager.delete_answer_from_comment_by_id(answer_id)
+    data_manager.delete_answer_from_db_by_id(answer_id)
     return redirect(f"/question/{question_id}")
 
 
@@ -194,9 +196,33 @@ def comment_questions(question_id):
     return render_template("Comment_questions.html", question_id=question_id)
 
 
+
 @app.route('/comments/<question_id>/<comment_id>/delete')
 def delete_comment(question_id, comment_id):
     data_manager.delete_comment_from_database(comment_id)
+    return redirect(f'/question/{question_id}')
+
+
+@app.route("/question/<question_id>/new-tag", methods=["POST"])
+def save_tags_to_a_question(question_id):
+    tags_id = list(request.form)
+    data_manager.delete_tag_list(question_id)
+    if len(tags_id) > 0:
+        for tag_id in tags_id:
+            data_manager.save_tag_list(question_id, tag_id)
+    return redirect(url_for("question", question_id=question_id))
+
+
+@app.route("/question/<question_id>/new-tag")
+def get_add_new_tag(question_id):
+    question_data = data_manager.get_question_db_by_question_id(question_id)
+    id_list = data_manager.get_id_list()
+    return render_template("new_tag.html", question_id=question_id, question_data=question_data, id_list=id_list)
+
+
+@app.route('/delete_question_comment/<question_id>/<comment_id>')
+def delete_questions_comment(question_id, comment_id):
+    data_manager.delete_comment_from_question(comment_id)
     return redirect(f'/question/{question_id}')
 
 
