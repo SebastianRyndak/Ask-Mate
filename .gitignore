@@ -9,7 +9,8 @@ __pycache__/*
 __pycache__
 .idea/ask-mate-2-python-kuba-bogacki.iml
 .idea/
-
+.static/uploads_pictures_answers
+.static/uploads_pictures_questions
 # Byte-compiled / optimized / DLL files
 >>>>>>> 984ad58db33e12bdd786079a152b7902b6eb68e3
 __pycache__/
