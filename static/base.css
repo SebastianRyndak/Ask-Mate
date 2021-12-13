@@ -1,3 +1,36 @@
+.topnav {
+    overflow: hidden;
+    background-color: rgba(68,69,68,0.94)
+}
+
+.topnav .a {
+    float: left;
+    display: block;
+    color: black;
+    button-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+}
+
+
+.topnav .search-container {
+    float: left;
+    display: block;
+    color: black;
+    button-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+}
+
+.topnav input[type=text] {
+    padding: 6px;
+    margin-top: 8px;
+    font-size: 17px;
+    border: none;
+}
+
 
 body {
     background-image: url("https://kc.localacura.com/wp-content/uploads/2018/03/question-background-v1a-1.png");
@@ -5,6 +38,7 @@ body {
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
+    margin: 0;
 }
 
 a:link {
@@ -12,7 +46,7 @@ a:link {
 }
 
 #header-title {
-    color: steelblue;
+    color: rgba(12,14,23,0.94)
 }
 
 table, th, td {
@@ -42,7 +76,7 @@ input, textarea {
 }
 
 button {
-    /*border: black, 2pt palegreen;*/
+    background-color: silver;
     border-radius: 4pt;
     color: black;
     padding: 4pt 12pt;
@@ -85,7 +119,7 @@ a {
 }
 
 .link-inside-table {
-    font-size: 1.4vh;
+    font-size: 1.7vh;
 }
 
 .answer-table {
@@ -99,4 +133,8 @@ a {
 
 .tag-button {
     background: #FFFAFA;
+}
+
+.background-img {
+  opacity: 0.5;
 }

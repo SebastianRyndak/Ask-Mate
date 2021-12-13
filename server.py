@@ -35,9 +35,10 @@ def main():
 
 
 @app.route("/list")
-def question_list():
+def question_list(order_direction):
     questions_list = data_manager.get_question_bd()
-    return render_template("list.html", questions_list=questions_list, table_headers=data_manager.TABLE_HEADERS)
+    return render_template("list.html", questions_list=questions_list, table_headers=data_manager.TABLE_HEADERS,
+                           order_direction=order_direction)
 
 
 @app.route("/<value>/<descend>")
@@ -128,7 +129,7 @@ def delete_answer(answer_id, question_id):
     return redirect(f"/question/{question_id}")
 
 
-@app.route('/question/<question_id>/delete', methods=["POST"])
+@app.route('/question/<question_id>/delete')
 def delete_question(question_id):
     data_manager.delete_answers_from_comment(question_id)
     data_manager.delete_answers_from_question_tag(question_id)
@@ -227,4 +228,5 @@ def delete_questions_comment(question_id, comment_id):
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True,
+            port=5001)

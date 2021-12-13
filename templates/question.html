@@ -20,10 +20,39 @@
     </ul>
     {% endfor %}
 
-    <form action="/add_comment_to_question/{{ question_id }}"><br>
-    <button type="submit">Comment question</button>
-    </form>
+    <table>
+        <thead>
+            <tr>
+                <th>
+                <form action="/add_comment_to_question/{{ question_id }}">
+                    <button type="submit">Comment question</button>
+                </form>
+                </th>
+                <th>
+                <form action="/question/{{ question_id }}/delete">
+                    <button type="submit">Delete question</button>
+                </form>
+                </th>
+                <th>
+                <form action="/edit_question/{{ question_id }}">
+                    <button type="submit">Edit question</button>
+                </form>
+                </th>
+                <th>
+                <form action="/new_answer/{{ question_id }}">
+                    <button type="submit">Add new answer</button>
+                </form>
+                </th>
+                <th>
+                <form action="/question/{{ question_id }}/new-tag">
+                    <button type="submit">Add tag</button>
+                </form>
+                </th>
+            </tr>
+        </thead>
+    </table>
 
+    <h4>Tags:</h4>
     {% for tag in tags %}
         <button disabled class="tag-button">{{ tag.name }}</button>
     {% endfor %}
@@ -55,10 +84,10 @@
             {% if answer.image == "" or answer.image == None %}
                 <a href="/answer/{{ answer.id }}/delete/{{ answer.question_id }}" class="link-inside-table">Delete answer 🗑️</a>
             {% else %}
-                <div style="text-align: center"><img src="{{ answer.image }}" alt="Image" width="300" ></div>
+                <div style="text-align: center"><img src="{{ answer.image }}" alt="Image" width="300" class="responsive"></div>
                 <a href="/answer/{{ answer.id }}/delete/{{ answer.question_id }}" class="link-inside-table">Delete answer 🗑️</a>
             {% endif %}
-                <a href="/edit_answer/{{ answer.id }}" class="link-inside-table">Edit answer</a><br>
+                <a href="/edit_answer/{{ answer.id }}" class="link-inside-table">Edit answer ✏️</a>
                 <a href="/add_comment_to_answer/{{ question_id }}/{{ answer.id }}" class="link-inside-table">Comment answer 🖊️</a>
                 </td>
             </tr>
@@ -69,9 +98,9 @@
                 <td>
                     <p class="comments">{{ comment.message }} </p>
                     <p class="comment-date">{{ submission_date[:-7] }}</p>
-                <a href="/edit_comment/{{ comment.question_id }}/{{ comment.id }}">Edit comment ✏️</a>
+                <a href="/edit_comment/{{ comment.question_id }}/{{ comment.id }}" class="link-inside-table">Edit comment ✏️</a>
                 <button onclick="alert('Are you sure to delete?'), location.href = '/comments/{{ comment.question_id }}/{{ comment.id }}/delete';"
-                        id="my_button" class="submit-button">🗑️</button>
+                        id="my_button" class="link-inside-table">🗑️</button>
                 {% endif %}
                 {% endfor %}
                 </td>
@@ -79,32 +108,6 @@
             </tbody>
         </table>
     {% endfor %}
-    <table>
-        <thead>
-            <tr>
-                <th>
-                <form action="/question/{{ question_id }}/delete" method="POST">
-                    <input type="submit" name="delete_button" value="Delete question">
-                </form>
-                </th>
-                <th>
-                <form action="/new_answer/{{ question_id }}">
-                    <button>Add new answer</button>
-                </form>
-                </th>
-                <th>
-                <form action="/edit_question/{{ question_id }}">
-                    <button>Edit question</button>
-                </form>
-                </th>
-                <th>
-                <form action="/question/{{ question_id }}/new-tag">
-                    <button>Add tag</button>
-                </form>
-                </th>
-            </tr>
-        </thead>
-    </table>
 
     <br><a href="/">Back to main page ↩️</a>
 

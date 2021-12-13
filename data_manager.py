@@ -289,10 +289,9 @@ def get_question_bd(cursor):
     cursor.execute("""
         SELECT *
         FROM question
-        ORDER BY submission_time DESC 
         """)
     return cursor.fetchall()
-
+# ORDER BY submission_time DESC
 
 @database_common.connection_handler
 def add_comment(cursor, message, question_id, answer_id=None):
@@ -444,3 +443,4 @@ def delete_comment_from_question(cursor, comment_id):
         DELETE FROM comment
         WHERE id = %(comment_id)s"""
     cursor.execute(query, {'comment_id': comment_id})
+
