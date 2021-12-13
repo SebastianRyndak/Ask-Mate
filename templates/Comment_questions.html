@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% block page_title %}
+    Comment question
+{% endblock %}
+
+{% block content %}
+
+    <form action="/add_comment_to_question/{{ question_id }}" method="POST">
+    <label>Comment</label><br>
+    <textarea name="comment"></textarea><br>
+    <button type="submit">Submit</button>
+    </form>
+
+{% endblock %}

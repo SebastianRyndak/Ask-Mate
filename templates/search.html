@@ -1,0 +1,49 @@
+{% extends "layout.html" %}
+
+{% block page_title %}
+    Searching results
+{% endblock %}
+
+{% block content %}
+        <h1 class="header"> Results searching "{{ searching_phrase }}" in our database:</h1>
+        <h4>We have {{ questions|length + answers|length + comments|length }} hits!</h4>
+        <table class="searching-question">
+            {% if questions != None %}
+                {% for question in questions %}
+                    <tr>{% for key, value in question.items() %}
+                        {% if key == "title" or key == "message" %}
+                            <td class="question-search-result"><a href="question/{{ question["id"] }}"> {{ value }}</a></td>
+                        {% elif key != "id" %}
+                            <td class="question-search-result">{{ value }}</td>
+                        {% endif %}
+                        </tr>
+                {% endfor %} {% endfor %}
+            {% endif %}
+
+            {% if answers != None %}
+                {% for answer in answers %}
+                    <tr>{% for key, value in answer.items() %}
+                        {% if key == "message" %}
+                            <td class="answer-search-result"><a href="question/{{ answer["question_id"] }}"> {{ value }}</a></td>
+                        {% elif key == "submission_time" %}
+                            <td class="answer-search-result">{{ value }}</td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %} {% endfor %}
+            {% endif %}
+
+            {% if comments != None %}
+                {% for comment in comments %}
+                    <tr>{% for key, value in comment.items() %}
+                       {% if key == "message" %}
+                            <td class="comment-search-result"><a href="question/{{ comment["question_id"] }}"> {{ value }}</a></td>
+                       {% elif key == "submission_time" %}
+                            <td class="comment-search-result">{{ value }}</td>
+                       {% endif %}
+                    </tr>
+                {% endfor %} {% endfor %}
+            {% endif %}
+
+        </table>
+
+{% endblock %}

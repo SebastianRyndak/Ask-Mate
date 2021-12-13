@@ -3,9 +3,12 @@ __pycache__/*
 /test.py
 __pycache__
 .idea/
+/test.py
+__pycache__
+.static/uploads_pictures_answers
+.static/uploads_pictures_questions
 
 # Byte-compiled / optimized / DLL files
->>>>>>> 984ad58db33e12bdd786079a152b7902b6eb68e3
 __pycache__/
 *.py[cod]
 *$py.class
@@ -140,16 +143,7 @@ dmypy.json
 
 # pytype static type analyzer
 .pytype/
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
 
 # Cython debug symbols
 cython_debug/
->>>>>>> kuba-bogacki
-=======
 
-
-# Cython debug symbols
-cython_debug/
->>>>>>> 984ad58db33e12bdd786079a152b7902b6eb68e3

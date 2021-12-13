@@ -1,0 +1,140 @@
+.topnav {
+    overflow: hidden;
+    background-color: rgba(68,69,68,0.94)
+}
+
+.topnav .a {
+    float: left;
+    display: block;
+    color: black;
+    button-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+}
+
+
+.topnav .search-container {
+    float: left;
+    display: block;
+    color: black;
+    button-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+}
+
+.topnav input[type=text] {
+    padding: 6px;
+    margin-top: 8px;
+    font-size: 17px;
+    border: none;
+}
+
+
+body {
+    background-image: url("https://kc.localacura.com/wp-content/uploads/2018/03/question-background-v1a-1.png");
+    height: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    margin: 0;
+}
+
+a:link {
+    text-decoration: none;
+}
+
+#header-title {
+    color: rgba(12,14,23,0.94)
+}
+
+table, th, td {
+    background-color: snow;
+    border-radius: 10px;
+    border-style: inset;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin-left: fill;
+    margin-right: auto;
+    /*border: 1px solid #ddd;*/
+    border-radius: 16px;
+    border-style: inset;
+    border-color: grey;
+    padding: 5px;
+    width: 250px;
+}
+
+input, textarea {
+    /*border: black, 2pt palegreen;*/
+    border-radius: 4pt;
+    padding: 4pt 12pt;
+}
+
+button {
+    background-color: silver;
+    border-radius: 4pt;
+    color: black;
+    padding: 4pt 12pt;
+    text-decoration: none;
+    margin: 2pt 2pt;
+    cursor: pointer;
+}
+
+footer {
+    height: 36pt;
+    position: fixed;
+    padding: 6pt;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: darkkhaki;
+    color: black;
+    text-align: center;
+}
+
+h1, h2, h3, table, form, div {
+   font-family: 'Consolas', 'Monaco', 'Bitstream Vera Sans Mono', monospace;
+    color: rgba(33,33,33,0.94);
+}
+
+a {
+   font-family: 'Consolas', 'Monaco', 'Bitstream Vera Sans Mono', monospace;
+    color: black;
+}
+
+.content-wrapper {
+    padding: 10%;
+}
+
+.comment-date {
+    font-size: 1.5vh;
+    font-style: italic;
+    text-align: end;
+    margin: 0.5vh 0 1vh;
+}
+
+.link-inside-table {
+    font-size: 1.7vh;
+}
+
+.answer-table {
+    width: 418px;
+    margin-top: 0.5vh;
+}
+
+.comments {
+    margin: 1vh 0 0;
+}
+
+.tag-button {
+    background: #FFFAFA;
+}
+
+.background-img {
+  opacity: 0.5;
+}

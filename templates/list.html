@@ -1,0 +1,34 @@
+{% extends "layout.html" %}
+
+{% block page_title %}
+    Hi Mates!
+{% endblock %}
+
+{% block content %}
+<h2>On this page you can read the following questions:</h2>
+
+<table class="">
+    <tr>
+    {% for key, header in table_headers.items() %}
+        <th>
+            <p>
+                <a href="/{{ key }}/1"><strong>  {{ header }}</strong></a>
+            </p>
+        </th>
+    {% endfor %}
+    </tr>
+    {% for user_record in questions_list %}
+        <tr>{% for keys in table_headers.keys() %}
+            {% if keys == "title" %}
+                <td><a href="/question/{{ user_record["id"]}}">{{ user_record[keys] }}</a></td>
+            {% elif keys == "vote_number" %}
+                <td> <a href="/vote/{{ user_record["id"] }}/+">👍</a> {{ user_record[keys] }} <a href="/vote/{{ user_record["id"] }}/-">👎</a> </td>
+            {% else: %}
+                <td>{{ user_record[keys] }}</td>
+            {% endif %} {% endfor %} </tr> {% endfor %}
+
+</table>
+<br>
+<button><a href="/new_question">Add question</a></button>
+
+{% endblock %}
