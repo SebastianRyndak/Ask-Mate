@@ -138,3 +138,8 @@ a {
 .background-img {
   opacity: 0.5;
 }
+
+.sort-button {
+    background: transparent;
+    border: none !important;
+}
