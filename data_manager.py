@@ -450,3 +450,21 @@ def sort_questions_by_column_name_desc(cursor, column_name):
     ORDER BY {column_name} DESC""").format(column_name=sql.Identifier(column_name))
     cursor.execute(query, {"column": column_name})
     return cursor.fetchall()
+
+
+@database_common.connection_handler
+def get_all_users(cursor):
+    query = sql.SQL("""
+    SELECT u.id, u.username, u.registration_date,u.reputation,COUNT(DISTINCT q.id) AS questions, COUNT(DISTINCT a.id) AS answers, COUNT(DISTINCT c.id) AS comments
+    FROM public."user" AS u
+    LEFT JOIN answer AS a
+    on u.id = a.user_id
+    LEFT JOIN question AS q 
+    on q.user_id = u.id
+    LEFT JOIN comment c 
+    on u.id = c.user_id
+    GROUP BY u.id
+    ORDER BY u.id DESC
+    """)
+    cursor.execute(query)
+    return cursor.fetchall()

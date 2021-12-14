@@ -1,4 +1,3 @@
-
 from flask import Flask, render_template, request, redirect, url_for
 from bonus_questions import SAMPLE_QUESTIONS
 import os
@@ -85,7 +84,8 @@ def summary_new_answer(question_id):
             if not data_manager.allowed_image(image.filename):
                 return redirect(request.url)
             image.save(os.path.join(app.config["UPLOAD_PICTURE_ANSWERS"], image.filename))
-            data_manager.write_answer_to_db(question_id, message, "../static/uploads_pictures_answers/"+image.filename)
+            data_manager.write_answer_to_db(question_id, message,
+                                            "../static/uploads_pictures_answers/" + image.filename)
         else:
             data_manager.write_answer_to_db(question_id, message)
     return redirect(f'/question/{question_id}')
@@ -168,7 +168,7 @@ def after_edit_answer(answer_id, question_id):
 def comment_answer(question_id, answer_id):
     if request.method == "POST":
         comment = request.form["comment"]
-        data_manager.add_comment(comment,question_id, answer_id)
+        data_manager.add_comment(comment, question_id, answer_id)
         return redirect(f"/question/{question_id}")
     return render_template("Comment_Answer.html", question_id=question_id, answer_id=answer_id)
 
@@ -208,7 +208,6 @@ def comment_questions(question_id):
     return render_template("Comment_questions.html", question_id=question_id)
 
 
-
 @app.route('/comments/<question_id>/<comment_id>/delete')
 def delete_comment(question_id, comment_id):
     data_manager.delete_comment_from_database(comment_id)
@@ -238,6 +237,12 @@ def delete_questions_comment(question_id, comment_id):
     return redirect(f'/question/{question_id}')
 
 
+@app.route('/users')
+def get_users():
+    users = data_manager.get_all_users()
+    print(users)
+    return render_template("users.html", users = users)
+
+
 if __name__ == "__main__":
-   # app.run(debug=True)
-    print(os.urandom(24))
+    app.run(debug=True)

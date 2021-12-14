@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Users list</title>
+    <link rel="stylesheet" href="/static/base.css">
+</head>
+<body>
+<div>
+    <h1>Table of users:</h1>
+</div>
+<div>
+<table>
+    <tr>
+        <th>Username</th>
+        <th>Registration date</th>
+        <th>Number of asked questions</th>
+        <th>Number of answers</th>
+        <th>Number of comments</th>
+        <th>Reputation</th>
+    </tr>
+    {% for item in users %}
+    <tr>
+           <td>{{ item.get("username").split("@")[0]}}</td>
+            <td>{{ item.get("registration_date")}}</td>
+            <td>{{ item.get('questions')}}</td>
+            <td>{{ item.get('answers')}}</td>
+            <td>{{ item.get('comments')}}</td>
+            <td> {{ item.get('reputation') }}</td>
+    </tr>
+     {% endfor %}
+</table>
+</div>
+</body>
+</html>
