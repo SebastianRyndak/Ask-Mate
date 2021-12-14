@@ -24,6 +24,16 @@
     font-size: 17px;
 }
 
+.topnav .account-container {
+    float: right;
+    display: block;
+    color: black;
+    button-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+}
+
 .topnav input[type=text] {
     padding: 6px;
     margin-top: 8px;
@@ -97,7 +107,7 @@ footer {
     text-align: center;
 }
 
-h1, h2, h3, table, form, div {
+h1, h2, h3, table, form, div, input, button {
    font-family: 'Consolas', 'Monaco', 'Bitstream Vera Sans Mono', monospace;
     color: rgba(33,33,33,0.94);
 }
@@ -123,7 +133,7 @@ a {
 }
 
 .answer-table {
-    width: 418px;
+    width: 740px;
     margin-top: 0.5vh;
 }
 
@@ -142,4 +152,4 @@ a {
 .sort-button {
     background: transparent;
     border: none !important;
-}
+
