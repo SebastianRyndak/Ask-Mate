@@ -1,0 +1,87 @@
+{% extends "layout.html" %}
+
+{% block page_title %}
+    🔍 User info and activity
+{% endblock %}
+
+{% block content %}
+
+    {% for information in user_information %}
+    <h2>Welcome {{ information.username }}!</h2>
+    <ul>
+        <li><strong>User ID: </strong><em>{{ user_id }}</em></li>
+        <li><strong>Username: </strong><em>{{ information.username.split('@')[0] }}</em></li>
+        <li><strong>Registration date: </strong><em>{{ (information.registration_date|string)[:-7] }}</em></li>
+        <li><strong>Reputation: </strong><em>{{ information.reputation }} points</em></li>
+    {% endfor %}
+        <li><strong>Number of asked questions: </strong><em>{{ question_data|length }}</em></li>
+        <li><strong>Number of answers: </strong><em>{{ answer_data|length }}</em></li>
+        <li><strong>Number of comments: </strong><em>{{ comment_data|length }}</em></li>
+    </ul>
+    <br>
+    <table class="answer-table">
+        <thead>
+            <tr>
+                <th><strong>❓ User question ❓</strong></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if question_data|length == 0 %}
+            <tr>
+                <td>You nothing asked yet</td>
+            </tr>
+            {% else %}
+            {% for question in question_data %}
+            <tr>
+                <td><a href="/question/{{ question.id }}">{{ question.title }}</a></td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+        </tbody>
+    </table>
+    <br>
+    <table class="answer-table">
+        <thead>
+            <tr>
+                <th><strong>❗ User answer ❗</strong></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if answer_data|length == 0 %}
+            <tr>
+                <td>You nothing answered yet</td>
+            </tr>
+            {% else %}
+            {% for answer in answer_data %}
+            <tr>
+                <td><a href="/question/{{ answer.question_id }}">{{ answer.message }}</a></td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+        </tbody>
+    </table>
+    <br>
+    <table class="answer-table">
+        <thead>
+            <tr>
+                <th><strong>💬 User comment 💬</strong></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if comment_data|length == 0 %}
+            <tr>
+                <td>You nothing commented yet</td>
+            </tr>
+            {% else %}
+            {% for comment in comment_data %}
+            <tr>
+                <td><a href="/question/{{ comment.question_id }}">{{ comment.message }}</a></td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+        </tbody>
+    </table>
+
+    <br><a href="/list">Back to list page ↩️</a>
+
+{% endblock %}
