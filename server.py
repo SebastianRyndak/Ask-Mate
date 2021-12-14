@@ -6,6 +6,7 @@ import data_manager
 
 
 app = Flask(__name__)
+app.secret_key = os.urandom(11)
 pictures_questions = ".\\static\\uploads_pictures_questions"
 app.config["UPLOAD_PICTURE_FOLDER"] = pictures_questions
 pictures_answers = '.\\static\\uploads_pictures_answers'
