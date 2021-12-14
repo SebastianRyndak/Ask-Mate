@@ -40,8 +40,10 @@ def list_answer_voting(question_id, answer_id, vote_number):
 def main():
     if 'username' in session:
         username = session['username']
+        user_data = data_manager.find_user_id_by_username(username)
         questions = data_manager.get_data_to_main_list()
-        return render_template("index.html", username=username, questions=questions, table_header=data_manager.TABLE_HEADERS)
+        return render_template("index.html", username=username, questions=questions,
+                               user_data=user_data, table_header=data_manager.TABLE_HEADERS)
     questions = data_manager.get_data_to_main_list()
     return render_template("index.html", questions=questions, table_header=data_manager.TABLE_HEADERS)
 
@@ -63,10 +65,10 @@ def prepare_sorted_table_to_display(value, descend):
 
 
 @app.route('/question')
-@app.route('/question/<int:question_id>')
+@app.route('/question/<question_id>')
 def question(question_id):
     tags = data_manager.get_tags(question_id)
-    question_data = data_manager.find_title_and_message(int(question_id))
+    question_data = data_manager.find_title_and_message(question_id)
     answer_data = data_manager.find_all_answer_to_question(question_id)
     comments_data = data_manager.search_comment_by_id(question_id)
     return render_template('question.html', question_data=question_data, question_id=question_id,
@@ -251,6 +253,17 @@ def create_new_user():
         data_manager.create_account(session['username'], password)
         return redirect(url_for('main'))
     return render_template('registration.html')
+
+
+@app.route('/user/<user_id>')
+def display_user_information(user_id):
+    user_information = data_manager.get_user_data(user_id)
+    question_data = data_manager.get_user_question_data(user_id)
+    answer_data = data_manager.get_user_answer_data(user_id)
+    comment_data = data_manager.get_user_comment_data(user_id)
+    return render_template('user_page.html', user_information=user_information, user_id=user_id,
+                           question_data=question_data, answer_data=answer_data,
+                           comment_data=comment_data)
 
 
 @app.route('/logout')

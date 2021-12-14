@@ -458,3 +458,62 @@ def create_account(cursor, username, password):
         (username, password, registration_date)
         VALUES (%(username)s, %(password)s, NOW())"""
     cursor.execute(query, {'username': username, 'password': password})
+
+
+@database_common.connection_handler
+def get_user_data(cursor, user_id):
+    query = """
+        SELECT username, registration_date, reputation
+        FROM public.user
+        WHERE id = %(user_id)s"""
+    cursor.execute(query, {'user_id': user_id})
+    return cursor.fetchall()
+
+
+@database_common.connection_handler
+def get_user_question_data(cursor, user_id):
+    query = """
+        SELECT question.title, question.id
+        FROM question
+        INNER JOIN public.user
+            ON question.user_id = public.user.id
+        WHERE public.user.id = %(user_id)s
+        GROUP BY question.title, question.id"""
+    cursor.execute(query, {'user_id': user_id})
+    return cursor.fetchall()
+
+
+@database_common.connection_handler
+def get_user_answer_data(cursor, user_id):
+    query = """
+        SELECT answer.message, answer.question_id
+        FROM answer
+        INNER JOIN public.user
+            ON answer.user_id = public.user.id
+        WHERE public.user.id = %(user_id)s
+        GROUP BY answer.message, answer.question_id"""
+    cursor.execute(query, {'user_id': user_id})
+    return cursor.fetchall()
+
+
+@database_common.connection_handler
+def get_user_comment_data(cursor, user_id):
+    query = """
+        SELECT comment.message, comment.question_id
+        FROM comment
+        INNER JOIN public.user
+            ON comment.user_id = public.user.id
+        WHERE public.user.id = %(user_id)s
+        GROUP BY comment.message, comment.question_id"""
+    cursor.execute(query, {'user_id': user_id})
+    return cursor.fetchall()
+
+
+@database_common.connection_handler
+def find_user_id_by_username(cursor, username):
+    query = """
+        SELECT public.user.id, public.user.username
+        FROM public.user
+        WHERE username = %(username)s"""
+    cursor.execute(query, {'username': username})
+    return cursor.fetchall()
