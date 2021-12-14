@@ -66,9 +66,9 @@
 	{% endif %}
 
     <br>
+    {% for answer in answer_data %}
     <table class="answer-table">
         <thead>
-            {% for answer in answer_data %}
             <tr>
                 <th><strong>{{ answer.message }}</strong></th>
                 <th>{{ answer.vote_number }} votes</th>

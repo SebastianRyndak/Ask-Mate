@@ -5,7 +5,11 @@
 {% endblock %}
 
 {% block content %}
+        {% if session %}
+        <h1 class="header">Hey {{ name }}! Check latest questions out!</h1>
+        {% else %}
         <h1 class="header">Hey Lads! Check latest questions out!</h1>
+        {% endif %}
 {#        <form action="/search" method="get">#}
 {#            <input type="search" class="search" placeholder="Search..." name="q">#}
 {#        </form><br>#}

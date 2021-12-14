@@ -1,6 +1,7 @@
 
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 from bonus_questions import SAMPLE_QUESTIONS
+from passlib.hash import pbkdf2_sha256
 import os
 import data_manager
 
@@ -37,15 +38,18 @@ def list_answer_voting(question_id, answer_id, vote_number):
 
 @app.route("/")
 def main():
+    if 'name' in session:
+        name = session['name']
+        questions = data_manager.get_data_to_main_list()
+        return render_template("index.html", name=name, questions=questions, table_header=data_manager.TABLE_HEADERS)
     questions = data_manager.get_data_to_main_list()
     return render_template("index.html", questions=questions, table_header=data_manager.TABLE_HEADERS)
 
 
 @app.route("/list")
-def question_list(order_direction):
+def question_list():
     questions_list = data_manager.get_question_bd()
-    return render_template("list.html", questions_list=questions_list, table_headers=data_manager.TABLE_HEADERS,
-                           order_direction=order_direction)
+    return render_template("list.html", questions_list=questions_list, table_headers=data_manager.TABLE_HEADERS)
 
 
 @app.route("/<value>/<descend>")
@@ -232,6 +236,17 @@ def get_add_new_tag(question_id):
 def delete_questions_comment(question_id, comment_id):
     data_manager.delete_comment_from_question(comment_id)
     return redirect(f'/question/{question_id}')
+
+
+@app.route('/registration', methods=["POST", "GET"])
+def create_new_user():
+    if request.method == 'POST':
+        session['name'] = request.form.get('name')
+        password_text = request.form.get('password')
+        password = pbkdf2_sha256.hash(password_text)
+        data_manager.add_new_user(session['name'], password)
+        return redirect(url_for('main'))
+    return render_template('registration.html')
 
 
 if __name__ == "__main__":
