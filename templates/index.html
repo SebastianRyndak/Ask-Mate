@@ -6,13 +6,11 @@
 
 {% block content %}
         {% if session %}
-        <h1 class="header">Hey {{ name }}! Check latest questions out!</h1>
+            <h1 class="header">Hey {{ username }}!</h1>
         {% else %}
-        <h1 class="header">Hey Lads! Check latest questions out!</h1>
+            <h1 class="header">Hey Lads!</h1>
         {% endif %}
-{#        <form action="/search" method="get">#}
-{#            <input type="search" class="search" placeholder="Search..." name="q">#}
-{#        </form><br>#}
+        <h1 class="header">Check latest questions out!</h1>
         <table class="main_table" title="main_table">
             {% for key in questions[0].keys() %}
                 {% if questions[0].keys() != "id" %}
