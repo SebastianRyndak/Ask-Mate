@@ -432,7 +432,6 @@ def delete_comment_from_question(cursor, comment_id):
     cursor.execute(query, {'comment_id': comment_id})
 
 
-@database_common.connection_handler
 def sort_questions_by_column_name_asc(cursor, column_name):
     query = sql.SQL("""
     SELECT id, submission_time,view_number,vote_number,title,message,image
@@ -450,3 +449,12 @@ def sort_questions_by_column_name_desc(cursor, column_name):
     ORDER BY {column_name} DESC""").format(column_name=sql.Identifier(column_name))
     cursor.execute(query, {"column": column_name})
     return cursor.fetchall()
+
+
+@database_common.connection_handler
+def create_account(cursor, username, password):
+    query = """
+        INSERT INTO public.user
+        (username, password, registration_date)
+        VALUES (%(username)s, %(password)s, NOW())"""
+    cursor.execute(query, {'username': username, 'password': password})

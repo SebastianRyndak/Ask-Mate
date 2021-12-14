@@ -14,9 +14,9 @@ def main():
 
 
 app = Flask(__name__)
-pictures_questions = ".\\static\\uploads_pictures_questions"
+pictures_questions = "E:\\Web and SQL - Python Flask\\ask-mate-3-python-BartoszKosicki\\static\\uploads_pictures_questions"
 app.config["UPLOAD_PICTURE_FOLDER"] = pictures_questions
-pictures_answers = '.\\static\\uploads_pictures_answers'
+pictures_answers = 'E:\\Web and SQL - Python Flask\\ask-mate-3-python-BartoszKosicki\\static\\uploads_pictures_answers'
 app.config["UPLOAD_PICTURE_ANSWERS"] = pictures_answers
 app.config["ALLOWED_IMAGE_EXTENSIONS"] = ["JPG", "PNG"]
 
@@ -38,10 +38,10 @@ def list_answer_voting(question_id, answer_id, vote_number):
 
 @app.route("/")
 def main():
-    if 'name' in session:
-        name = session['name']
+    if 'username' in session:
+        username = session['username']
         questions = data_manager.get_data_to_main_list()
-        return render_template("index.html", name=name, questions=questions, table_header=data_manager.TABLE_HEADERS)
+        return render_template("index.html", username=username, questions=questions, table_header=data_manager.TABLE_HEADERS)
     questions = data_manager.get_data_to_main_list()
     return render_template("index.html", questions=questions, table_header=data_manager.TABLE_HEADERS)
 
@@ -245,14 +245,21 @@ def delete_questions_comment(question_id, comment_id):
 @app.route('/registration', methods=["POST", "GET"])
 def create_new_user():
     if request.method == 'POST':
-        session['name'] = request.form.get('name')
+        session['username'] = request.form['username']
         password_text = request.form.get('password')
         password = pbkdf2_sha256.hash(password_text)
-        data_manager.add_new_user(session['name'], password)
+        data_manager.create_account(session['username'], password)
         return redirect(url_for('main'))
     return render_template('registration.html')
 
 
+@app.route('/logout')
+def logout():
+    session.pop('username', None)
+    return redirect(url_for('main'))
+
+
 if __name__ == "__main__":
+    app.secret_key = b'_5#y2L"F435ffCBQ8z\n\xec]/'
     app.run(debug=True,
-            port=5001)
+            port=5009)
