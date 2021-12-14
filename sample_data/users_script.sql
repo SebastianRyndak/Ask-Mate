@@ -6,7 +6,8 @@ CREATE TABLE IF NOT EXISTS public."user"
 (
     id uuid NOT NULL,
     username text COLLATE pg_catalog."default",
-    registration_date time without time zone,
+    registration_date timestamp without time zone,
+    password text COLLATE pg_catalog."default",
     questions integer DEFAULT 0,
     answers integer DEFAULT 0,
     comments integer DEFAULT 0,
@@ -34,3 +35,6 @@ ALTER TABLE ONLY public.comment
 
 ALTER TABLE ONLY public.question
     ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES public.user(id);
+
+
+

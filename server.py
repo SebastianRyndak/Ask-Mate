@@ -18,6 +18,7 @@ app.config["UPLOAD_PICTURE_FOLDER"] = pictures_questions
 pictures_answers = '.\\static\\uploads_pictures_answers'
 app.config["UPLOAD_PICTURE_ANSWERS"] = pictures_answers
 app.config["ALLOWED_IMAGE_EXTENSIONS"] = ["JPG", "PNG"]
+app.secret_key = b"'=\x8a\xd4\xe9\xf1\x018\x90\xa8\x91!\xda\xf8\xe4\xe2\xd3R\x8d!\xd6\xdeS\xa0"
 
 
 @app.route("/vote/<id>/<value>")
@@ -238,5 +239,5 @@ def delete_questions_comment(question_id, comment_id):
 
 
 if __name__ == "__main__":
-    app.run(debug=True,
-            port=5001)
+   # app.run(debug=True)
+    print(os.urandom(24))
