@@ -180,9 +180,6 @@ def delete_answer_from_comment_by_id(cursor, answer_id):
     cursor.execute(query, {'answer_id': answer_id})
 
 
-def save_new_answer(message, image, question_id):
-        write_answer_to_db(datetime.datetime.now(), 0, question_id, message, image)
-
 
 @database_common.connection_handler
 def get_question_id_by_answer_id_db(cursor, answer_id):
@@ -320,16 +317,6 @@ def substract_vote_counter(cursor,id):
 
 
 @database_common.connection_handler
-def sort_questions_by_column(cursor, column):
-    query = sql.SQL("""
-    SELECT id, submission_time,view_number,vote_number,title,message,image
-     FROM question
-    ORDER BY %s::text""")
-    cursor.execute(query, (column,))
-    return cursor.fetchall()
-
-
-@database_common.connection_handler
 def get_data_to_main_list(cursor):
     cursor.execute("""
         SELECT title, message, submission_time,  vote_number, view_number, id
@@ -444,3 +431,22 @@ def delete_comment_from_question(cursor, comment_id):
         WHERE id = %(comment_id)s"""
     cursor.execute(query, {'comment_id': comment_id})
 
+
+@database_common.connection_handler
+def sort_questions_by_column_name_asc(cursor, column_name):
+    query = sql.SQL("""
+    SELECT id, submission_time,view_number,vote_number,title,message,image
+    FROM question
+    ORDER BY {column_name} ASC""").format(column_name=sql.Identifier(column_name))
+    cursor.execute(query, {"column": column_name})
+    return cursor.fetchall()
+
+
+@database_common.connection_handler
+def sort_questions_by_column_name_desc(cursor, column_name):
+    query = sql.SQL("""
+    SELECT id, submission_time,view_number,vote_number,title,message,image
+    FROM question
+    ORDER BY {column_name} DESC""").format(column_name=sql.Identifier(column_name))
+    cursor.execute(query, {"column": column_name})
+    return cursor.fetchall()

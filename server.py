@@ -52,10 +52,13 @@ def question_list():
     return render_template("list.html", questions_list=questions_list, table_headers=data_manager.TABLE_HEADERS)
 
 
-@app.route("/<value>/<descend>")
-def prepare_sorted_table_to_display(value,descend=1):
-    questions_list = data_manager.sort_questions_by_column(value)
+@app.route("/<value>/<descend>", methods=["GET", "POST"])
+def prepare_sorted_table_to_display(value, descend):
     table_headers = data_manager.TABLE_HEADERS
+    if descend == '0':
+        questions_list = data_manager.sort_questions_by_column_name_asc(value)
+    elif descend == '1':
+        questions_list = data_manager.sort_questions_by_column_name_desc(value)
     return render_template("list.html", questions_list=questions_list, table_headers=table_headers)
 
 
@@ -107,6 +110,7 @@ def summary_new_question():
             if not data_manager.allowed_image(image.filename):
                 return redirect(request.url)
             image.save(os.path.join(app.config["UPLOAD_PICTURE_FOLDER"], image.filename))
+            data_manager.save_new_question(message, title, "../static/uploads_pictures_questions/" + image.filename)
         else:
             data_manager.save_new_question(message, title)
     return redirect('/list')
