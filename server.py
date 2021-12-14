@@ -1,24 +1,24 @@
-
 from flask import Flask, render_template, request, redirect, url_for, session
 from bonus_questions import SAMPLE_QUESTIONS
 from passlib.hash import pbkdf2_sha256
 import os
 import data_manager
 
-app = Flask(__name__)
-
-
-@app.route("/bonus-questions")
-def main():
-    return render_template('bonus_questions.html', questions=SAMPLE_QUESTIONS)
-
 
 app = Flask(__name__)
+app.secret_key = b'_5#y2L"F435ffCBQ8z\n\xec]/'
+
+
 pictures_questions = "E:\\Web and SQL - Python Flask\\ask-mate-3-python-BartoszKosicki\\static\\uploads_pictures_questions"
 app.config["UPLOAD_PICTURE_FOLDER"] = pictures_questions
 pictures_answers = 'E:\\Web and SQL - Python Flask\\ask-mate-3-python-BartoszKosicki\\static\\uploads_pictures_answers'
 app.config["UPLOAD_PICTURE_ANSWERS"] = pictures_answers
 app.config["ALLOWED_IMAGE_EXTENSIONS"] = ["JPG", "PNG"]
+
+
+@app.route("/bonus-questions")
+def bonus_questions():
+    return render_template('bonus_questions.html', questions=SAMPLE_QUESTIONS)
 
 
 @app.route("/vote/<id>/<value>")
@@ -260,6 +260,4 @@ def logout():
 
 
 if __name__ == "__main__":
-    app.secret_key = b'_5#y2L"F435ffCBQ8z\n\xec]/'
-    app.run(debug=True,
-            port=5009)
+    app.run(debug=True)
