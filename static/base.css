@@ -129,11 +129,11 @@ a {
 }
 
 .link-inside-table {
-    font-size: 1.7vh;
+    font-size: 80%;
 }
 
 .answer-table {
-    width: 740px;
+    width: 418px;
     margin-top: 0.5vh;
 }
 
@@ -151,5 +151,45 @@ a {
 
 .sort-button {
     background: transparent;
-    border: none !important;
+    border: none;
+    display: inline-block;
+    margin-right:2vh;
+    padding: 0;
+}
 
+.author {
+    font-style: italic;
+}
+
+.post-username {
+    display: inline-block;
+    font-size: large;
+    font-weight: bold;
+}
+
+.answer-message {
+    font-weight: bold;
+}
+
+.answer-footer {
+    font-weight: normal;
+    font-style: italic;
+    font-size: small;
+    text-align: right;
+}
+
+.answer-footer-author {
+    font-weight: bold;
+}
+
+.comment-footer-author {
+    text-align: right;
+    font-style: italic;
+    font-size: 10px;
+    margin: 0 0 2px;
+}
+
+.comment-author {
+    font-weight: bold;
+    margin: 0
+}

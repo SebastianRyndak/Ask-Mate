@@ -6,12 +6,9 @@ import data_manager
 
 
 app = Flask(__name__)
-app.secret_key = b'_5#y2L"F435ffCBQ8z\n\xec]/'
-
-
-pictures_questions = "E:\\Web and SQL - Python Flask\\ask-mate-3-python-BartoszKosicki\\static\\uploads_pictures_questions"
+pictures_questions = ".\\static\\uploads_pictures_questions"
 app.config["UPLOAD_PICTURE_FOLDER"] = pictures_questions
-pictures_answers = 'E:\\Web and SQL - Python Flask\\ask-mate-3-python-BartoszKosicki\\static\\uploads_pictures_answers'
+pictures_answers = '.\\static\\uploads_pictures_answers'
 app.config["UPLOAD_PICTURE_ANSWERS"] = pictures_answers
 app.config["ALLOWED_IMAGE_EXTENSIONS"] = ["JPG", "PNG"]
 
@@ -212,7 +209,6 @@ def comment_questions(question_id):
         data_manager.add_comment(comment, question_id)
         return redirect(f"/question/{question_id}")
     return render_template("Comment_questions.html", question_id=question_id)
-
 
 
 @app.route('/comments/<question_id>/<comment_id>/delete')

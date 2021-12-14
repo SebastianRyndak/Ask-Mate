@@ -65,9 +65,11 @@ def return_question_id_and_message(cursor, answer_id):
 @database_common.connection_handler
 def find_title_and_message(cursor, question_id):
     query = sql.SQL("""
-        SELECT title, message, image
+        SELECT title, message, image, u.username
         FROM question
-        WHERE id = %(question_id)s
+        LEFT JOIN public.user as u
+        ON question.user_id = u.id
+        WHERE question.id = %(question_id)s
         ORDER BY title""").format(
         question_id=sql.Identifier('question_id')
     )
@@ -123,14 +125,17 @@ def save_edited_question(cursor, title, message, question_id):
 @database_common.connection_handler
 def find_all_answer_to_question(cursor, question_id):
     query = sql.SQL("""
-        SELECT *
+        SELECT answer.submission_time, answer.id, answer.vote_number, answer.message,
+       answer.image, "user".username
         FROM answer
+        LEFT JOIN "user" ON answer.user_id = "user".id
         WHERE question_id = %(question_id)s
         ORDER BY vote_number DESC""").format(
         question_id=sql.Identifier('question_id')
     )
     cursor.execute(query, {'question_id': question_id})
     return cursor.fetchall()
+
 
 @database_common.connection_handler
 def delete_question(cursor, question_id):
@@ -368,8 +373,10 @@ def search_user_phrase_comment(cursor, searching_phrase):
 @database_common.connection_handler
 def search_comment_by_id(cursor, question_id):
     query = ("""
-        SELECT *
+        SELECT comment.id, comment.question_id, comment.answer_id, comment.message, comment.submission_time, 
+        comment.edited_count, "user".username
         FROM comment
+        LEFT JOIN public."user" ON comment.user_id = "user".id 
         WHERE question_id = %(question_id)s
         ORDER BY id ASC;
         """)
@@ -432,6 +439,7 @@ def delete_comment_from_question(cursor, comment_id):
     cursor.execute(query, {'comment_id': comment_id})
 
 
+@database_common.connection_handler
 def sort_questions_by_column_name_asc(cursor, column_name):
     query = sql.SQL("""
     SELECT id, submission_time,view_number,vote_number,title,message,image

@@ -5,37 +5,43 @@
 {% endblock %}
 
 {% block content %}
-
-    <h1>{{ question_data[0].get("title") }}</h1><br>
-    {% if question_data[0].get("image") == "" or question_data[0].get("image") == None %}
-        <h3>{{ question_data[0].get("message") }}</h3><br>
-    {% else %}
-        <h3>{{ question_data[0].get("message") }}<br><br><img src="{{ question_data[0].get("image") }}" alt="Image" width="300"></h3>
-    {% endif %}
-
+    <div class="question-block">
+        <h1>{{ question_data[0].get("title") }}</h1><br>
+        {% if question_data[0].get("image") == "" or question_data[0].get("image") == None %}
+            <h3>{{ question_data[0].get("message") }}</h3><br>
+        {% else %}
+            <h3>{{ question_data[0].get("message") }}<br><br><img src="{{ question_data[0].get("image") }}" alt="Image" width="300"></h3>
+        {% endif %}
+        {% if question_data[0].get("username") == "" or question_data[0].get("username") == None %}
+        <p class="author">Posted by <span class="post-username">Unknown</span></p>
+        {% else %}
+        <p class="author">Posted by <span class="post-username">{{ question_data[0].get("username") }}</span></p>
+        {% endif %}
+    </div>
     {% for data in comments_data %}
+        {% if data.question_id and (data.answer_id == None or data.answer_id == "") %}
     <ul>
         <li><h4>{{ data.message }}</h4></li>
-        <a href="/delete_question_comment/{{ data.question_id }}/{{ data.id }}">Delete comment 🗑️</a>
+        <a href="/delete_question_comment/{{ data.question_id }}/{{ data.id }}"> Delete 🗑️</a>
     </ul>
-    {% endfor %}
+    {% endif %}{% endfor %}
 
     <table>
         <thead>
             <tr>
                 <th>
                 <form action="/add_comment_to_question/{{ question_id }}">
-                    <button type="submit">Comment question</button>
+                    <button type="submit">Comment</button>
                 </form>
                 </th>
                 <th>
                 <form action="/question/{{ question_id }}/delete">
-                    <button type="submit">Delete question</button>
+                    <button type="submit">Delete</button>
                 </form>
                 </th>
                 <th>
                 <form action="/edit_question/{{ question_id }}">
-                    <button type="submit">Edit question</button>
+                    <button type="submit">Edit</button>
                 </form>
                 </th>
                 <th>
@@ -70,7 +76,14 @@
     <table class="answer-table">
         <thead>
             <tr>
-                <th><strong>{{ answer.message }}</strong></th>
+                <th class="answer-message">
+                    {{ answer.message }}
+                {% if answer.username == None or  answer.username == "" %}
+                    <p class="answer-footer"> Posted by <span class="answer-footer-author">Unknown</span></p>
+                {% else %}
+                    <p class="answer-footer"> Posted by <span class="answer-footer-author">{{ answer.username }}</span></p>
+                {% endif %}
+                </th>
                 <th>{{ answer.vote_number }} votes</th>
                 <th>
                 <a href="/question/vote/{{ answer.question_id }}/{{ answer.id }}/{{ answer.vote_number + 1 }}">👍</a>
@@ -82,13 +95,13 @@
             <tr>
                 <td>
             {% if answer.image == "" or answer.image == None %}
-                <a href="/answer/{{ answer.id }}/delete/{{ answer.question_id }}" class="link-inside-table">Delete answer 🗑️</a>
+                <a href="/answer/{{ answer.id }}/delete/{{ answer.question_id }}" class="link-inside-table">Delete 🗑️</a>
             {% else %}
                 <div style="text-align: center"><img src="{{ answer.image }}" alt="Image" width="300" class="responsive"></div>
-                <a href="/answer/{{ answer.id }}/delete/{{ answer.question_id }}" class="link-inside-table">Delete answer 🗑️</a>
+                <a href="/answer/{{ answer.id }}/delete/{{ answer.question_id }}" class="link-inside-table">Delete 🗑️</a>
             {% endif %}
-                <a href="/edit_answer/{{ answer.id }}" class="link-inside-table">Edit answer ✏️</a>
-                <a href="/add_comment_to_answer/{{ question_id }}/{{ answer.id }}" class="link-inside-table">Comment answer 🖊️</a>
+                <a href="/edit_answer/{{ answer.id }}" class="link-inside-table">Edit ✏️</a>
+                <a href="/add_comment_to_answer/{{ question_id }}/{{ answer.id }}" class="link-inside-table">Comment 🖊️</a>
                 </td>
             </tr>
                 {% for comment in comments_data %}
@@ -97,8 +110,13 @@
             <tr>
                 <td>
                     <p class="comments">{{ comment.message }} </p>
-                    <p class="comment-date">{{ submission_date[:-7] }}</p>
-                <a href="/edit_comment/{{ comment.question_id }}/{{ comment.id }}" class="link-inside-table">Edit comment ✏️</a>
+                    {% if comment.username == None or comment.username == "" %}
+                        <p class="comment-footer-author">Posted by <span class="comment-author">Unknown</span></p>
+                    {% else %}
+                        <p class="comment-footer-author">Posted by <span class="comment-author">{{ comment.username }}</span></p>
+                    {% endif %}
+                    <p class="comment-footer-author">{{ submission_date[:-7] }}</p>
+                <a href="/edit_comment/{{ comment.question_id }}/{{ comment.id }}" class="link-inside-table">Edit ✏️</a>
                 <button onclick="alert('Are you sure to delete?'), location.href = '/comments/{{ comment.question_id }}/{{ comment.id }}/delete';"
                         id="my_button" class="link-inside-table">🗑️</button>
                 {% endif %}
