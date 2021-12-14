@@ -240,7 +240,6 @@ def delete_questions_comment(question_id, comment_id):
 @app.route('/users')
 def get_users():
     users = data_manager.get_all_users()
-    print(users)
     return render_template("users.html", users = users)
 
 

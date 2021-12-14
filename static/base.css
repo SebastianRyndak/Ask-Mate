@@ -143,3 +143,8 @@ a {
     background: transparent;
     border: none !important;
 }
+
+.users-td {
+    text-align: center;
+    vertical-align: middle;
+}
