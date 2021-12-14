@@ -22,10 +22,12 @@
         {% if data.question_id and (data.answer_id == None or data.answer_id == "") %}
     <ul>
         <li><h4>{{ data.message }}</h4></li>
+        {% if session %}
         <a href="/delete_question_comment/{{ data.question_id }}/{{ data.id }}"> Delete 🗑️</a>
+        {% endif %}
     </ul>
     {% endif %}{% endfor %}
-
+    {% if session %}
     <table>
         <thead>
             <tr>
@@ -57,7 +59,7 @@
             </tr>
         </thead>
     </table>
-
+    {% endif %}
     <h4>Tags:</h4>
     {% for tag in tags %}
         <button disabled class="tag-button">{{ tag.name }}</button>
@@ -95,13 +97,19 @@
             <tr>
                 <td>
             {% if answer.image == "" or answer.image == None %}
-                <a href="/answer/{{ answer.id }}/delete/{{ answer.question_id }}" class="link-inside-table">Delete 🗑️</a>
+                {% if session %}
+                    <a href="/answer/{{ answer.id }}/delete/{{ answer.question_id }}" class="link-inside-table">Delete 🗑️</a>
+                {% endif %}
             {% else %}
                 <div style="text-align: center"><img src="{{ answer.image }}" alt="Image" width="300" class="responsive"></div>
-                <a href="/answer/{{ answer.id }}/delete/{{ answer.question_id }}" class="link-inside-table">Delete 🗑️</a>
+                {% if session %}
+                    <a href="/answer/{{ answer.id }}/delete/{{ answer.question_id }}" class="link-inside-table">Delete 🗑️</a>
+                {% endif %}
             {% endif %}
-                <a href="/edit_answer/{{ answer.id }}" class="link-inside-table">Edit ✏️</a>
-                <a href="/add_comment_to_answer/{{ question_id }}/{{ answer.id }}" class="link-inside-table">Comment 🖊️</a>
+                {% if session %}
+                    <a href="/edit_answer/{{ answer.id }}" class="link-inside-table">Edit ✏️</a>
+                    <a href="/add_comment_to_answer/{{ question_id }}/{{ answer.id }}" class="link-inside-table">Comment 🖊️</a>
+                {% endif %}
                 </td>
             </tr>
                 {% for comment in comments_data %}
@@ -116,9 +124,11 @@
                         <p class="comment-footer-author">Posted by <span class="comment-author">{{ comment.username }}</span></p>
                     {% endif %}
                     <p class="comment-footer-author">{{ submission_date[:-7] }}</p>
-                <a href="/edit_comment/{{ comment.question_id }}/{{ comment.id }}" class="link-inside-table">Edit ✏️</a>
-                <button onclick="alert('Are you sure to delete?'), location.href = '/comments/{{ comment.question_id }}/{{ comment.id }}/delete';"
-                        id="my_button" class="link-inside-table">🗑️</button>
+                    {% if session %}
+                        <a href="/edit_comment/{{ comment.question_id }}/{{ comment.id }}" class="link-inside-table">Edit ✏️</a>
+                        <button onclick="alert('Are you sure to delete?'), location.href = '/comments/{{ comment.question_id }}/{{ comment.id }}/delete';"
+                                id="my_button" class="link-inside-table">🗑️</button>
+                    {% endif %}
                 {% endif %}
                 {% endfor %}
                 </td>

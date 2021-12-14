@@ -100,22 +100,19 @@ def save_new_answer(cursor, message, question_id, submission_time, image):
 
 
 @database_common.connection_handler
-def save_new_question(cursor, message, title, image=None):
+def save_new_question(cursor, message, title, user_id, image=None):
     query = """
         INSERT INTO question
-        (submission_time, message, image, title)
-        VALUES (NOW(),
-                %(message)s, %(image)s,
-                %(title)s);"""
-    cursor.execute(query, {'title': title, 'message': message, 'image': image})
+        (submission_time, message, image, title, user_id)
+        VALUES (NOW(), %(message)s, %(image)s, %(title)s, %(user_id)s);"""
+    cursor.execute(query, {'title': title, 'message': message, 'image': image, 'user_id': user_id})
 
 
 @database_common.connection_handler
 def save_edited_question(cursor, title, message, question_id):
     query = sql.SQL("""
         UPDATE question
-        SET message = %(message)s,
-            title = %(title)s
+        SET message = %(message)s, title = %(title)s
         WHERE id = %(question_id)s""").format(
         question_id=sql.Identifier('question_id')
     )
@@ -202,12 +199,12 @@ def get_question_id_by_answer_id_db(cursor, answer_id):
 
 
 @database_common.connection_handler
-def write_answer_to_db(cursor, question_id, message, image=None):
+def write_answer_to_db(cursor, question_id, message, user_id, image=None):
     query = """
-    INSERT INTO answer (submission_time, question_id, message, image) 
-    VALUES (NOW(),%(question_id)s,%(message)s,%(image)s)
+    INSERT INTO answer (submission_time, question_id, message, image, user_id) 
+    VALUES (NOW(),%(question_id)s,%(message)s,%(image)s, %(user_id)s)
     """
-    cursor.execute(query, {"question_id": question_id, "message": message, "image": image})
+    cursor.execute(query, {"question_id": question_id, "message": message, "image": image, "user_id": user_id})
 
 
 @database_common.connection_handler
@@ -295,14 +292,16 @@ def get_question_bd(cursor):
     return cursor.fetchall()
 # ORDER BY submission_time DESC
 
+
 @database_common.connection_handler
-def add_comment(cursor, message, question_id, answer_id=None):
+def add_comment(cursor, message, question_id, user_id, answer_id=None):
     query = """
-            INSERT INTO comment (question_id, answer_id, message, submission_time) 
-            VALUES (%(question_id)s, %(answer_id)s, %(message)s, NOW())
+            INSERT INTO comment (question_id, answer_id, message, submission_time, user_id) 
+            VALUES (%(question_id)s, %(answer_id)s, %(message)s, NOW(), %(user_id)s)
     """
-    arguments = {'message': message, 'question_id': question_id, 'answer_id': answer_id}
+    arguments = {'message': message, 'question_id': question_id, 'answer_id': answer_id, 'user_id': user_id}
     cursor.execute(query, arguments)
+
 
 @database_common.connection_handler
 def add_vote_counter(cursor,id):
@@ -312,8 +311,9 @@ def add_vote_counter(cursor,id):
         WHERE id = %(id)s""").format(id=sql.Identifier("id"))
     cursor.execute(query, {"id": id})
 
+
 @database_common.connection_handler
-def substract_vote_counter(cursor,id):
+def substract_vote_counter(cursor, id):
     query = sql.SQL("""
         UPDATE question
         SET vote_number = vote_number - 1

@@ -15,9 +15,13 @@
         </div>
         {% if not session %}
         <div class="account-container">
+            <form action="/login">
+                <button type="submit" disabled>Login</button>
+            </form>
             <form action="/registration">
                 <button type="submit">Create account</button>
             </form>
+
         </div>
         {% else %}
         <div class="account-container">

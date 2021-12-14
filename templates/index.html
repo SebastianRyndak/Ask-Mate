@@ -6,7 +6,7 @@
 
 {% block content %}
         {% if session %}
-            <h1 class="header">Hey {{ username }}!</h1>
+            <h1 class="header">Hey {{ session['username']}}!</h1>
         {% else %}
             <h1 class="header">Hey Lads!</h1>
         {% endif %}
@@ -28,9 +28,9 @@
                     {% endif %}{% endfor %}
                 </tr>
             {% endfor %}
+
         </table><br>
         <form action="/list" method="get">
             <input type="submit" value="All questions" class="all-questions">
         </form>
-
 {% endblock %}
