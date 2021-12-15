@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 from bonus_questions import SAMPLE_QUESTIONS
 import os
 import data_manager
@@ -239,7 +239,10 @@ def delete_questions_comment(question_id, comment_id):
 
 @app.route('/users')
 def get_users():
-    users = data_manager.get_all_users()
+    if 'username' in session:
+        users = data_manager.get_all_users()
+    else:
+        users = {}
     return render_template("users.html", users = users)
 
 
