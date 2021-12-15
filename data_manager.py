@@ -470,7 +470,7 @@ def verify_password(plain_text_password, hashed_password):
 @database_common.connection_handler
 def login(cursor, username):
     query = """
-    SELECT password 
+    SELECT password, id
     FROM public.user
     WHERE username = %(username)s
     """
