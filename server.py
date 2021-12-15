@@ -307,7 +307,8 @@ def logout():
 
 @app.route('/tags')
 def tags_page():
-    return render_template("tags.html")
+    tags = data_manager.get_tags_with_counter()
+    return render_template("tags.html", tags=tags)
 
 
 if __name__ == "__main__":
