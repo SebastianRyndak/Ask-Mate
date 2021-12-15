@@ -305,5 +305,10 @@ def logout():
     return redirect(url_for('main'))
 
 
+@app.route('/tags')
+def tags_page():
+    return render_template("tags.html")
+
+
 if __name__ == "__main__":
     app.run(debug=True)
