@@ -1,12 +1,14 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from bonus_questions import SAMPLE_QUESTIONS
-from passlib.hash import pbkdf2_sha256
+import bcrypt
 import os
 import data_manager
 
 
 app = Flask(__name__)
 app.secret_key = os.urandom(11)
+
+
 pictures_questions = ".\\static\\uploads_pictures_questions"
 app.config["UPLOAD_PICTURE_FOLDER"] = pictures_questions
 pictures_answers = '.\\static\\uploads_pictures_answers'
@@ -278,8 +280,9 @@ def create_new_user():
     if 'username' not in session:
         if request.method == 'POST':
             session['username'] = request.form['username']
-            password_text = request.form.get('password')
-            password = pbkdf2_sha256.hash(password_text)
+            plain_text_password = request.form.get('password')
+            password_text = bcrypt.hashpw(plain_text_password.encode('utf-8'), bcrypt.gensalt())
+            password = password_text.decode('utf-8')
             data_manager.create_account(session['username'], password)
             return redirect(url_for('main'))
         return render_template('registration.html')
