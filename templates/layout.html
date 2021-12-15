@@ -24,25 +24,22 @@
         {% if not session %}
         <div class="account-container">
             <form action="/login">
-                <button type="submit" disabled>Login</button>
+                <button type="submit">Login</button>
             </form>
             <form action="/registration">
                 <button type="submit">Create account</button>
             </form>
-
         </div>
         {% else %}
         <div class="account-container">
-            <form action="/logout">
+            <form action='/logout'>
                 <button type="submit">Logout</button>
             </form>
         </div>
         <div class="account-container">
-            {% for data in user_data %}
-            <form action="/user/{{ data.id }}">
-                <button type="submit">{{ data.username.split('@')[0] }} page</button>
+            <form action="/user/{{ session['user_id'] }}">
+                <button type="submit">{{ session['username'].split('@')[0] }} page</button>
             </form>
-            {% endfor %}
         </div>
         {% endif %}
     </div>
