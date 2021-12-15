@@ -457,7 +457,6 @@ def delete_comment_from_question(cursor, comment_id):
     cursor.execute(query, {'comment_id': comment_id})
 
 
-
 def hash_password(plain_text_password):
     hashed_bytes = bcrypt.hashpw(plain_text_password.encode('utf-8'), bcrypt.gensalt())
     return hashed_bytes.decode('utf-8')
@@ -478,7 +477,7 @@ def login(cursor, username):
     cursor.execute(query, {'username': username})
     return cursor.fetchone()
 
-  
+
 @database_common.connection_handler
 def sort_questions_by_column_name_asc(cursor, column_name):
     query = sql.SQL("""

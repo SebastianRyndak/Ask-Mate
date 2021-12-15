@@ -314,6 +314,7 @@ def create_new_user():
         redirect(url_for('main'))
 
 
+
 @app.route('/user/<user_id>')
 def display_user_information(user_id):
     user_information = data_manager.get_user_data(user_id)
