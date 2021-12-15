@@ -14,18 +14,20 @@
                 <button type="submit">Submit</button>
             </form>
         </div>
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            {% for message in messages %}
-                <span class="flash-messages">{{ message }}</span>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <span class="flash-messages">{{ message }}</span>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
         {% if not session %}
         <div class="account-container">
             <form action="/login">
                 <button type="submit">Login</button>
             </form>
+        </div>
+        <div class="account-container">
             <form action="/registration">
                 <button type="submit">Create account</button>
             </form>
@@ -43,16 +45,17 @@
         </div>
         {% endif %}
     </div>
-<div class="content-wrapper">
-    <header>
-        <a href="/list"><h1 id="header-title">🆀 & 🅰 - 🅰🆂🅺.🅼🅰🆃🅴</h1></a>
-    </header>
-    <section>
-        <h2 class="title text-center">{{ self.page_title() }}</h2>
+    <div class="content-wrapper">
+        <header>
+            <a href="/list"><h1 id="header-title">🆀 & 🅰 - 🅰🆂🅺.🅼🅰🆃🅴</h1></a>
+        </header>
+        <section>
+            <h2 class="title text-center">{{ self.page_title() }}</h2>
 
-        {% block content %}{% endblock %}
-    </section>
-</div>
+            {% block content %}{% endblock %}
+        </section>
+    </div>
+    <script src="../static/js/markingAnswer.js"></script>
 </body>
 </html>
 

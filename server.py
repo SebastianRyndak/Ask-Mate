@@ -7,9 +7,9 @@ import data_manager, utils
 
 app = Flask(__name__)
 app.secret_key = os.urandom(11)
-pictures_questions = ".\\static\\uploads_pictures_questions"
+pictures_questions = "..\\ask-mate-3-python-BartoszKosicki\\static\\uploads_pictures_questions"
 app.config["UPLOAD_PICTURE_FOLDER"] = pictures_questions
-pictures_answers = '.\\static\\uploads_pictures_answers'
+pictures_answers = '..\\ask-mate-3-python-BartoszKosicki\\static\\uploads_pictures_answers'
 app.config["UPLOAD_PICTURE_ANSWERS"] = pictures_answers
 app.config["ALLOWED_IMAGE_EXTENSIONS"] = ["JPG", "PNG"]
 
@@ -95,8 +95,9 @@ def question(question_id):
     question_data = data_manager.find_title_and_message(question_id)
     answer_data = data_manager.find_all_answer_to_question(question_id)
     comments_data = data_manager.search_comment_by_id(question_id)
+    user_id = utils.get_user_id(question_data)
     return render_template('question.html', question_data=question_data, question_id=question_id,
-                           answer_data=answer_data, comments_data=comments_data, tags=tags)
+                           answer_data=answer_data, comments_data=comments_data, tags=tags, user_id=user_id)
 
 
 @app.route('/new_answer/<question_id>')
@@ -330,8 +331,17 @@ def get_users():
         users = data_manager.get_all_users()
     else:
         users = {}
-    return render_template("users.html", users = users)
+    return render_template("users.html", users=users)
 
+
+@app.route('/question/<question_id>/<answer_id>/<acceptation_form>')
+def mark_answer(question_id, answer_id, acceptation_form):
+    if acceptation_form == "1":
+        data_manager.mark_acceptable_status(answer_id, bool_value=True)
+    elif acceptation_form == "0":
+        data_manager.mark_acceptable_status(answer_id, bool_value=False)
+
+    return redirect(url_for('question', question_id=question_id))
 
 
 if __name__ == "__main__":

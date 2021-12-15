@@ -42,3 +42,8 @@ def allowed_image(filename):
         return True
     else:
         return False
+
+
+def get_user_id(question_data):
+    for data in question_data:
+        return data.get('user_id')
