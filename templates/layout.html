@@ -12,6 +12,15 @@
                 <input type="search" class="search" placeholder="Search.." name="q">
                 <button type="submit">Submit</button>
             </form>
+            {% if "user_name" in session %}
+            <form action='/logout'>
+                <button type="submit">Logout</button>
+            </form>
+            {% else %}
+            <form action='/login'>
+                <button type="submit">login</button>
+            </form>
+            {% endif %}
         </div>
     </div>
 <div class="content-wrapper">

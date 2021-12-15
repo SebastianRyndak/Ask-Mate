@@ -1,14 +1,9 @@
-import connection
 from datetime import datetime
-import time
 import os
-from operator import itemgetter
 import datetime
-import csv
-from typing import List, Dict
 from psycopg2 import sql
-from psycopg2.extras import RealDictCursor
 import database_common
+import bcrypt
 
 ANSWER_DATA_PATH = os.getenv("ANSWER_DATA_PATH") if "ANSWER_DATA_PATH" in os.environ else "sample_data/answer.csv"
 QUESTION_HEADERS = ["id", "submission_time", "view_number", "vote_number", "title", "message", "image"]
@@ -17,6 +12,29 @@ TABLE_HEADERS = {"vote_number": "Votes", "title": "Title", "message": "Message",
                  "view_number": "Views", "id":"ID"}
 SORT_BY_INT = ["vote_number", "Published on", "view_number"]
 file_extention = ["JPG", "PNG"]
+
+INVALID_LOGIN_ATTEMPT="""
+                            <script>
+                            alert('Invalid login attempt')
+                            window.location='/Login'
+                            </script>
+                            """
+
+
+ENTER_ALL_VALUES="""
+                <script>
+                alert('Enter all values!!!')
+                window.location='/login'
+                </script>
+                """
+
+
+YOU_ARE_LOGGED_IN = """"
+                <script>
+                    alert("You are logged in")
+                    window.location= "/"
+                </script>    
+                """
 reverse = 0
 
 
@@ -444,3 +462,25 @@ def delete_comment_from_question(cursor, comment_id):
         WHERE id = %(comment_id)s"""
     cursor.execute(query, {'comment_id': comment_id})
 
+
+def hash_password(plain_text_password):
+    hashed_bytes = bcrypt.hashpw(plain_text_password.encode('utf-8'), bcrypt.gensalt())
+    return hashed_bytes.decode('utf-8')
+
+
+def verify_password(plain_text_password, hashed_password):
+    hashed_bytes_password = hashed_password.encode('utf-8')
+    return bcrypt.checkpw(plain_text_password.encode('utf-8'), hashed_bytes_password)
+
+
+@database_common.connection_handler
+def login(cursor, username):
+    query = """
+    SELECT password 
+    FROM users
+    WHERE username = %(username)s
+    """
+    cursor.execute(query, {'username': username})
+    return cursor.fetchone()
+
+# users = {'Alibaba@wp.pl': '$2b$12$/WulZ0Yq.azDw5Pp2yocw.Ztzs8LC0XkCxPf07DCz3VKQEarU/kTW'}

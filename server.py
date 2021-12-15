@@ -1,15 +1,7 @@
-
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 from bonus_questions import SAMPLE_QUESTIONS
 import os
 import data_manager
-
-app = Flask(__name__)
-
-
-@app.route("/bonus-questions")
-def main():
-    return render_template('bonus_questions.html', questions=SAMPLE_QUESTIONS)
 
 
 app = Flask(__name__)
@@ -18,6 +10,36 @@ app.config["UPLOAD_PICTURE_FOLDER"] = pictures_questions
 pictures_answers = '.\\static\\uploads_pictures_answers'
 app.config["UPLOAD_PICTURE_ANSWERS"] = pictures_answers
 app.config["ALLOWED_IMAGE_EXTENSIONS"] = ["JPG", "PNG"]
+app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == "POST":
+        if request.form['user_name'] != '' and request.form['password_name'] != '':
+            login = request.form['user_name']
+            password = request.form['password_name']
+            if data_manager.verify_password(password, data_manager.login(login)['password']):
+                session['user_name'] = login
+                session['password_name'] = password
+                return data_manager.YOU_ARE_LOGGED_IN
+            else:
+                return data_manager.INVALID_LOGIN_ATTEMPT
+        else:
+            return data_manager.ENTER_ALL_VALUES
+    return render_template('login_form.html')
+
+
+@app.route('/logout')
+def logout():
+    session.pop('user_name', None)
+    session.pop('password_name', None)
+    return redirect(url_for('index'))
+
+
+@app.route("/bonus-questions")
+def bonus_questions():
+    return render_template('bonus_questions.html', questions=SAMPLE_QUESTIONS)
 
 
 @app.route("/vote/<id>/<value>")
@@ -36,16 +58,15 @@ def list_answer_voting(question_id, answer_id, vote_number):
 
 
 @app.route("/")
-def main():
+def index():
     questions = data_manager.get_data_to_main_list()
     return render_template("index.html", questions=questions, table_header=data_manager.TABLE_HEADERS)
 
 
 @app.route("/list")
-def question_list(order_direction):
+def question_list():
     questions_list = data_manager.get_question_bd()
-    return render_template("list.html", questions_list=questions_list, table_headers=data_manager.TABLE_HEADERS,
-                           order_direction=order_direction)
+    return render_template("list.html", questions_list=questions_list, table_headers=data_manager.TABLE_HEADERS)
 
 
 @app.route("/<value>/<descend>")
@@ -103,6 +124,7 @@ def summary_new_question():
             if not data_manager.allowed_image(image.filename):
                 return redirect(request.url)
             image.save(os.path.join(app.config["UPLOAD_PICTURE_FOLDER"], image.filename))
+            data_manager.save_new_question(message, title, "../static/uploads_pictures_questions/"+image.filename)
         else:
             data_manager.save_new_question(message, title)
     return redirect('/list')
@@ -119,12 +141,6 @@ def summary_edited_question(question_id):
     if request.method == "POST":
         title = request.form.get("title")
         message = request.form.get("question")
-        # image = request.files['image']
-        # if image.filename != "":
-        #     if not data_manager.allowed_image(image.filename):
-        #         return redirect(request.url)
-        #     image.save(os.path.join(app.config["UPLOAD_PICTURE_FOLDER"], image.filename))
-        # data_manager.save_edited_question(title, message, "../static/uploads_pictures_questions/"+image.filename, question_id)
         data_manager.save_edited_question(title, message, question_id)
     return redirect(f'/question/{question_id}')
 
@@ -204,7 +220,6 @@ def comment_questions(question_id):
     return render_template("Comment_questions.html", question_id=question_id)
 
 
-
 @app.route('/comments/<question_id>/<comment_id>/delete')
 def delete_comment(question_id, comment_id):
     data_manager.delete_comment_from_database(comment_id)
@@ -235,5 +250,4 @@ def delete_questions_comment(question_id, comment_id):
 
 
 if __name__ == "__main__":
-    app.run(debug=True,
-            port=5001)
+    app.run(debug=True)
