@@ -12,6 +12,36 @@ app.config["UPLOAD_PICTURE_FOLDER"] = pictures_questions
 pictures_answers = '.\\static\\uploads_pictures_answers'
 app.config["UPLOAD_PICTURE_ANSWERS"] = pictures_answers
 app.config["ALLOWED_IMAGE_EXTENSIONS"] = ["JPG", "PNG"]
+app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == "POST":
+        if request.form['user_name'] != '' and request.form['password_name'] != '':
+            login = request.form['user_name']
+            password = request.form['password_name']
+            if data_manager.verify_password(password, data_manager.login(login)['password']):
+                session['user_name'] = login
+                session['password_name'] = password
+                return data_manager.YOU_ARE_LOGGED_IN
+            else:
+                return data_manager.INVALID_LOGIN_ATTEMPT
+        else:
+            return data_manager.ENTER_ALL_VALUES
+    return render_template('login_form.html')
+
+
+@app.route('/logout')
+def logout():
+    session.pop('user_name', None)
+    session.pop('password_name', None)
+    return redirect(url_for('index'))
+
+
+@app.route("/bonus-questions")
+def bonus_questions():
+    return render_template('bonus_questions.html', questions=SAMPLE_QUESTIONS)
 
 
 @app.route("/bonus-questions")
@@ -138,12 +168,6 @@ def summary_edited_question(question_id):
         if request.method == "POST":
             title = request.form.get("title")
             message = request.form.get("question")
-            # image = request.files['image']
-            # if image.filename != "":
-            #     if not data_manager.allowed_image(image.filename):
-            #         return redirect(request.url)
-            #     image.save(os.path.join(app.config["UPLOAD_PICTURE_FOLDER"], image.filename))
-            # data_manager.save_edited_question(title, message, "../static/uploads_pictures_questions/"+image.filename, question_id)
             data_manager.save_edited_question(title, message, question_id)
     return redirect(f'/question/{question_id}')
 
