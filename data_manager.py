@@ -527,9 +527,10 @@ def find_user_id_by_username(cursor, username):
     return cursor.fetchall()
 
 
+@database_common.connection_handler
 def get_tags_with_counter(cursor):
     query = sql.SQL("""
-    SELECT t.name, count(qt.question_id) AS questions_with_tag
+    SELECT t.name as name, count(qt.question_id) AS questions_with_tag
     FROM question_tag AS qt
     RIGHT JOIN tag AS t
     ON qt.tag_id = t.id
