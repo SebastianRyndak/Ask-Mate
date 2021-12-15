@@ -1,13 +1,5 @@
-import connection
-from datetime import datetime
-import time
 import os
-from operator import itemgetter
-import datetime
-import csv
-from typing import List, Dict
 from psycopg2 import sql
-from psycopg2.extras import RealDictCursor
 import database_common
 
 ANSWER_DATA_PATH = os.getenv("ANSWER_DATA_PATH") if "ANSWER_DATA_PATH" in os.environ else "sample_data/answer.csv"
@@ -16,7 +8,6 @@ ANSWER_HEADERS = ["id", "submission_time", "vote_number", "question_id", "messag
 TABLE_HEADERS = {"vote_number": "Votes", "title": "Title", "message": "Message", "submission_time": "Date",
                  "view_number": "Views", "id":"ID"}
 SORT_BY_INT = ["vote_number", "Published on", "view_number"]
-file_extention = ["JPG", "PNG"]
 reverse = 0
 
 
@@ -213,16 +204,6 @@ def delete_answer_from_cvs_by_id_db(cursor, id):
     DELETE FROM answer
     WHERE id = %(id)s""").format(id=sql.Identifier('id'))
     cursor.execute(query, {"id": id})
-
-
-def allowed_image(filename):
-    if not "." in filename:
-        return False
-    ext = filename.rsplit(".", 1)[1]
-    if ext.upper() in file_extention:
-        return True
-    else:
-        return False
 
 
 @database_common.connection_handler
@@ -440,6 +421,17 @@ def delete_comment_from_question(cursor, comment_id):
 
 
 @database_common.connection_handler
+def login(cursor, username):
+    query = """
+    SELECT password, id
+    FROM public.user
+    WHERE username = %(username)s
+    """
+    cursor.execute(query, {'username': username})
+    return cursor.fetchone()
+
+
+@database_common.connection_handler
 def sort_questions_by_column_name_asc(cursor, column_name):
     query = sql.SQL("""
     SELECT id, submission_time,view_number,vote_number,title,message,image
@@ -456,6 +448,24 @@ def sort_questions_by_column_name_desc(cursor, column_name):
     FROM question
     ORDER BY {column_name} DESC""").format(column_name=sql.Identifier(column_name))
     cursor.execute(query, {"column": column_name})
+    return cursor.fetchall()
+
+
+@database_common.connection_handler
+def get_all_users(cursor):
+    query = sql.SQL("""
+    SELECT u.id, u.username, u.registration_date,u.reputation,COUNT(DISTINCT q.id) AS questions, COUNT(DISTINCT a.id) AS answers, COUNT(DISTINCT c.id) AS comments
+    FROM public."user" AS u
+    LEFT JOIN answer AS a
+    on u.id = a.user_id
+    LEFT JOIN question AS q 
+    on q.user_id = u.id
+    LEFT JOIN comment c 
+    on u.id = c.user_id
+    GROUP BY u.id
+    ORDER BY u.id DESC
+    """)
+    cursor.execute(query)
     return cursor.fetchall()
 
 
@@ -538,3 +548,4 @@ def get_tags_with_counter(cursor):
     """)
     cursor.execute(query)
     return cursor.fetchall()
+

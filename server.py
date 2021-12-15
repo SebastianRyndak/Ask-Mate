@@ -1,8 +1,8 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 from bonus_questions import SAMPLE_QUESTIONS
-from passlib.hash import pbkdf2_sha256
+import bcrypt
 import os
-import data_manager
+import data_manager, utils
 
 
 app = Flask(__name__)
@@ -12,6 +12,31 @@ app.config["UPLOAD_PICTURE_FOLDER"] = pictures_questions
 pictures_answers = '.\\static\\uploads_pictures_answers'
 app.config["UPLOAD_PICTURE_ANSWERS"] = pictures_answers
 app.config["ALLOWED_IMAGE_EXTENSIONS"] = ["JPG", "PNG"]
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == "POST":
+        if request.form['user_name'] != '' and request.form['password_name'] != '':
+            login = request.form['user_name']
+            password = request.form['password_name']
+            if utils.verify_password(password, data_manager.login(login)['password']):
+                session['user_id'] = data_manager.login(login)['id']
+                session['username'] = login
+                return utils.YOU_ARE_LOGGED_IN
+            else:
+                return utils.INVALID_LOGIN_ATTEMPT
+        else:
+            return utils.ENTER_ALL_VALUES
+    return render_template('login_form.html')
+
+
+@app.route('/logout')
+def logout():
+    session.pop('username', None)
+    session.pop('user_id', None)
+    flash("You have been successfully logged out")
+    return redirect(url_for('main'))
 
 
 @app.route("/bonus-questions")
@@ -91,7 +116,7 @@ def summary_new_answer(question_id):
             message = request.form.get("message")
             image = request.files['image']
             if image.filename != "" and image.filename is not None:
-                if not data_manager.allowed_image(image.filename):
+                if not utils.allowed_image(image.filename):
                     return redirect(request.url)
                 image.save(os.path.join(app.config["UPLOAD_PICTURE_ANSWERS"], image.filename))
                 data_manager.write_answer_to_db(question_id, message, session['user_id'], "../static/uploads_pictures_answers/"+image.filename)
@@ -105,7 +130,7 @@ def add_new_question():
     if 'username' in session:
         return render_template("add-question.html")
     else:
-        return redirect('/question')
+        return redirect(url_for('main'))
 
 
 @app.route('/new_question/add_new_question', methods=["POST"])
@@ -116,7 +141,7 @@ def summary_new_question():
             message = request.form.get("question")
             image = request.files['image']
             if image.filename != "" and image.filename is not None:
-                if not data_manager.allowed_image(image.filename):
+                if not utils.allowed_image(image.filename):
                     return redirect(request.url)
                 image.save(os.path.join(app.config["UPLOAD_PICTURE_FOLDER"], image.filename))
                 data_manager.save_new_question(message, title, session['user_id'],
@@ -138,12 +163,6 @@ def summary_edited_question(question_id):
         if request.method == "POST":
             title = request.form.get("title")
             message = request.form.get("question")
-            # image = request.files['image']
-            # if image.filename != "":
-            #     if not data_manager.allowed_image(image.filename):
-            #         return redirect(request.url)
-            #     image.save(os.path.join(app.config["UPLOAD_PICTURE_FOLDER"], image.filename))
-            # data_manager.save_edited_question(title, message, "../static/uploads_pictures_questions/"+image.filename, question_id)
             data_manager.save_edited_question(title, message, question_id)
     return redirect(f'/question/{question_id}')
 
@@ -278,8 +297,9 @@ def create_new_user():
     if 'username' not in session:
         if request.method == 'POST':
             session['username'] = request.form['username']
-            password_text = request.form.get('password')
-            password = pbkdf2_sha256.hash(password_text)
+            plain_text_password = request.form.get('password')
+            password_text = bcrypt.hashpw(plain_text_password.encode('utf-8'), bcrypt.gensalt())
+            password = password_text.decode('utf-8')
             data_manager.create_account(session['username'], password)
             return redirect(url_for('main'))
         return render_template('registration.html')
@@ -298,6 +318,7 @@ def display_user_information(user_id):
                            comment_data=comment_data)
 
 
+
 @app.route('/logout')
 def logout():
     session.pop('username', None)
@@ -305,11 +326,22 @@ def logout():
     return redirect(url_for('main'))
 
 
+
 @app.route('/tags')
 def tags_page():
     tags = data_manager.get_tags_with_counter()
     return render_template("tags.html", tags=tags)
 
+@app.route('/users')
+def get_users():
+    if 'username' in session:
+        users = data_manager.get_all_users()
+    else:
+        users = {}
+    return render_template("users.html", users = users)
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)
+
