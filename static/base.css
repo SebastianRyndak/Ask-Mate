@@ -157,6 +157,12 @@ a {
     padding: 0;
 }
 
+.users-td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+
 .author {
     font-style: italic;
 }
@@ -197,3 +203,4 @@ a {
 .flash-messages {
     padding-top:  10px;
 }
+

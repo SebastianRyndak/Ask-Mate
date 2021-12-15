@@ -318,5 +318,23 @@ def display_user_information(user_id):
                            comment_data=comment_data)
 
 
+
+@app.route('/logout')
+def logout():
+    session.pop('username', None)
+    session.pop('user_id', None)
+    return redirect(url_for('main'))
+
+
+@app.route('/users')
+def get_users():
+    if 'username' in session:
+        users = data_manager.get_all_users()
+    else:
+        users = {}
+    return render_template("users.html", users = users)
+
+
 if __name__ == "__main__":
     app.run(debug=True)
+

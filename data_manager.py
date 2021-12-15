@@ -452,6 +452,24 @@ def sort_questions_by_column_name_desc(cursor, column_name):
 
 
 @database_common.connection_handler
+def get_all_users(cursor):
+    query = sql.SQL("""
+    SELECT u.id, u.username, u.registration_date,u.reputation,COUNT(DISTINCT q.id) AS questions, COUNT(DISTINCT a.id) AS answers, COUNT(DISTINCT c.id) AS comments
+    FROM public."user" AS u
+    LEFT JOIN answer AS a
+    on u.id = a.user_id
+    LEFT JOIN question AS q 
+    on q.user_id = u.id
+    LEFT JOIN comment c 
+    on u.id = c.user_id
+    GROUP BY u.id
+    ORDER BY u.id DESC
+    """)
+    cursor.execute(query)
+    return cursor.fetchall()
+
+
+@database_common.connection_handler
 def create_account(cursor, username, password):
     query = """
         INSERT INTO public.user
@@ -517,3 +535,4 @@ def find_user_id_by_username(cursor, username):
         WHERE username = %(username)s"""
     cursor.execute(query, {'username': username})
     return cursor.fetchall()
+
