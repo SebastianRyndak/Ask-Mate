@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 from bonus_questions import SAMPLE_QUESTIONS
 import bcrypt
 import os
-import data_manager
+import data_manager, utils
 
 
 app = Flask(__name__)
@@ -20,14 +20,14 @@ def login():
         if request.form['user_name'] != '' and request.form['password_name'] != '':
             login = request.form['user_name']
             password = request.form['password_name']
-            if data_manager.verify_password(password, data_manager.login(login)['password']):
+            if utils.verify_password(password, data_manager.login(login)['password']):
                 session['user_id'] = data_manager.login(login)['id']
                 session['username'] = login
-                return data_manager.YOU_ARE_LOGGED_IN
+                return utils.YOU_ARE_LOGGED_IN
             else:
-                return data_manager.INVALID_LOGIN_ATTEMPT
+                return utils.INVALID_LOGIN_ATTEMPT
         else:
-            return data_manager.ENTER_ALL_VALUES
+            return utils.ENTER_ALL_VALUES
     return render_template('login_form.html')
 
 
@@ -116,7 +116,7 @@ def summary_new_answer(question_id):
             message = request.form.get("message")
             image = request.files['image']
             if image.filename != "" and image.filename is not None:
-                if not data_manager.allowed_image(image.filename):
+                if not utils.allowed_image(image.filename):
                     return redirect(request.url)
                 image.save(os.path.join(app.config["UPLOAD_PICTURE_ANSWERS"], image.filename))
                 data_manager.write_answer_to_db(question_id, message, session['user_id'], "../static/uploads_pictures_answers/"+image.filename)
@@ -141,7 +141,7 @@ def summary_new_question():
             message = request.form.get("question")
             image = request.files['image']
             if image.filename != "" and image.filename is not None:
-                if not data_manager.allowed_image(image.filename):
+                if not utils.allowed_image(image.filename):
                     return redirect(request.url)
                 image.save(os.path.join(app.config["UPLOAD_PICTURE_FOLDER"], image.filename))
                 data_manager.save_new_question(message, title, session['user_id'],
