@@ -24,6 +24,16 @@
     font-size: 17px;
 }
 
+.topnav .account-container {
+    float: right;
+    display: block;
+    color: black;
+    button-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+}
+
 .topnav input[type=text] {
     padding: 6px;
     margin-top: 8px;
@@ -97,7 +107,7 @@ footer {
     text-align: center;
 }
 
-h1, h2, h3, table, form, div {
+h1, h2, h3, table, form, div, input, button {
    font-family: 'Consolas', 'Monaco', 'Bitstream Vera Sans Mono', monospace;
     color: rgba(33,33,33,0.94);
 }
@@ -119,7 +129,7 @@ a {
 }
 
 .link-inside-table {
-    font-size: 1.7vh;
+    font-size: 80%;
 }
 
 .answer-table {
@@ -141,10 +151,51 @@ a {
 
 .sort-button {
     background: transparent;
-    border: none !important;
+    border: none;
+    display: inline-block;
+    margin-right:2vh;
+    padding: 0;
 }
 
 .users-td {
     text-align: center;
     vertical-align: middle;
+}
+
+
+.author {
+    font-style: italic;
+}
+
+.post-username {
+    display: inline-block;
+    font-size: large;
+    font-weight: bold;
+}
+
+.answer-message {
+    font-weight: bold;
+}
+
+.answer-footer {
+    font-weight: normal;
+    font-style: italic;
+    font-size: small;
+    text-align: right;
+}
+
+.answer-footer-author {
+    font-weight: bold;
+}
+
+.comment-footer-author {
+    text-align: right;
+    font-style: italic;
+    font-size: 10px;
+    margin: 0 0 2px;
+}
+
+.comment-author {
+    font-weight: bold;
+    margin: 0
 }

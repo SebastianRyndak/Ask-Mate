@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+
+{% block page_title %}
+    Create an account
+{% endblock %}
+
+{% block content %}
+
+    <form action="/registration" method="POST">
+        <label for="username">Enter user e-mail:</label><br>
+        <input type="text" id="username" name="username" placeholder="Enter user e-mail..."><br><br>
+        <label for="password">Enter your password:</label><br>
+        <input type="password" id="password" name="password" placeholder="Enter your password..."><br><br>
+        <button type="submit">Register</button>
+    </form>
+
+    <br><a href="/list">Back to list page ↩️</a>
+
+{% endblock %}
