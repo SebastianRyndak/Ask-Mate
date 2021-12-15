@@ -326,6 +326,12 @@ def logout():
     return redirect(url_for('main'))
 
 
+
+@app.route('/tags')
+def tags_page():
+    tags = data_manager.get_tags_with_counter()
+    return render_template("tags.html", tags=tags)
+
 @app.route('/users')
 def get_users():
     if 'username' in session:
@@ -333,6 +339,7 @@ def get_users():
     else:
         users = {}
     return render_template("users.html", users = users)
+
 
 
 if __name__ == "__main__":
