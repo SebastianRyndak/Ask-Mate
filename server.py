@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 from bonus_questions import SAMPLE_QUESTIONS
 import bcrypt
 import os
@@ -35,6 +35,7 @@ def login():
 def logout():
     session.pop('username', None)
     session.pop('user_id', None)
+    flash("You have been successfully logged out")
     return redirect(url_for('main'))
 
 
