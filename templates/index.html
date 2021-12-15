@@ -5,7 +5,13 @@
 {% endblock %}
 
 {% block content %}
-        <h1 class="header">Hey Lads! Check latest questions out!</h1>
+        {% if session %}
+            <h1 class="header">Hey {{ session['username']}}!</h1>
+        {% else %}
+            <h1 class="header">Hey Lads!</h1>
+        {% endif %}
+        <h1 class="header">Check latest questions out!</h1>
+
         <table class="main_table" title="main_table">
             {% for key in questions[0].keys() %}
                 {% if questions[0].keys() != "id" %}
@@ -23,9 +29,9 @@
                     {% endif %}{% endfor %}
                 </tr>
             {% endfor %}
+
         </table><br>
         <form action="/list" method="get">
             <input type="submit" value="All questions" class="all-questions">
         </form>
-
 {% endblock %}

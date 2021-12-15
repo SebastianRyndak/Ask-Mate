@@ -12,7 +12,11 @@
     {% for key, header in table_headers.items() %}
         <th>
             <p>
-                <a href="/{{ key }}/1"><strong>  {{ header }}</strong></a>
+            <form>
+            <strong> {{ header }}</strong>
+            <br><button type="button" class="sort-button" id="sort-up" name="sort" value="sort-up"><a href="/{{ key }}/1">&#8593;</a></button>
+            <br><button type="button" class="sort-button" id="sort-down" name="sort" value="sort-down"><a href="/{{ key }}/0">&#8595;</a></button>
+            </form>
             </p>
         </th>
     {% endfor %}
@@ -30,5 +34,7 @@
 </table>
 <br>
 <button><a href="/new_question">Add question</a></button>
+
+    <br><a href="/">Back to main page ↩️</a>
 
 {% endblock %}
