@@ -33,8 +33,9 @@
 
 </table>
 <br>
-<button><a href="/new_question">Add question</a></button>
-
+    {% if session  %}
+    <button><a href="/new_question">Add question</a></button>
+    {% endif %}
     <br><a href="/">Back to main page ↩️</a>
 
 {% endblock %}

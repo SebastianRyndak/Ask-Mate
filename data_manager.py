@@ -1,13 +1,5 @@
-import connection
-from datetime import datetime
-import time
 import os
-from operator import itemgetter
-import datetime
-import csv
-from typing import List, Dict
 from psycopg2 import sql
-from psycopg2.extras import RealDictCursor
 import database_common
 
 ANSWER_DATA_PATH = os.getenv("ANSWER_DATA_PATH") if "ANSWER_DATA_PATH" in os.environ else "sample_data/answer.csv"
@@ -16,7 +8,6 @@ ANSWER_HEADERS = ["id", "submission_time", "vote_number", "question_id", "messag
 TABLE_HEADERS = {"vote_number": "Votes", "title": "Title", "message": "Message", "submission_time": "Date",
                  "view_number": "Views", "id":"ID"}
 SORT_BY_INT = ["vote_number", "Published on", "view_number"]
-file_extention = ["JPG", "PNG"]
 reverse = 0
 
 
@@ -213,16 +204,6 @@ def delete_answer_from_cvs_by_id_db(cursor, id):
     DELETE FROM answer
     WHERE id = %(id)s""").format(id=sql.Identifier('id'))
     cursor.execute(query, {"id": id})
-
-
-def allowed_image(filename):
-    if not "." in filename:
-        return False
-    ext = filename.rsplit(".", 1)[1]
-    if ext.upper() in file_extention:
-        return True
-    else:
-        return False
 
 
 @database_common.connection_handler
@@ -437,6 +418,17 @@ def delete_comment_from_question(cursor, comment_id):
         DELETE FROM comment
         WHERE id = %(comment_id)s"""
     cursor.execute(query, {'comment_id': comment_id})
+
+
+@database_common.connection_handler
+def login(cursor, username):
+    query = """
+    SELECT password, id
+    FROM public.user
+    WHERE username = %(username)s
+    """
+    cursor.execute(query, {'username': username})
+    return cursor.fetchone()
 
 
 @database_common.connection_handler

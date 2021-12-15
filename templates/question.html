@@ -6,7 +6,13 @@
 
 {% block content %}
     <div class="question-block">
-        <h1>{{ question_data[0].get("title") }}</h1><br>
+{#        <h1>{{ question_data[0].get("title") }}</h1><br>#}
+{#        {% if question_data[0].get("image") == "" or question_data[0].get("image") == None %}#}
+{#            <h3>{{ question_data[0].get("message") }}</h3><br>#}
+{#        {% else %}#}
+{#            <h3>{{ question_data[0].get("message") }}<br><br><img src="{{ question_data[0].get("image") }}" alt="Image" width="300"></h3>#}
+{#        {% endif %}#}
+        <h1 style="text-decoration: underline">{{ question_data[0].get("title") }}</h1><br>
         {% if question_data[0].get("image") == "" or question_data[0].get("image") == None %}
             <h3>{{ question_data[0].get("message") }}</h3><br>
         {% else %}
@@ -18,6 +24,7 @@
         <p class="author">Posted by <span class="post-username">{{ question_data[0].get("username") }}</span></p>
         {% endif %}
     </div>
+
     {% for data in comments_data %}
         {% if data.question_id and (data.answer_id == None or data.answer_id == "") %}
     <ul>
@@ -88,8 +95,8 @@
                 </th>
                 <th>{{ answer.vote_number }} votes</th>
                 <th>
-                <a href="/question/vote/{{ answer.question_id }}/{{ answer.id }}/{{ answer.vote_number + 1 }}">👍</a>
-                <a href="/question/vote/{{ answer.question_id }}/{{ answer.id }}/{{ answer.vote_number - 1 }}">👎</a>
+                <a href="/question/vote/{{ question_id }}/{{ answer.id }}/{{ answer.vote_number + 1 }}">👍</a>
+                <a href="/question/vote/{{ question_id }}/{{ answer.id }}/{{ answer.vote_number - 1 }}">👎</a>
                 </th>
             </tr>
         </thead>
@@ -114,7 +121,7 @@
             </tr>
                 {% for comment in comments_data %}
                 {% if comment.answer_id == answer.id %}
-                    {% set submission_date = comment.submission_time|string() %}
+                {% set submission_date = comment.submission_time|string() %}
             <tr>
                 <td>
                     <p class="comments">{{ comment.message }} </p>
