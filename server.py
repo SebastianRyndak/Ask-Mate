@@ -1,12 +1,14 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 from bonus_questions import SAMPLE_QUESTIONS
 from passlib.hash import pbkdf2_sha256
+# from datetime import timedelta
 import os
 import data_manager
 
 
 app = Flask(__name__)
 app.secret_key = os.urandom(11)
+# app.permanent_session_lifetime = timedelta(days=2)
 pictures_questions = ".\\static\\uploads_pictures_questions"
 app.config["UPLOAD_PICTURE_FOLDER"] = pictures_questions
 pictures_answers = '.\\static\\uploads_pictures_answers'
@@ -105,7 +107,7 @@ def add_new_question():
     if 'username' in session:
         return render_template("add-question.html")
     else:
-        return redirect('/question')
+        return redirect(url_for('main'))
 
 
 @app.route('/new_question/add_new_question', methods=["POST"])
@@ -302,6 +304,7 @@ def display_user_information(user_id):
 def logout():
     session.pop('username', None)
     session.pop('user_id', None)
+    flash("You have been successfully logged out")
     return redirect(url_for('main'))
 
 

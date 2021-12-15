@@ -88,8 +88,8 @@
                 </th>
                 <th>{{ answer.vote_number }} votes</th>
                 <th>
-                <a href="/question/vote/{{ answer.question_id }}/{{ answer.id }}/{{ answer.vote_number + 1 }}">👍</a>
-                <a href="/question/vote/{{ answer.question_id }}/{{ answer.id }}/{{ answer.vote_number - 1 }}">👎</a>
+                <a href="/question/vote/{{ question_id }}/{{ answer.id }}/{{ answer.vote_number + 1 }}">👍</a>
+                <a href="/question/vote/{{ question_id }}/{{ answer.id }}/{{ answer.vote_number - 1 }}">👎</a>
                 </th>
             </tr>
         </thead>
