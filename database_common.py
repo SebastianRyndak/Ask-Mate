@@ -12,6 +12,7 @@ def get_connection_string():
     password = os.environ.get('PSQL_PASSWORD')
     host = os.environ.get('PSQL_HOST')
     database_name = os.environ.get('PSQL_DB_NAME')
+    port = os.environ.get('PSQL_PORT')
 
     env_variables_defined = user_name and password and host and database_name
 
@@ -21,7 +22,7 @@ def get_connection_string():
             user_name=user_name,
             password=password,
             host=host,
-            database_name=database_name
+            database_name=database_name,
         )
     else:
         raise KeyError('Some necessary environment variable(s) are not defined')
