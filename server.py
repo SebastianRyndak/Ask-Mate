@@ -318,15 +318,6 @@ def display_user_information(user_id):
                            comment_data=comment_data)
 
 
-
-@app.route('/logout')
-def logout():
-    session.pop('username', None)
-    session.pop('user_id', None)
-    return redirect(url_for('main'))
-
-
-
 @app.route('/tags')
 def tags_page():
     tags = data_manager.get_tags_with_counter()
