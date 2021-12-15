@@ -12,7 +12,6 @@ app.config["UPLOAD_PICTURE_FOLDER"] = pictures_questions
 pictures_answers = '.\\static\\uploads_pictures_answers'
 app.config["UPLOAD_PICTURE_ANSWERS"] = pictures_answers
 app.config["ALLOWED_IMAGE_EXTENSIONS"] = ["JPG", "PNG"]
-app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -22,8 +21,8 @@ def login():
             login = request.form['user_name']
             password = request.form['password_name']
             if data_manager.verify_password(password, data_manager.login(login)['password']):
-                session['user_name'] = login
-                session['password_name'] = password
+                session['user_id'] = data_manager.login(login)['id']
+                session['username'] = login
                 return data_manager.YOU_ARE_LOGGED_IN
             else:
                 return data_manager.INVALID_LOGIN_ATTEMPT
@@ -34,14 +33,9 @@ def login():
 
 @app.route('/logout')
 def logout():
-    session.pop('user_name', None)
-    session.pop('password_name', None)
-    return redirect(url_for('index'))
-
-
-@app.route("/bonus-questions")
-def bonus_questions():
-    return render_template('bonus_questions.html', questions=SAMPLE_QUESTIONS)
+    session.pop('username', None)
+    session.pop('user_id', None)
+    return redirect(url_for('main'))
 
 
 @app.route("/bonus-questions")
@@ -135,7 +129,7 @@ def add_new_question():
     if 'username' in session:
         return render_template("add-question.html")
     else:
-        return redirect('/question')
+        return redirect(url_for('main'))
 
 
 @app.route('/new_question/add_new_question', methods=["POST"])
@@ -320,13 +314,6 @@ def display_user_information(user_id):
     return render_template('user_page.html', user_information=user_information, user_id=user_id,
                            question_data=question_data, answer_data=answer_data,
                            comment_data=comment_data)
-
-
-@app.route('/logout')
-def logout():
-    session.pop('username', None)
-    session.pop('user_id', None)
-    return redirect(url_for('main'))
 
 
 if __name__ == "__main__":
