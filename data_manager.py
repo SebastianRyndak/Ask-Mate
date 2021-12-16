@@ -120,7 +120,7 @@ def save_edited_question(cursor, title, message, question_id):
 @database_common.connection_handler
 def find_all_answer_to_question(cursor, question_id):
     query = sql.SQL("""
-        SELECT answer.submission_time, answer.id, answer.vote_number, answer.message,
+        SELECT answer.submission_time, answer.id, answer.vote_number, answer.message, answer.question_id,
        answer.image,answer.votes_up, answer.votes_down, "user".username
         FROM answer
         LEFT JOIN "user" ON answer.user_id = "user".id
@@ -600,17 +600,26 @@ def get_all_usersnames(cursor):
     return cursor.fetchall()
 
 @database_common.connection_handler
-def count_rank_points(cursor, user_id):
+def count_answer_points(cursor, user_id):
     query = """
-        SELECT SUM(public.question.votes_up * %(question_up)s + public.answer.votes_up * %(answer_up)s)+ 
-        SUM(public.question.votes_down * %(question_down)s + public.answer.votes_down * %(answer_down)s) + 
-        COUNT(public.answer.acceptation_status) * %(answer_accept)s as votes
+        SELECT SUM(public.answer.votes_up) * %(answer_up)s + SUM(public.answer.votes_down) * %(answer_down)s + 
+        SUM(public.answer.acceptation_status) * %(answer_accept)s as a_points
         FROM public.answer
-        INNER JOIN public.question on public.answer.question_id = question.id
         WHERE answer.user_id = %(user_id)s
-        GROUP BY answer.user_id"""
-    cursor.execute(query, {'user_id': user_id, 'question_up': CALC['question_up'], 'answer_up': CALC['answer_up'],
-                           'question_down': CALC['question_down'], 'answer_down': CALC['answer_down'], 'answer_accept': CALC['answer_accept']})
+        GROUP BY answer.user_id;"""
+    cursor.execute(query, {'user_id': user_id, 'answer_up': CALC['answer_up'], 'answer_down': CALC['answer_down'],
+                           'answer_accept': CALC['answer_accept']})
+    return cursor.fetchone()
+
+
+@database_common.connection_handler
+def count_question_points(cursor, user_id):
+    query = """
+        SELECT SUM(public.question.votes_up) * %(question_up)s + SUM(public.question.votes_down) * %(question_down)s as q_points
+        FROM public.question
+        WHERE question.user_id = %(user_id)s
+        GROUP BY question.user_id;"""
+    cursor.execute(query, {'user_id': user_id, 'question_up': CALC['question_up'], 'question_down': CALC['question_down']})
     return cursor.fetchone()
 
 

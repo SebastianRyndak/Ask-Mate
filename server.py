@@ -294,7 +294,7 @@ def display_user_information(user_id):
     question_data = data_manager.get_user_question_data(user_id)
     answer_data = data_manager.get_user_answer_data(user_id)
     comment_data = data_manager.get_user_comment_data(user_id)
-    user_points = data_manager.count_rank_points(user_id)
+    user_points = utils.get_user_points(user_id)
     return render_template('user_page.html', user_information=user_information, user_id=user_id,
                            question_data=question_data, answer_data=answer_data, user_points=user_points,
                            comment_data=comment_data, ranks=utils.RANKS)
@@ -341,8 +341,8 @@ def get_add_new_tag(question_id):
 def get_users():
     if 'username' in session:
         users = data_manager.get_all_users()
-        user_ranks = utils.get_user_rank()
-        return render_template("users.html", users = users, user_ranks=user_ranks)
+        user_ranks = utils.get_users_rank()
+        return render_template("users.html", users=users, user_ranks=user_ranks)
     else:
         return redirect(url_for('main'))
 
