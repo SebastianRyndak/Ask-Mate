@@ -49,21 +49,35 @@ def allowed_image(filename):
         return False
 
 
-def get_user_points():
+def user_points_validations(id, user_name, all_points):
+    a_points = data_manager.count_answer_points(id)
+    q_points = data_manager.count_question_points(id)
+    if a_points == None and q_points == None:
+        all_points[user_name] = 0
+    elif a_points == None:
+        all_points[user_name] = q_points.get("q_points")
+    elif q_points == None:
+        all_points[user_name] = a_points.get("a_points")
+    else:
+        all_points[user_name] = q_points.get("q_points") + a_points.get("a_points")
+
+
+def get_user_points(user_id):
+    user_points = {}
+    user_points_validations(user_id, user_id, user_points)
+    return user_points
+
+
+def get_all_users_points():
     all_users = data_manager.get_all_usersnames()
     all_points = {}
     for user in all_users:
-        z = user.get('id')
-        points = data_manager.count_rank_points(user.get('id'))
-        if points == None:
-            all_points[user.get('username')] = 0
-        else:
-            all_points[user.get('username')] = points.get('votes')
+        user_points_validations(user.get('id'), user.get('username'), all_points)
     return all_points
 
 
-def get_user_rank():
-    user_points = get_user_points()
+def get_users_rank():
+    user_points = get_all_users_points()
     user_rank = {}
     for user_id, points in user_points.items():
         for rank, points_range in RANKS.items():
