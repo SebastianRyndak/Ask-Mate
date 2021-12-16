@@ -27,23 +27,32 @@ function getSortedItems(items, sortField, sortDirection) {
 function getFilteredItems(items, filterValue) {
     console.log(items)
     console.log(filterValue)
-     let matches = []
+    let matches = []
 
     // === SAMPLE CODE ===
     // if you have not changed the original html uncomment the code below to have an idea of the
     // effect this function has on the table
     //
     for (let i=0; i<filterValue.length; i++) {
-       for (let j= 0; j<items.length;j++){
-
-       }
+        filterData = (items, filterValue) => {
+    const filteredData = data.filter( (item) => {
+        for (let key in query) {
+            if (item[key] === undefined || !query[key].includes(item[key])) {
+                return false;
+            }
+        }
+        return true;
+    });
+    return filteredData;
+};
    }
+
  /*   let selectedItems = items.filter(function (item){
         console.log(item.Title)
         return item.Title.cont
     });
     console.log(selectedItems)*/
-    return matches
+    return items
 }
 
 
