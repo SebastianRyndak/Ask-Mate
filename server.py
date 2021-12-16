@@ -95,8 +95,9 @@ def question(question_id):
     question_data = data_manager.find_title_and_message(question_id)
     answer_data = data_manager.find_all_answer_to_question(question_id)
     comments_data = data_manager.search_comment_by_id(question_id)
+    user_id = utils.get_user_id(question_data)
     return render_template('question.html', question_data=question_data, question_id=question_id,
-                           answer_data=answer_data, comments_data=comments_data, tags=tags)
+                           answer_data=answer_data, comments_data=comments_data, tags=tags, user_id=user_id)
 
 
 @app.route('/new_answer/<question_id>')
@@ -239,11 +240,12 @@ def edit_comment(question_id, comment_id):
 
 @app.route('/edit_comment/<question_id>/<comment_id>/<edited_count>/edit', methods=["POST"])
 def after_edit_comment(question_id, comment_id, edited_count):
-    if request.method == "POST" and 'user' in session:
-        message = request.form.get("message")
-        edited_count = int(edited_count) + 1
-        data_manager.edit_comment_by_comment_id(message, edited_count, comment_id)
-    return redirect(f'/question/{question_id}')
+    if 'username' in session:
+        if request.method == "POST":
+            message = request.form.get("message")
+            edited_count = int(edited_count) + 1
+            data_manager.edit_comment_by_comment_id(message, edited_count, comment_id)
+        return redirect(f'/question/{question_id}')
 
 
 @app.route("/add_comment_to_question/<question_id>", methods=["POST", "GET"])
@@ -345,6 +347,14 @@ def get_users():
         return render_template("users.html", users=users, user_ranks=user_ranks)
     else:
         return redirect(url_for('main'))
+
+@app.route('/question/<question_id>/<answer_id>/<acceptation_form>')
+def mark_answer(question_id, answer_id, acceptation_form):
+    if acceptation_form == "1":
+        data_manager.mark_acceptable_status(answer_id, bool_value=1)
+    elif acceptation_form == "0":
+        data_manager.mark_acceptable_status(answer_id, bool_value=0)
+    return redirect(url_for('question', question_id=question_id))
 
 
 if __name__ == "__main__":

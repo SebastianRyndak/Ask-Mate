@@ -6,28 +6,32 @@
 
 {% block content %}
 <center>
-<h1>Log in</h1>
-<form action="/login" method="POST">
-    <table>
-        <tr>
-            <td>
-                <label for="username">USERNAME:</label>
-            </td>
-            <td>
-                <input id="username" type="email" name="user_name">
-            </td>
-        </tr>
-        <tr>
-            <td>
-                    <label for="password">PASSWORD:</label>
-            </td>
-        <td>
-        <input id="password" type="password" name="password_name">
-        </td>
-        </tr>
-    </table>
-    <button type="submit">Login</button>
-
-</form>
+    <h1>Log in</h1>
+    <form action="/login" method="POST">
+        <table>
+            <tr>
+                <td>
+                    <label for="username">Username:</label>
+                </td>
+                <td>
+                    <input id="username" type="email" name="user_name" placeholder="Username...">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="password">Password:</label>
+                </td>
+                <td>
+                    <input id="password" type="password" name="password_name" placeholder="Password...">
+                </td>
+            </tr>
+        </table>
+        <button type="submit">Login</button>
+    </form>
+    <h3>New member?</h3>
+    <form action="/registration">
+        <button type="submit">Create account</button>
+    </form>
 </center>
+
 {% endblock %}

@@ -210,6 +210,14 @@ a {
     width: 30px;
     text-align: center;
 }
+.max-width {
+    background-color: rgba(200,203,206,0.92);
+    border-radius: 10px;
+    max-width: 960px;
+    margin-left: auto;
+    margin-right: auto;
+    border: 3px solid rgba(15,30,12,0.92);
+}
 
 .votes-cell .votes-display {
     margin: 0px;

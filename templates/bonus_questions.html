@@ -1,20 +1,30 @@
 <html>
     <head>
+        <title>{% block page_title %}Main page{% endblock %} - Q & A - Ask.Mate</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
         <script type="text/javascript" src="{{ url_for('static', filename='js/bonusQuestions.js') }}" defer></script>
         <script type="text/javascript" src="{{ url_for('static', filename='js/doNotModifyThisFile.js') }}" defer></script>
     </head>
     <body>
-        <h1>AskMate</h1>
+        <div class="content-wrapper">
+            <header>
+                <a href="/list"><h1 id="header-title">🆀 & 🅰 - 🅰🆂🅺.🅼🅰🆃🅴</h1></a>
+            </header>
+            <section>
+                <h2 class="title text-center">{{ self.page_title() }}</h2>
+
+                {% block content %}{% endblock %}
+            </section>
         <h2>All Questions:</h2>
         <button id="theme-button">Change Theme to Dark</button>
-        <button id="increase-font-button">Increase page font</button>
-        <button id="decrease-font-button">Decrease page font</button>
+        <button onclick="increaseFont()" id="increase-font-button">Increase page font</button>
+        <button onclick="decreaseFont()" id="decrease-font-button">Decrease page font</button>
         <input
                 data-table-body="doNotModifyThisId_QuestionsTableBody"
                 style="width: 500px" id="doNotModifyThisId_QuestionsFilter"
                 type="text"
                 placeholder="filter questions by keywords">
-        <table>
+        <table id="container" class="main_table">
             <thead id="doNotModifyThisId_QuestionsTableHeader">
                 <tr>
                     <td>Title</td>
@@ -34,5 +44,6 @@
                 {% endfor %}
             </tbody>
         </table>
+        </div>
     </body>
 </html>

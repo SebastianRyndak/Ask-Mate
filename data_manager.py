@@ -63,7 +63,8 @@ def return_question_id_and_message(cursor, answer_id):
 @database_common.connection_handler
 def find_title_and_message(cursor, question_id):
     query = sql.SQL("""
-        SELECT title, message, image, votes_up, votes_down, u.username
+        SELECT title, message, image, user_id, u.username,
+        votes_up, votes_down
         FROM question
         LEFT JOIN public.user as u
         ON question.user_id = u.id
@@ -120,8 +121,9 @@ def save_edited_question(cursor, title, message, question_id):
 @database_common.connection_handler
 def find_all_answer_to_question(cursor, question_id):
     query = sql.SQL("""
-        SELECT answer.submission_time, answer.id, answer.vote_number, answer.message, answer.question_id,
-       answer.image,answer.votes_up, answer.votes_down, "user".username
+        SELECT answer.submission_time, answer.id, answer.vote_number, answer.message,
+        answer.image, "user".username, answer.question_id, answer.votes_up, answer.votes_down,
+        answer.acceptation_status
         FROM answer
         LEFT JOIN "user" ON answer.user_id = "user".id
         WHERE question_id = %(question_id)s
@@ -631,3 +633,10 @@ def get_all_usersnames(cursor):
         ORDER BY id DESC"""
     cursor.execute(query)
     return cursor.fetchall()
+@database_common.connection_handler
+def mark_acceptable_status(cursor, answer_id, bool_value):
+    query = """
+        UPDATE answer
+        SET acceptation_status = %(bool_value)s
+        WHERE id = %(answer_id)s"""
+    cursor.execute(query, {'bool_value': bool_value, 'answer_id': answer_id})

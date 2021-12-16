@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block content %}
+
     <div class="question-block">
         <h1 style="text-decoration: underline">{{ question_data[0].get("title") }}</h1><br>
         {% if question_data[0].get("image") == "" or question_data[0].get("image") == None %}
@@ -38,14 +39,16 @@
                 </form>
                 </th>
                 <th>
+                {% if user_id == session['user_id'] %}
                 <form action="/question/{{ question_id }}/delete">
-                    <button type="submit">Delete</button>
+                    <button onclick="deleteQuestion()" type="submit">Delete</button>
                 </form>
                 </th>
                 <th>
                 <form action="/edit_question/{{ question_id }}">
                     <button type="submit">Edit</button>
                 </form>
+                {% endif %}
                 </th>
                 <th>
                 <form action="/new_answer/{{ question_id }}">
@@ -80,7 +83,11 @@
         <thead>
             <tr>
                 <th class="answer-message">
+                {% if answer.acceptation_status == True %}
+                    <div class="max-width">{{ answer.message }}</div>
+                {% else %}
                     {{ answer.message }}
+                {% endif %}
                 {% if answer.username == None or  answer.username == "" %}
                     <p class="answer-footer"> Posted by <span class="answer-footer-author">Unknown</span></p>
                 {% else %}
@@ -114,6 +121,19 @@
                     <a href="/edit_answer/{{ answer.id }}" class="link-inside-table">Edit ✏️</a>
                     <a href="/add_comment_to_answer/{{ question_id }}/{{ answer.id }}" class="link-inside-table">Comment 🖊️</a>
                 {% endif %}
+                </td>
+                <td>
+                    {% if user_id == session['user_id'] %}
+                        {% if answer.acceptation_status == 0 %}
+                            <form action="/question/{{ question_id }}/{{ answer.id }}/1">
+                            <button onclick="markAnswer()" type="Submit">✔</button>
+                            </form>
+                        {% elif answer.acceptation_status == 1 %}
+                            <form action="/question/{{ question_id }}/{{ answer.id }}/0">
+                            <button onclick="unmarkAnswer()" value="Submit">❌</button>
+                            </form>
+                        {% endif %}
+                    {% endif %}
                 </td>
             </tr>
                 {% for comment in comments_data %}
