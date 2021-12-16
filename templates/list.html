@@ -14,8 +14,8 @@
             <p>
             <form>
             <strong> {{ header }}</strong>
-            <br><button type="button" class="sort-button" id="sort-up" name="sort" value="sort-up"><a href="/{{ key }}/1">&#8593;</a></button>
-            <br><button type="button" class="sort-button" id="sort-down" name="sort" value="sort-down"><a href="/{{ key }}/0">&#8595;</a></button>
+            <button type="button" class="sort-button" id="sort-up" name="sort" value="sort-up"><a href="/{{ key }}/1">&#8593;</a></button>
+            <button type="button" class="sort-button" id="sort-down" name="sort" value="sort-down"><a href="/{{ key }}/0">&#8595;</a></button>
             </form>
             </p>
         </th>
@@ -26,7 +26,8 @@
             {% if keys == "title" %}
                 <td><a href="/question/{{ user_record["id"]}}">{{ user_record[keys] }}</a></td>
             {% elif keys == "vote_number" %}
-                <td> <a href="/vote/{{ user_record["id"] }}/+">👍</a> {{ user_record[keys] }} <a href="/vote/{{ user_record["id"] }}/-">👎</a> </td>
+                <td class="votes-question"> <div class="votes-question-display"><a href="/vote/{{ user_record["id"] }}/+">👍</a> {{ user_record["votes_up"] }} </div>
+                    <div class="votes-question-display"><a href="/vote/{{ user_record["id"] }}/-">👎</a> {{ user_record["votes_down"] }}</div></td>
             {% else: %}
                 <td>{{ user_record[keys] }}</td>
             {% endif %} {% endfor %} </tr> {% endfor %}
@@ -37,5 +38,4 @@
     <button><a href="/new_question">Add question</a></button>
     {% endif %}
     <br><a href="/">Back to main page ↩️</a>
-
 {% endblock %}

@@ -216,6 +216,7 @@ def comment_answer(question_id, answer_id):
     else:
         return redirect(f'/question/{question_id}')
 
+
 @app.route('/search')
 def get_search():
     searching_phrase = request.args.get("q")
@@ -263,26 +264,6 @@ def delete_comment(question_id, comment_id):
         return redirect(f"/question/{question_id}")
 
 
-@app.route("/question/<question_id>/new-tag", methods=["POST"])
-def save_tags_to_a_question(question_id):
-    tags_id = list(request.form)
-    data_manager.delete_tag_list(question_id)
-    if len(tags_id) > 0:
-        for tag_id in tags_id:
-            data_manager.save_tag_list(question_id, tag_id)
-    return redirect(url_for("question", question_id=question_id))
-
-
-@app.route("/question/<question_id>/new-tag")
-def get_add_new_tag(question_id):
-    if 'username' in session:
-        question_data = data_manager.get_question_db_by_question_id(question_id)
-        id_list = data_manager.get_id_list()
-        return render_template("new_tag.html", question_id=question_id, question_data=question_data, id_list=id_list)
-    else:
-        return redirect(url_for("main"))
-
-
 @app.route('/delete_question_comment/<question_id>/<comment_id>')
 def delete_questions_comment(question_id, comment_id):
     if 'username' in session:
@@ -313,9 +294,10 @@ def display_user_information(user_id):
     question_data = data_manager.get_user_question_data(user_id)
     answer_data = data_manager.get_user_answer_data(user_id)
     comment_data = data_manager.get_user_comment_data(user_id)
+    user_points = data_manager.count_rank_points(user_id)
     return render_template('user_page.html', user_information=user_information, user_id=user_id,
-                           question_data=question_data, answer_data=answer_data,
-                           comment_data=comment_data)
+                           question_data=question_data, answer_data=answer_data, user_points=user_points,
+                           comment_data=comment_data, ranks=utils.RANKS)
 
 
 @app.route('/tags')
@@ -324,14 +306,45 @@ def tags_page():
     return render_template("tags.html", tags=tags)
 
 
+@app.route("/question/<question_id>/new-tag", methods=["POST"])
+def save_tags_to_a_question(question_id):
+    tags_id = list(request.form)
+    new_tags = request.form.get("new_tag")
+    if new_tags == None:
+        data_manager.delete_tag_list(question_id)
+        if len(tags_id) > 0:
+            for tag_id in tags_id:
+                data_manager.save_tag_list(question_id, tag_id)
+        return redirect(url_for("question", question_id=question_id))
+    else:
+        data_manager.save_new_tag(new_tags)
+        return redirect(url_for("get_add_new_tag", question_id=question_id))
+
+
+@app.route("/question/<question_id>/tag/<tag_id>/Delete", methods=['GET', 'POST'])
+def delete_tag(tag_id, question_id):
+    data_manager.delete_tag(tag_id, question_id)
+    return redirect(url_for("question", question_id=question_id))
+
+
+@app.route("/question/<question_id>/new-tag")
+def get_add_new_tag(question_id):
+    if 'username' in session:
+        question_data = data_manager.get_question_db_by_question_id(question_id)
+        id_list = data_manager.get_id_list()
+        return render_template("new_tag.html", question_id=question_id, question_data=question_data, id_list=id_list)
+    else:
+        return redirect(url_for("main"))
+
+
 @app.route('/users')
 def get_users():
     if 'username' in session:
         users = data_manager.get_all_users()
+        user_ranks = utils.get_user_rank()
+        return render_template("users.html", users = users, user_ranks=user_ranks)
     else:
-        users = {}
-    return render_template("users.html", users = users)
-
+        return redirect(url_for('main'))
 
 
 if __name__ == "__main__":

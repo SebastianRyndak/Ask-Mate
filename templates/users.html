@@ -5,30 +5,34 @@
 {% endblock %}
 
 {% block content %}
-<div>
-    <h1>Table of users:</h1>
-</div>
-<div>
-<table>
-    <tr>
-        <th>Username</th>
-        <th>Registration date</th>
-        <th>Number of asked questions</th>
-        <th>Number of answers</th>
-        <th>Number of comments</th>
-        <th>Reputation</th>
-    </tr>
-    {% for item in users %}
-    <tr>
-           <td class="users-td">{{ item.get("username").split("@")[0]}}</td>
-            <td class="users-td">{{ item.get("registration_date")}}</td>
-            <td class="users-td">{{ item.get('questions')}}</td>
-            <td class="users-td">{{ item.get('answers')}}</td>
-            <td class="users-td">{{ item.get('comments')}}</td>
-            <td class="users-td"> {{ item.get('reputation') }}</td>
-    </tr>
-     {% endfor %}
-</table>
-</div>
+    <div>
+        <h1>Table of users:</h1>
+    </div>
+    <div>
+        <table>
+            <tr>
+                <th>Username</th>
+                <th>Registration date</th>
+                <th>Number of asked questions</th>
+                <th>Number of answers</th>
+                <th>Number of comments</th>
+                <th>Reputation</th>
+            </tr>
+            {% for item in users %}
+            <tr>
+                   <td class="users-td">{{ item.get("username").split("@")[0]}}</td>
+                    <td class="users-td">{{ item.get("registration_date")}}</td>
+                    <td class="users-td">{{ item.get('questions')}}</td>
+                    <td class="users-td">{{ item.get('answers')}}</td>
+                    <td class="users-td">{{ item.get('comments')}}</td>
+                {% for user, rank in user_ranks.items() %}
+                    {% if user.split("@")[0] == item.get("username").split("@")[0] %}
+                        <td class="users-td"> {{ rank }}</td>
+                    {% endif %}
+                {% endfor %}
+
+            </tr>
+             {% endfor %}
+        </table>
+    </div>
     <div><a href="/">Back to main page ↩️</a></div>
-{% endblock %}

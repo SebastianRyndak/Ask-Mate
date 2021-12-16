@@ -6,12 +6,6 @@
 
 {% block content %}
     <div class="question-block">
-{#        <h1>{{ question_data[0].get("title") }}</h1><br>#}
-{#        {% if question_data[0].get("image") == "" or question_data[0].get("image") == None %}#}
-{#            <h3>{{ question_data[0].get("message") }}</h3><br>#}
-{#        {% else %}#}
-{#            <h3>{{ question_data[0].get("message") }}<br><br><img src="{{ question_data[0].get("image") }}" alt="Image" width="300"></h3>#}
-{#        {% endif %}#}
         <h1 style="text-decoration: underline">{{ question_data[0].get("title") }}</h1><br>
         {% if question_data[0].get("image") == "" or question_data[0].get("image") == None %}
             <h3>{{ question_data[0].get("message") }}</h3><br>
@@ -28,7 +22,7 @@
     {% for data in comments_data %}
         {% if data.question_id and (data.answer_id == None or data.answer_id == "") %}
     <ul>
-        <li><h4>{{ data.message }}</h4></li>
+        <li class="answer-comments-cell"><h4>{{ data.message }}</h4></li>
         {% if session %}
         <a href="/delete_question_comment/{{ data.question_id }}/{{ data.id }}"> Delete 🗑️</a>
         {% endif %}
@@ -69,7 +63,7 @@
     {% endif %}
     <h4>Tags:</h4>
     {% for tag in tags %}
-        <button disabled class="tag-button">{{ tag.name }}</button>
+        <button disabled class="tag-button">{{ tag.name }}</button> <sup><a href="/question/{{ question_id }}/tag/{{ tag.id }}/Delete">X</a></sup>
     {% endfor %}
 
 	{% if answer_data|length == 0 %}
@@ -93,11 +87,14 @@
                     <p class="answer-footer"> Posted by <span class="answer-footer-author">{{ answer.username }}</span></p>
                 {% endif %}
                 </th>
-                <th>{{ answer.vote_number }} votes</th>
-                <th>
-                <a href="/question/vote/{{ question_id }}/{{ answer.id }}/{{ answer.vote_number + 1 }}">👍</a>
-                <a href="/question/vote/{{ question_id }}/{{ answer.id }}/{{ answer.vote_number - 1 }}">👎</a>
-                </th>
+                <th class="votes-cell">{{ answer.votes_up }}  <a href="/question/vote/{{ question_id }}/{{ answer.id }}/{{ answer.votes_up + 1}}">👍</a></th>
+                {% if answer.votes_down == 0 %}
+                    <th class="votes-cell"> <p class="votes-display"> {{ answer.votes_down }} </p><a href="/question/vote/{{ question_id }}/{{ answer.id }}/-1">👎</a>
+                {% else %}
+                    <th class="votes-cell"><p class="votes-display"> {{ answer.votes_down }} </p><a href="/question/vote/{{ question_id }}/{{ answer.id }}/-1">👎</a></th>
+{#                           <a href="/question/vote/{{ question_id }}/{{ answer.id }}/+ 1">👍</a>#}
+{#                <a href="/question/vote/{{ question_id }}/{{ answer.id }}/- 1">👎</a>#}
+                {% endif %}
             </tr>
         </thead>
         <tbody>
