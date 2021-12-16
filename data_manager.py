@@ -121,7 +121,7 @@ def save_edited_question(cursor, title, message, question_id):
 @database_common.connection_handler
 def find_all_answer_to_question(cursor, question_id):
     query = sql.SQL("""
-        SELECT answer.submission_time, answer.id, answer.vote_number, answer.message,
+        SELECT answer.submission_time, answer.id, answer.vote_number, answer.message, answer.user_id,
         answer.image, "user".username, answer.question_id, answer.votes_up, answer.votes_down,
         answer.acceptation_status
         FROM answer
