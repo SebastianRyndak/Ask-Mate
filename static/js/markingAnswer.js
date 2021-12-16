@@ -14,6 +14,14 @@ function unmarkAnswer() {
     }
 }
 
+function deleteQuestion() {
+    if (confirm('Are you sure to delete question?')) {
+        alert('Question deleted');
+    } else {
+        alert('Action canceled');
+    }
+}
+
 window.addEventListener('scroll',function() {
     //When scroll change, you save it on localStorage.
     localStorage.setItem('scrollPosition',window.scrollY);

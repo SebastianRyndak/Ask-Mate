@@ -239,11 +239,12 @@ def edit_comment(question_id, comment_id):
 
 @app.route('/edit_comment/<question_id>/<comment_id>/<edited_count>/edit', methods=["POST"])
 def after_edit_comment(question_id, comment_id, edited_count):
-    if request.method == "POST" and 'user' in session:
-        message = request.form.get("message")
-        edited_count = int(edited_count) + 1
-        data_manager.edit_comment_by_comment_id(message, edited_count, comment_id)
-    return redirect(f'/question/{question_id}')
+    if 'username' in session:
+        if request.method == "POST":
+            message = request.form.get("message")
+            edited_count = int(edited_count) + 1
+            data_manager.edit_comment_by_comment_id(message, edited_count, comment_id)
+        return redirect(f'/question/{question_id}')
 
 
 @app.route("/add_comment_to_question/<question_id>", methods=["POST", "GET"])
@@ -337,10 +338,9 @@ def get_users():
 @app.route('/question/<question_id>/<answer_id>/<acceptation_form>')
 def mark_answer(question_id, answer_id, acceptation_form):
     if acceptation_form == "1":
-        data_manager.mark_acceptable_status(answer_id, bool_value=True)
+        data_manager.mark_acceptable_status(answer_id, bool_value=1)
     elif acceptation_form == "0":
-        data_manager.mark_acceptable_status(answer_id, bool_value=False)
-
+        data_manager.mark_acceptable_status(answer_id, bool_value=0)
     return redirect(url_for('question', question_id=question_id))
 
 

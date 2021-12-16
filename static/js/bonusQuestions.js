@@ -43,10 +43,29 @@ function toggleTheme() {
     console.log("toggle theme")
 }
 
+
+
 function increaseFont() {
-    console.log("increaseFont")
+    let container = document.getElementById('container');
+    let style = window.getComputedStyle(container, null).getPropertyValue('font-size');
+    let fontSize = parseFloat(style);
+    container.style.fontSize = (fontSize - 1) + "px";
+    console.log(container)
+    for(let i=0; i < container.style.fontSize; i++){
+        increaseFont(container.style.fontSize[i]);
+    }
+    return container
 }
 
+
 function decreaseFont() {
-    console.log("decreaseFont")
+    let container = document.getElementById('container');
+    let style = window.getComputedStyle(container, null).getPropertyValue('font-size');
+    let fontSize = parseFloat(style);
+    container.style.fontSize = (fontSize + 1) + "px";
+    console.log(container)
+    for(let i=0; i < container.style.fontSize; i++){
+        decreaseFont(container.style.fontSize[i]);
+    }
+    return container
 }
