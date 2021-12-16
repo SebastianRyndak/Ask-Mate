@@ -390,36 +390,6 @@ def get_id_list(cursor):
 
 
 @database_common.connection_handler
-def save_tag_list(cursor, question_id, tag_id):
-    query = ("""
-        INSERT INTO question_tag
-        VALUES (%(question_id)s, %(tag_id)s);
-        """)
-    cursor.execute(query, {"question_id": f"{question_id}", "tag_id": f"{tag_id}"})
-
-
-@database_common.connection_handler
-def delete_tag_list(cursor, question_id):
-    query = ("""
-        DELETE FROM question_tag
-        WHERE question_id = %(question_id)s 
-        """)
-    cursor.execute(query, {"question_id": f"{question_id}"})
-
-
-@database_common.connection_handler
-def get_tags(cursor, question_id):
-    query = ("""
-        SELECT t.name FROM question_tag AS qt
-        LEFT JOIN tag AS t
-        ON qt.tag_id = t.id
-        WHERE qt.question_id = %(question_id)s ;
-        """)
-    cursor.execute(query, {"question_id": f"{question_id}"})
-    return cursor.fetchall()
-
-
-@database_common.connection_handler
 def delete_comment_from_question(cursor, comment_id):
     query = """
         DELETE FROM comment
@@ -556,6 +526,78 @@ def get_tags_with_counter(cursor):
     cursor.execute(query)
     return cursor.fetchall()
 
+
+@database_common.connection_handler
+def get_tags(cursor, question_id):
+    query = ("""
+        SELECT t.name, t.id FROM question_tag AS qt
+        LEFT JOIN tag AS t
+        ON qt.tag_id = t.id
+        WHERE qt.question_id = %(question_id)s ;
+        """)
+    cursor.execute(query, {"question_id": f"{question_id}"})
+    return cursor.fetchall()
+
+
+@database_common.connection_handler
+def delete_tag_list(cursor, question_id):
+    query = ("""
+        DELETE FROM question_tag
+        WHERE question_id = %(question_id)s 
+        """)
+    cursor.execute(query, {"question_id": f"{question_id}"})
+
+
+@database_common.connection_handler
+def delete_tag(cursor, tag_id, question_id):
+    query = ("""
+    DELETE FROM question_tag
+    WHERE tag_id = %(tag_id)s and question_id = %(question_id)s
+    """)
+    cursor.execute(query, {'tag_id': tag_id, 'question_id': question_id})
+
+
+@database_common.connection_handler
+def save_tag_list(cursor, question_id, tag_id):
+    query = ("""
+        INSERT INTO question_tag
+        VALUES (%(question_id)s, %(tag_id)s);
+        """)
+    cursor.execute(query, {"question_id": f"{question_id}", "tag_id": f"{tag_id}"})
+
+
+@database_common.connection_handler
+def save_new_tag(cursor, name):
+    query = ("""
+    INSERT INTO tag (name)
+    VALUES (%(name)s);
+    """)
+    cursor.execute(query, {'name': name})
+
+
+@database_common.connection_handler
+def count_rank_points(cursor, user_id):
+    query = """
+        SELECT SUM(public.question.votes_up * %(question_up)s + public.answer.votes_up * %(answer_up)s)+ 
+        SUM(public.question.votes_down * %(question_down)s + public.answer.votes_down * %(answer_down)s) + 
+        COUNT(public.answer.acceptation_status) * %(answer_accept)s as votes
+        FROM public.answer
+        INNER JOIN public.question on public.answer.question_id = question.id
+        WHERE answer.user_id = %(user_id)s
+        GROUP BY answer.user_id"""
+    cursor.execute(query, {'user_id': user_id, 'question_up': CALC['question_up'], 'answer_up': CALC['answer_up'],
+                           'question_down': CALC['question_down'], 'answer_down': CALC['answer_down'], 'answer_accept': CALC['answer_accept']})
+    return cursor.fetchone()
+
+
+@database_common.connection_handler
+def get_all_usersnames(cursor):
+    query = """
+        SELECT id, "username"
+        FROM "user"
+        ORDER BY id DESC"""
+    cursor.execute(query)
+    return cursor.fetchall()
 
 @database_common.connection_handler
 def count_answer_points(cursor, user_id):

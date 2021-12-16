@@ -6,12 +6,6 @@
 
 {% block content %}
     <div class="question-block">
-{#        <h1>{{ question_data[0].get("title") }}</h1><br>#}
-{#        {% if question_data[0].get("image") == "" or question_data[0].get("image") == None %}#}
-{#            <h3>{{ question_data[0].get("message") }}</h3><br>#}
-{#        {% else %}#}
-{#            <h3>{{ question_data[0].get("message") }}<br><br><img src="{{ question_data[0].get("image") }}" alt="Image" width="300"></h3>#}
-{#        {% endif %}#}
         <h1 style="text-decoration: underline">{{ question_data[0].get("title") }}</h1><br>
         {% if question_data[0].get("image") == "" or question_data[0].get("image") == None %}
             <h3>{{ question_data[0].get("message") }}</h3><br>
@@ -69,7 +63,7 @@
     {% endif %}
     <h4>Tags:</h4>
     {% for tag in tags %}
-        <button disabled class="tag-button">{{ tag.name }}</button>
+        <button disabled class="tag-button">{{ tag.name }}</button> <sup><a href="/question/{{ question_id }}/tag/{{ tag.id }}/Delete">X</a></sup>
     {% endfor %}
 
 	{% if answer_data|length == 0 %}
@@ -146,7 +140,9 @@
             </tbody>
         </table>
     {% endfor %}
-
+        <div>
+         <a href="/tags">See list of tags</a>
+        </div>
     <br><a href="/list">Back to list page ↩️</a>
 
 {% endblock %}

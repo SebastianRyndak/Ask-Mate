@@ -27,17 +27,29 @@ function getSortedItems(items, sortField, sortDirection) {
 function getFilteredItems(items, filterValue) {
     console.log(items)
     console.log(filterValue)
+    let matches = []
 
     // === SAMPLE CODE ===
     // if you have not changed the original html uncomment the code below to have an idea of the
     // effect this function has on the table
     //
-    for (let i=0; i<filterValue.length; i++) {
-        items.pop()
+    if (filterValue.length >0 && filterValue.charAt(0)!="!") {
+        for (let i = 0; i < filterValue.length; i++) {
+            matches = items.filter(item => item.Title.includes(filterValue));
+        }
+        return matches
+    } else if (filterValue.length >0 && filterValue.charAt(0)=="!"){
+         for (let i = 0; i < filterValue.length; i++) {
+            matches = items.filter(item => !item.Title.includes(filterValue));
+        }
+        return matches
     }
 
     return items
 }
+
+
+
 
 function toggleTheme() {
     console.log("toggle theme")

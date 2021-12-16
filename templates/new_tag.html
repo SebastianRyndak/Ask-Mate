@@ -23,17 +23,22 @@
         <label for="id">Choose tag:</label>
     <button class="tag-button" disabled>
         {% for id in id_list %}
-            <input type="checkbox" name={{ id.id }}>{{ id.name }}
+            <input type="checkbox" name={{ id.id }} >{{ id.name }}
+{#            <input type="checkbox" name={{ id.id }} >{{ id.name }} <sup><a href="/question/{{ question_id }}/tag/{{ id.id }}/Delete">X</a></sup>#}
         {% endfor %}
     </button>
             <input hidden='{{ question_id }}'>
+            <input type="submit" value="Submit">
         <br>
+    </form>
+    <form method="POST">
+    <label for="new_tag">Create new tag</label>
+        <input type="text" name="new_tag" id="new_tag">
         <input type="submit" value="Submit">
     </form>
     <br>
     <br>
    <a href="/question/{{ question_id }}">Back to Question </a>
-
     <br><a href="/list">Back to list page ↩️</a>
 
 {% endblock %}
