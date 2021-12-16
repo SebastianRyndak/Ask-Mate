@@ -1,6 +1,7 @@
 import os
 from psycopg2 import sql
 import database_common
+from utils import RANK_CALC as CALC
 
 ANSWER_DATA_PATH = os.getenv("ANSWER_DATA_PATH") if "ANSWER_DATA_PATH" in os.environ else "sample_data/answer.csv"
 QUESTION_HEADERS = ["id", "submission_time", "view_number", "vote_number", "title", "message", "image"]
@@ -22,12 +23,18 @@ def get_question_bd(cursor):
 
 @database_common.connection_handler
 def vote_for_answers(cursor, answer_id, vote_number, question_id):
-    query = """
+    if vote_number == "-1":
+        query = """
+            UPDATE answer
+            SET votes_down = votes_down + 1
+            WHERE id = %(answer_id)s"""
+        cursor.execute(query, {'vote_number': vote_number, 'answer_id': answer_id, 'question_id': question_id})
+    else:
+        query = """
         UPDATE answer
-        SET vote_number = %(vote_number)s,
-            question_id = %(question_id)s
+        SET votes_up = votes_up + 1
         WHERE id = %(answer_id)s"""
-    cursor.execute(query, {'vote_number': vote_number, 'answer_id': answer_id, 'question_id': question_id})
+        cursor.execute(query, {'vote_number': vote_number, 'answer_id': answer_id, 'question_id': question_id})
 
 
 @database_common.connection_handler
@@ -56,7 +63,7 @@ def return_question_id_and_message(cursor, answer_id):
 @database_common.connection_handler
 def find_title_and_message(cursor, question_id):
     query = sql.SQL("""
-        SELECT title, message, image, u.username
+        SELECT title, message, image, votes_up, votes_down, u.username
         FROM question
         LEFT JOIN public.user as u
         ON question.user_id = u.id
@@ -114,7 +121,7 @@ def save_edited_question(cursor, title, message, question_id):
 def find_all_answer_to_question(cursor, question_id):
     query = sql.SQL("""
         SELECT answer.submission_time, answer.id, answer.vote_number, answer.message,
-       answer.image, "user".username
+       answer.image,answer.votes_up, answer.votes_down, "user".username
         FROM answer
         LEFT JOIN "user" ON answer.user_id = "user".id
         WHERE question_id = %(question_id)s
@@ -288,7 +295,7 @@ def add_comment(cursor, message, question_id, user_id, answer_id=None):
 def add_vote_counter(cursor,id):
     query = sql.SQL("""
         UPDATE question
-        SET vote_number = vote_number + 1
+        SET votes_up = votes_up + 1
         WHERE id = %(id)s""").format(id=sql.Identifier("id"))
     cursor.execute(query, {"id": id})
 
@@ -297,7 +304,7 @@ def add_vote_counter(cursor,id):
 def substract_vote_counter(cursor, id):
     query = sql.SQL("""
         UPDATE question
-        SET vote_number = vote_number - 1
+        SET votes_down = votes_down + 1
         WHERE id = %(id)s""").format(id=sql.Identifier("id"))
     cursor.execute(query, {"id": id})
 
@@ -549,3 +556,27 @@ def get_tags_with_counter(cursor):
     cursor.execute(query)
     return cursor.fetchall()
 
+
+@database_common.connection_handler
+def count_rank_points(cursor, user_id):
+    query = """
+        SELECT SUM(public.question.votes_up * %(question_up)s + public.answer.votes_up * %(answer_up)s)+ 
+        SUM(public.question.votes_down * %(question_down)s + public.answer.votes_down * %(answer_down)s) + 
+        COUNT(public.answer.acceptation_status) * %(answer_accept)s as votes
+        FROM public.answer
+        INNER JOIN public.question on public.answer.question_id = question.id
+        WHERE answer.user_id = %(user_id)s
+        GROUP BY answer.user_id"""
+    cursor.execute(query, {'user_id': user_id, 'question_up': CALC['question_up'], 'answer_up': CALC['answer_up'],
+                           'question_down': CALC['question_down'], 'answer_down': CALC['answer_down'], 'answer_accept': CALC['answer_accept']})
+    return cursor.fetchone()
+
+
+@database_common.connection_handler
+def get_all_usersnames(cursor):
+    query = """
+        SELECT id, "username"
+        FROM "user"
+        ORDER BY id DESC"""
+    cursor.execute(query)
+    return cursor.fetchall()
