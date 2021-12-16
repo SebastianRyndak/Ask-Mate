@@ -7,9 +7,9 @@ import data_manager, utils
 
 app = Flask(__name__)
 app.secret_key = os.urandom(11)
-pictures_questions = "..\\ask-mate-3-python-BartoszKosicki\\static\\uploads_pictures_questions"
+pictures_questions = "E:\\Web and SQL - Python Flask\\ask-mate-3-python-BartoszKosicki\\static\\uploads_pictures_questions"
 app.config["UPLOAD_PICTURE_FOLDER"] = pictures_questions
-pictures_answers = '..\\ask-mate-3-python-BartoszKosicki\\static\\uploads_pictures_answers'
+pictures_answers = 'E:\\Web and SQL - Python Flask\\ask-mate-3-python-BartoszKosicki\\static\\uploads_pictures_answers'
 app.config["UPLOAD_PICTURE_ANSWERS"] = pictures_answers
 app.config["ALLOWED_IMAGE_EXTENSIONS"] = ["JPG", "PNG"]
 
