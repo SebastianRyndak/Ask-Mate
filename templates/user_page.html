@@ -13,9 +13,9 @@
         <li><strong>Username: </strong><em>{{ information.username.split('@')[0] }}</em></li>
         <li><strong>Registration date: </strong><em>{{ (information.registration_date|string)[:-7] }}</em></li>
     {% endfor %}
-        <li><strong>Reputation: </strong><em>{{ user_points.get('votes') }} points</em></li>
+        <li><strong>Reputation: </strong><em>{{ user_points['votes'] }} points</em></li>
         {% for key, value in ranks.items() %}
-            {%  if user_points.get('votes') in range(value[0], value[1]) %}
+            {%  if user_points['votes'] in range(value[0], value[1]) %}
                 <li><strong>Rank: </strong><em>{{ key }} !</em></li>
             {% endif %}
         {% endfor %}
