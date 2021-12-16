@@ -33,25 +33,18 @@ function getFilteredItems(items, filterValue) {
     // if you have not changed the original html uncomment the code below to have an idea of the
     // effect this function has on the table
     //
-    for (let i=0; i<filterValue.length; i++) {
-        filterData = (items, filterValue) => {
-    const filteredData = data.filter( (item) => {
-        for (let key in query) {
-            if (item[key] === undefined || !query[key].includes(item[key])) {
-                return false;
-            }
+    if (filterValue.length >0 && filterValue.charAt(0)!="!") {
+        for (let i = 0; i < filterValue.length; i++) {
+            matches = items.filter(item => item.Title.includes(filterValue));
         }
-        return true;
-    });
-    return filteredData;
-};
-   }
+        return matches
+    } else if (filterValue.length >0 && filterValue.charAt(0)=="!"){
+         for (let i = 0; i < filterValue.length; i++) {
+            matches = items.filter(item => !item.Title.includes(filterValue));
+        }
+        return matches
+    }
 
- /*   let selectedItems = items.filter(function (item){
-        console.log(item.Title)
-        return item.Title.cont
-    });
-    console.log(selectedItems)*/
     return items
 }
 
