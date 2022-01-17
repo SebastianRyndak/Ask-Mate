@@ -14,26 +14,30 @@
         <h1 class="header">Check latest questions out!</h1>
         <table class="main_table" title="main_table">
             {% for key in questions[0].keys() %}
-                {% if questions[0].keys() != "id" %}
-                <th class="table_header">{{ table_header.get(key) }}</th>
+                {% if key != "id" %}
+                <th class="table_header">{{ table_header.get(key) }} </th>
             {% endif %}{% endfor %}
             {% for question in questions %}
                 <tr>
                 {% for key, value in question.items() %}
                     {% if key == "message" or key == "title" %}
                         <td><a href="question/{{ question.get("id") }}">{{ value }} </a></td>
-                    {% else %}
-                        <td>
-                            {{ value }}
-                        </td>
+                    {% elif key == "submission_time" %}
+                        <td>{{ (value|string)[:-7] }}</td>
+                    {% elif key == "view_number" or key == "vote_number" %}
+                        <td>{{ value }}</td>
                     {% endif %}{% endfor %}
                 </tr>
             {% endfor %}
 
         </table><br>
-        <form action="/list" method="get">
+    <table class="footer-buttons">
+        <tr><form action="/list" method="get">
             <input type="submit" value="All questions" class="all-questions">
         </form>
+        <form action="/bonus-questions">
+               <button type="submit">See bonus question</button>
+        </form></tr></table>
         <br>
         <div>
             <a href="/users">See list of users ↩️</a>

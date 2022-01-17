@@ -10,6 +10,7 @@
 <table class="">
     <tr>
     {% for key, header in table_headers.items() %}
+        {% if key != 'id' %}
         <th>
             <p>
             <form>
@@ -19,7 +20,7 @@
             </form>
             </p>
         </th>
-    {% endfor %}
+    {% endif %}{% endfor %}
     </tr>
     {% for user_record in questions_list %}
         <tr>{% for keys in table_headers.keys() %}
@@ -28,7 +29,9 @@
             {% elif keys == "vote_number" %}
                 <td class="votes-question"> <div class="votes-question-display"><a href="/vote/{{ user_record["id"] }}/+">👍</a> {{ user_record["votes_up"] }} </div>
                     <div class="votes-question-display"><a href="/vote/{{ user_record["id"] }}/-">👎</a> {{ user_record["votes_down"] }}</div></td>
-            {% else: %}
+            {% elif keys== "submission_time" %}
+                <td>{{ (user_record[keys]|string)[:-7] }}</td>
+            {% elif keys!= "id" %}
                 <td>{{ user_record[keys] }}</td>
             {% endif %} {% endfor %} </tr> {% endfor %}
 

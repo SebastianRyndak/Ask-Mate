@@ -5,6 +5,9 @@ __pycache__
 .idea/
 /test.py
 __pycache__
+/static/image
+/static/uploads_pictures_answers
+/static/uploads_pictures_questions
 
 
 # Byte-compiled / optimized / DLL files

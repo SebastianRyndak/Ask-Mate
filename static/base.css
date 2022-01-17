@@ -222,3 +222,6 @@ a {
 .votes-cell .votes-display {
     margin: 0px;
 }
+.footer-buttons tr {
+    padding: 0;
+}

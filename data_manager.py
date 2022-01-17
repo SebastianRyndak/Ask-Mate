@@ -1,5 +1,7 @@
 import os
+
 from psycopg2 import sql
+
 import database_common
 from utils import RANK_CALC as CALC
 
@@ -278,6 +280,7 @@ def get_question_bd(cursor):
     cursor.execute("""
         SELECT *
         FROM question
+        ORDER BY submission_time DESC
         """)
     return cursor.fetchall()
 # ORDER BY submission_time DESC
@@ -413,7 +416,7 @@ def login(cursor, username):
 @database_common.connection_handler
 def sort_questions_by_column_name_asc(cursor, column_name):
     query = sql.SQL("""
-    SELECT id, submission_time,view_number,vote_number,title,message,image
+    SELECT id, submission_time,view_number,vote_number,title,message,image, votes_up, votes_down
     FROM question
     ORDER BY {column_name} ASC""").format(column_name=sql.Identifier(column_name))
     cursor.execute(query, {"column": column_name})
@@ -423,7 +426,7 @@ def sort_questions_by_column_name_asc(cursor, column_name):
 @database_common.connection_handler
 def sort_questions_by_column_name_desc(cursor, column_name):
     query = sql.SQL("""
-    SELECT id, submission_time,view_number,vote_number,title,message,image
+    SELECT id, submission_time,view_number,vote_number,title,message,image, votes_up, votes_down
     FROM question
     ORDER BY {column_name} DESC""").format(column_name=sql.Identifier(column_name))
     cursor.execute(query, {"column": column_name})
@@ -633,6 +636,8 @@ def get_all_usersnames(cursor):
         ORDER BY id DESC"""
     cursor.execute(query)
     return cursor.fetchall()
+
+
 @database_common.connection_handler
 def mark_acceptable_status(cursor, answer_id, bool_value):
     query = """

@@ -53,6 +53,7 @@ def get_user_id(question_data):
     for data in question_data:
         return data.get('user_id')
 
+
 def user_points_validations(id, user_name, all_points):
     a_points = data_manager.count_answer_points(id)
     q_points = data_manager.count_question_points(id)

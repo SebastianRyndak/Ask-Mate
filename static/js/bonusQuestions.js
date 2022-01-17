@@ -44,7 +44,6 @@ function getFilteredItems(items, filterValue) {
         }
         return matches
     }
-
     return items
 }
 

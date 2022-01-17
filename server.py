@@ -1,9 +1,11 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
-from bonus_questions import SAMPLE_QUESTIONS
-import bcrypt
 import os
-import data_manager, utils
 
+import bcrypt
+from flask import Flask, render_template, request, redirect, url_for, session, flash
+
+import data_manager
+import utils
+from bonus_questions import SAMPLE_QUESTIONS
 
 app = Flask(__name__)
 app.secret_key = os.urandom(11)
