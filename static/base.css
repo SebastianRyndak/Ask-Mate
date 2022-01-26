@@ -225,3 +225,18 @@ a {
 .footer-buttons tr {
     padding: 0;
 }
+
+.question-container {
+    display:flex;
+    flex-basis: 80vh;
+    flex-direction: column;
+    background: 	rgba(255, 255, 255, 0.7);
+    border-radius: 10px;
+    border-style: solid;
+}
+.question-massage, .question-img, .author{
+    margin: 0 2vh 2vh;
+}
+.question-img {
+/*align-self: end;*/
+}
