@@ -25,7 +25,7 @@ Frontend technologies:
 
 
 ## Developers team
-# Ryndak Sebastian
-# Jakub Bogacki
-# Bartosz Kosicki
-# Witold Brzeziński
+- Ryndak Sebastian
+- Jakub Bogacki
+- Bartosz Kosicki
+- Witold Brzeziński
